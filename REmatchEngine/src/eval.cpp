@@ -91,7 +91,7 @@ Evaluator::inlinedNext(bool early_output, bool line_by_line) {
           (i_pos_ < text_->size()             && !line_by_line_)) { // Main search loop
 
       if(line_by_line_)   a = line_[i_pos_-i_start_];
-      else                a = text_->get();
+      else                text_->get(a);
 
       if(early_output_)   readingT(a, i_pos_);
       else                readingF(a, i_pos_);
