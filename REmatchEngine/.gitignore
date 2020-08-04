@@ -20,7 +20,7 @@ embuild/
 bin/
 results/
 credentials.json
-drive_token.pickle
+*.pickle
 scripts/*/settings.json
 datasets
 tmp
