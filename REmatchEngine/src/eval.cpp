@@ -190,6 +190,8 @@ inline void Evaluator::capture(size_t i, bool early_output) {
   for (auto &currentState: capture_states_) {
     for (auto &capture: currentState->c) {
 
+      // TODO: Sumar contador de capture
+
       nextState = capture->next;
 
       newNode = Evaluator::memory_manager_.alloc(capture->S, i,
@@ -220,6 +222,8 @@ inline void Evaluator::reading(char a, size_t i, bool early_output) {
   NodeList* prevList;
 
   for (auto &currentState: current_states_) {
+
+    // TODO: Sumar contador de reading
 
 #ifdef NOPT_CROSSPROD
     if(currentState->visited == i+2)
