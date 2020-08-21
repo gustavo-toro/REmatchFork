@@ -1,5 +1,4 @@
 {
-  "homepage": "https://rematchchile.github.io/REmatch",
   "name": "rematch",
   "version": "0.1.0",
   "private": true,
@@ -18,8 +17,6 @@
     "react-tooltip": "^4.2.7"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
@@ -38,7 +35,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "gh-pages": "^2.2.0"
-  }
+  "devDependencies": {}
 }
