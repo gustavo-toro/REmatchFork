@@ -17,7 +17,9 @@ Evaluator::Evaluator(RegEx &rgx, std::istream& input,
       direct_text_(false),
       i_pos_(0),
       i_start_(0),
-      nlines_(0) {
+      nlines_(0),
+      capture_counter_(0),
+      reading_counter_(0) {
   init();
 }
 
@@ -31,7 +33,9 @@ Evaluator::Evaluator(RegEx &rgx, const std::string &text,
       direct_text_(true),
       i_pos_(0),
       i_start_(0),
-      nlines_(0) {
+      nlines_(0),
+      capture_counter_(0),
+      reading_counter_(0) {
   init();
 }
 
@@ -190,8 +194,7 @@ inline void Evaluator::capture(size_t i, bool early_output) {
   for (auto &currentState: capture_states_) {
     for (auto &capture: currentState->c) {
 
-      // TODO: Sumar contador de capture
-
+      capture_counter_++;
       nextState = capture->next;
 
       newNode = Evaluator::memory_manager_.alloc(capture->S, i,
@@ -223,7 +226,7 @@ inline void Evaluator::reading(char a, size_t i, bool early_output) {
 
   for (auto &currentState: current_states_) {
 
-    // TODO: Sumar contador de reading
+    reading_counter_++;
 
 #ifdef NOPT_CROSSPROD
     if(currentState->visited == i+2)

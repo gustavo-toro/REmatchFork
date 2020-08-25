@@ -19,6 +19,8 @@ namespace rematch {
 class Evaluator {
  public:
 
+  friend class RegEx;
+
   enum EvalOptions {
     kLineByLine    = 1<<2,
     kEarlyOutput   = 1<<3,
@@ -79,6 +81,9 @@ class Evaluator {
   size_t i_pos_;
   size_t i_start_;
   size_t nlines_;
+
+  size_t capture_counter_;
+  size_t reading_counter_;
 }; // end class Evaluator
 
 } // namespace rematch
