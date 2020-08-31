@@ -84,9 +84,7 @@ void Interface::normalRun() {
 void Interface::benchmarkRun() {
     std::stringstream output;
 
-	size_t eVASize, detASize, numOfSpans,
-		numOfNodes, numOfNodeArenas,
-		numOfNodesReused;
+	size_t numOfSpans, numOfCaptures, numOfReadings;
 	double initAutomataTime, evaluateTime, totTime;
 	/**************************** Run Algorithm ****************************/
 
@@ -106,14 +104,14 @@ void Interface::benchmarkRun() {
 		numOfSpans++;
 	}
 
+	numOfCaptures = regex.capture_counter();
+	numOfReadings = regex.reading_counter();
+
 	evaluateTime = t.elapsed(); 			// Evaluation time
 
 	/************************** Get Measurments **************************/
 
 	totTime = initAutomataTime + evaluateTime;
-
-	eVASize = 0;
-	detASize = 0;
 
 	// GET MEMORY USAGE
 	struct rusage usage;
@@ -127,13 +125,10 @@ void Interface::benchmarkRun() {
 	/************************ Output Measurments ************************/
 
 	std::cout
-				<< "ExtendedVA size\t\t\t"			<< 	eVASize						<< 	'\n'
-				<< "DetVA size\t\t\t" 					<< 	detASize					<<	'\n'
 				<< "Number of mappings\t\t" 		<< 	numOfSpans				<<	'\n'
-				<< "Number of nodes\t\t\t"			<<	numOfNodes 				<< 	'\n'
-				<< "Number of node arenas\t\t"	<<	numOfNodeArenas 	<< 	'\n'
 				<< "Memory used \t\t\t"					<<	memoryUsed	 			<< 	'\n'
-				<< "Nodes reused\t\t\t"					<<	numOfNodesReused 	<< 	'\n'
+				<< "Num of Captures\t\t\t"			<< 	numOfCaptures			<<	'\n'
+				<< "Num of Readings\t\t\t"			<< 	numOfReadings			<<	'\n'
 				<< "Init Automata time\t\t"			<<	initAutomataTime 	<< 	"s\n"
 				<< "Evaluate time\t\t\t"				<<	evaluateTime			<< 	"s\n"
 				<< "Total time\t\t\t"						<<	totTime 					<< 	"s\n";
