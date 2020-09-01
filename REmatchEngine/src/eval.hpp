@@ -10,6 +10,7 @@
 #include "enumeration.hpp"
 #include "automata/detautomaton.hpp"
 #include "memmanager.hpp"
+#include "document.hpp"
 
 class DetState;
 
@@ -17,6 +18,8 @@ namespace rematch {
 
 class Evaluator {
  public:
+
+  friend class RegEx;
 
   enum EvalOptions {
     kLineByLine    = 1<<2,
@@ -58,10 +61,10 @@ class Evaluator {
 
   RegEx &rgx_;
   std::unique_ptr<Enumerator> enumerator_;
-  MemManager memory_manager_;
+  static MemManager memory_manager_;
 
-  std::istream* input_stream_;
-  std::string text_;
+  std::unique_ptr<Document> text_;
+  std::string line_;
 
   std::vector<DetState*> current_states_;
   std::vector<DetState*> new_states_;
@@ -73,10 +76,14 @@ class Evaluator {
   bool line_by_line_;
 
   bool document_ended_;
+  bool direct_text_;
 
   size_t i_pos_;
   size_t i_start_;
   size_t nlines_;
+
+  size_t capture_counter_;
+  size_t reading_counter_;
 }; // end class Evaluator
 
 } // namespace rematch

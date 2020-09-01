@@ -49,6 +49,7 @@ class RegEx {
   Match_ptr find(const std::string &text);
 
   Match_ptr findIter(const std::string &text);
+  Match_ptr findIter(std::istream& is);
 
   int varCount() const {return dman_.varFactory()->size();}
 
@@ -62,6 +63,11 @@ class RegEx {
 
   DetManager& detManager() {return dman_;};
   DetManager& rawDetManager() {return raw_dman_;};
+
+  // Stats passed to interface
+
+  size_t capture_counter() const;
+  size_t reading_counter() const;
 
   private:
 

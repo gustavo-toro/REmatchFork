@@ -18,7 +18,6 @@ std::string RegEx::uniformGenerate(uint32_t n) {
     dman_.computeFullDetAutomaton();
     full_dfa_ = true;
   }
-
   return dman_.uniformSample(n);
 }
 
@@ -26,6 +25,13 @@ std::string RegEx::uniformGenerate(uint32_t n) {
 Match_ptr RegEx::findIter(const std::string &text) {
   if(eval_ == nullptr) {
     eval_ = std::make_unique<Evaluator>(*this, text, Evaluator::kAllFlags & flags_);
+  }
+  return eval_->next();
+}
+
+Match_ptr RegEx::findIter(std::istream &is) {
+  if(eval_ == nullptr) {
+    eval_ = std::make_unique<Evaluator>(*this, is, Evaluator::kAllFlags & flags_);
   }
   return eval_->next();
 }
@@ -43,6 +49,14 @@ uint8_t RegEx::parseFlags(rematch::RegExOptions rgx_opts) {
                  rgx_opts.early_output()  * kEarlyOutput  |
                  rgx_opts.save_anchors()  * kSaveAnchors;
   return ret;
+}
+
+size_t RegEx::capture_counter() const {
+  return eval_->capture_counter_;
+}
+
+size_t RegEx::reading_counter() const {
+  return eval_->reading_counter_;
 }
 
 } // end namespace rematch

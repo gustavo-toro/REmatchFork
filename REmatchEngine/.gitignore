@@ -20,10 +20,12 @@ embuild/
 bin/
 results/
 credentials.json
-token.pickle
+*.pickle
+scripts/*/settings.json
 datasets
 tmp
 .vscode
+.VSCodeCounter/
 python/settings.json
 callgrind.out.*
 exp/re2/.vscode
