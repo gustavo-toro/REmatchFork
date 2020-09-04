@@ -12,7 +12,119 @@ code {
 .m0 {
   background-color: #03DAC6 !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m0.m1 {
+  border-bottom: 0.5rem solid #03DAC6;
+}
+
+.m0.m1.m2 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m1.m3 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m1.m4 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m1.m5 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m1.m6 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m1.m7 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m2 {
+  border-bottom: 0.5rem solid #03DAC6;
+}
+
+.m0.m2.m3 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m2.m4 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m2.m5 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m2.m6 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m2.m7 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m3 {
+  border-bottom: 0.5rem solid #03DAC6;
+}
+
+.m0.m3.m4 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m3.m5 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m3.m6 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m3.m7 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m4 {
+  border-bottom: 0.5rem solid #03DAC6;
+}
+
+.m0.m4.m5 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m4.m6 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m4.m7 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m5 {
+  border-bottom: 0.5rem solid #03DAC6;
+}
+
+.m0.m5.m6 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m5.m7 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m6 {
+  border-bottom: 0.5rem solid #03DAC6;
+}
+
+.m0.m6.m7 {
+  border-top: 0.5rem solid #03DAC6;
+}
+
+.m0.m7 {
+  border-bottom: 0.5rem solid #03DAC6;
 }
 
 .th0 {
@@ -28,7 +140,91 @@ code {
 .m1 {
   background-color: #FCE938 !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m1.m2 {
+  border-bottom: 0.5rem solid #FCE938;
+}
+
+.m1.m2.m3 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m2.m4 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m2.m5 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m2.m6 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m2.m7 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m3 {
+  border-bottom: 0.5rem solid #FCE938;
+}
+
+.m1.m3.m4 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m3.m5 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m3.m6 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m3.m7 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m4 {
+  border-bottom: 0.5rem solid #FCE938;
+}
+
+.m1.m4.m5 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m4.m6 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m4.m7 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m5 {
+  border-bottom: 0.5rem solid #FCE938;
+}
+
+.m1.m5.m6 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m5.m7 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m6 {
+  border-bottom: 0.5rem solid #FCE938;
+}
+
+.m1.m6.m7 {
+  border-top: 0.5rem solid #FCE938;
+}
+
+.m1.m7 {
+  border-bottom: 0.5rem solid #FCE938;
 }
 
 .th1 {
@@ -44,7 +240,67 @@ code {
 .m2 {
   background-color: #d6515f !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m2.m3 {
+  border-bottom: 0.5rem solid #d6515f;
+}
+
+.m2.m3.m4 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m3.m5 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m3.m6 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m3.m7 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m4 {
+  border-bottom: 0.5rem solid #d6515f;
+}
+
+.m2.m4.m5 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m4.m6 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m4.m7 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m5 {
+  border-bottom: 0.5rem solid #d6515f;
+}
+
+.m2.m5.m6 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m5.m7 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m6 {
+  border-bottom: 0.5rem solid #d6515f;
+}
+
+.m2.m6.m7 {
+  border-top: 0.5rem solid #d6515f;
+}
+
+.m2.m7 {
+  border-bottom: 0.5rem solid #d6515f;
 }
 
 .th2 {
@@ -60,7 +316,47 @@ code {
 .m3 {
   background-color: #5a6afc !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m3.m4 {
+  border-bottom: 0.5rem solid #5a6afc;
+}
+
+.m3.m4.m5 {
+  border-top: 0.5rem solid #5a6afc;
+}
+
+.m3.m4.m6 {
+  border-top: 0.5rem solid #5a6afc;
+}
+
+.m3.m4.m7 {
+  border-top: 0.5rem solid #5a6afc;
+}
+
+.m3.m5 {
+  border-bottom: 0.5rem solid #5a6afc;
+}
+
+.m3.m5.m6 {
+  border-top: 0.5rem solid #5a6afc;
+}
+
+.m3.m5.m7 {
+  border-top: 0.5rem solid #5a6afc;
+}
+
+.m3.m6 {
+  border-bottom: 0.5rem solid #5a6afc;
+}
+
+.m3.m6.m7 {
+  border-top: 0.5rem solid #5a6afc;
+}
+
+.m3.m7 {
+  border-bottom: 0.5rem solid #5a6afc;
 }
 
 .th3 {
@@ -76,7 +372,31 @@ code {
 .m4 {
   background-color: #20BA56 !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m4.m5 {
+  border-bottom: 0.5rem solid #20BA56;
+}
+
+.m4.m5.m6 {
+  border-top: 0.5rem solid #20BA56;
+}
+
+.m4.m5.m7 {
+  border-top: 0.5rem solid #20BA56;
+}
+
+.m4.m6 {
+  border-bottom: 0.5rem solid #20BA56;
+}
+
+.m4.m6.m7 {
+  border-top: 0.5rem solid #20BA56;
+}
+
+.m4.m7 {
+  border-bottom: 0.5rem solid #20BA56;
 }
 
 .th4 {
@@ -90,25 +410,41 @@ code {
 }
 
 .m5 {
-  background-color: #eb34ff !important;
+  background-color: #f5a0ff !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m5.m6 {
+  border-bottom: 0.5rem solid #f5a0ff;
+}
+
+.m5.m6.m7 {
+  border-top: 0.5rem solid #f5a0ff;
+}
+
+.m5.m7 {
+  border-bottom: 0.5rem solid #f5a0ff;
 }
 
 .th5 {
-  background-color: #eb34ff !important;
+  background-color: #f5a0ff !important;
   color: black !important;
   font-weight: bolder !important;
 }
 
 .cm-m5 {
-  color: #eb34ff !important;
+  color: #f5a0ff !important;
 }
 
 .m6 {
   background-color: #a6ff22 !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
+}
+
+.m6.m7 {
+  border-bottom: 0.5rem solid #a6ff22;
 }
 
 .th6 {
@@ -124,7 +460,7 @@ code {
 .m7 {
   background-color: #7f34f0 !important;
   color: black !important;
-  padding: .25rem;
+  padding: .15rem .1rem;
 }
 
 .th7 {
@@ -139,6 +475,10 @@ code {
 
 .CodeMirror {
   font-size: 22px;
+}
+
+.CodeMirror .CodeMirror-scroll {
+  padding-top: .5rem;
 }
 
 #queryEditor .CodeMirror {
