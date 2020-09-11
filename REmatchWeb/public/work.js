@@ -18,7 +18,7 @@ this.onmessage = (m) => {
         let rgx = new RegEx(`.*${m.data.query}.*`, rgxOptions);
 
         /* THIS SHOULD BE IN RegEx OBJECT */
-        let schema = [...m.data.query.matchAll(/!([A-Za-z0-9])/g)].map((m) => (m[1]));
+        let schema = [...m.data.query.matchAll(/!([A-Za-z0-9]+)/g)].map((m) => (m[1]));
         this.postMessage({
             type: 'SCHEMA',
             payload: schema,
