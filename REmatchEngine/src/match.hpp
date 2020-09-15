@@ -33,9 +33,11 @@ class Match {
  public:
   operator bool() const {return !data_.empty();}
 
-  Match(string const &d): doc_(d) {}
+  Match() = default;
 
-  Match(string const &d, SpanMap s): doc_(d), data_(s) {}
+  Match(string const &d): doc_(&d) {}
+
+  Match(string const &d, SpanMap s): doc_(&d), data_(s) {}
 
   Match(string const &d, SpanVect s,
         vector<string> output_scheme);
@@ -50,7 +52,7 @@ class Match {
   string group(string var) const;
 
   // Returns referece to the sublaying document.
-  const string& doc() const {return doc_;}
+  const string* doc() const {return doc_;}
 
   // Returns a vector with the variable names in order
   vector<string> variables() const;
@@ -67,7 +69,7 @@ class Match {
   void addMapping(string var, Span span);
 
 
-  const string &doc_;     // Access to context document.
+  const std::string *doc_;     // Access to context document.
   SpanMap data_;          // Mappings table.
 
 }; // end class Match
