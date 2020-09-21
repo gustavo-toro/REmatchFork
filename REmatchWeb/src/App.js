@@ -58,6 +58,9 @@ const darkTheme = createMuiTheme({
     primary: {
       main: '#03DAC6',
     },
+    secondary: {
+      main: '#FCE938',
+    },
     background: {
       paper: '#212121',
       default: '#353535',
@@ -70,6 +73,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      running: false,
       schema: [],
       matches: [],
       uploadingFile: false,
@@ -160,6 +164,7 @@ class App extends Component {
   }
 
   runWorker = () => {
+    this.setState({running: true});
     console.log('STARTED');
     this.clearMarks();
     this.setState({ matches: [], schema: [] });
@@ -175,11 +180,16 @@ class App extends Component {
         case 'MATCHES':
           this.setState((prevState) => ({ matches: [...prevState.matches, ...m.data.payload] }));
           break;
+        case 'LAST_MATCHES':
+          this.setState((prevState) => ({ matches: [...prevState.matches, ...m.data.payload] }));
+          this.setState({running: false});
+          break;
         case 'ERROR':
           console.log('ERROR:', m.data.payload);
           worker.terminate();
           worker = new Worker(WORKPATH);
           console.log('WORKER HAS BEEN RELOADED');
+          this.setState({running: false});
           break;
         default:
           break;
@@ -215,6 +225,7 @@ class App extends Component {
               <Grid item sm={2} xs={4}>
                 <Tooltip title="Run query">
                 <Button 
+                  disabled={this.state.running}
                   color="primary" 
                   variant="text"
                   startIcon={<PlayArrow />} 
