@@ -12,6 +12,7 @@ file(GLOB sources
 set(BUILD_TARGETS
   rematch
   generate
+  test-regex
 )
 
 if(SWIG) # Only set shared library target
