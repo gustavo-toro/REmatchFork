@@ -3,6 +3,7 @@ importScripts('./rematch_wasm.js');
 
 // eslint-disable-next-line no-undef
 const { RegEx, RegExOptions } = Module;
+const CHUNK_SIZE = 10000;
 const MESSAGE_SIZE = 20000;
 
 this.onmessage = (m) => {
@@ -12,7 +13,6 @@ this.onmessage = (m) => {
         let currMatch = [];
         let matches = [];
 
-        let match;
         let rgxOptions = new RegExOptions();
         rgxOptions.early_output = true;
         let rgx = new RegEx(`.*${m.data.query}.*`, rgxOptions);
@@ -25,6 +25,21 @@ this.onmessage = (m) => {
         })
         /* THIS SHOULD BE IN RegEx OBJECT */
 
+        let s = 0;
+        let e = CHUNK_SIZE;
+        let match;
+        console.log('MESSAGE RECEIVED');
+        while (s < m.data.text.length) {
+            rgx.feed(m.data.text.slice(s, e));
+            while ((match = rgx.internalFindIter())) {
+                schema.forEach((variable) => {
+                    console.log(variable, ':', match.span(variable));
+                });
+            }
+            s = e;
+            e += CHUNK_SIZE;
+        }
+/*
         while ((match = rgx.findIter(m.data.text))) {
 
             schema.forEach((variable) => {
@@ -44,8 +59,9 @@ this.onmessage = (m) => {
                 matches = [];
                 count = 0;
             }
-        }
-
+            
+        }*/
+/*
         if (matches.length > 0) {
             console.log('SEND LAST CHUNK');
             this.postMessage({
@@ -53,7 +69,7 @@ this.onmessage = (m) => {
                 payload: matches,
             });
         }
-
+*/
         rgxOptions.delete();
         rgx.delete();
 
