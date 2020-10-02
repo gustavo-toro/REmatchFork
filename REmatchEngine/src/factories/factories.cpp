@@ -8,6 +8,7 @@
 #include "factories.hpp"
 #include "charclass.hpp"
 #include "parser/visitors.hpp"
+#include "parser/exceptions.hpp"
 
 using namespace std;
 
@@ -127,7 +128,7 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 
 		  numVars++;
 		} else {
-			throw visitors::bad_regex();
+			throw parsing::BadRegex("Regex is not functional.");
 		}
 	}
 

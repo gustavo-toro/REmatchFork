@@ -10,6 +10,7 @@
 #include "automata/detautomaton.hpp"
 #include "automata/detstate.hpp"
 #include "det/setstate.hpp"
+#include "automata/lvastate.hpp"
 
 // #include <boost/multiprecision/cpp_int.hpp>
 // #include <boost/multiprecision/cpp_bin_float.hpp>

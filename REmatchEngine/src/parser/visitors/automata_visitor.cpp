@@ -1,22 +1,14 @@
-#include <iostream>
-#include <sstream>
-#include <cassert>
-#include <exception>
+#include "automata_visitor.hpp"
 
-#include <boost/variant.hpp>
-#include <boost/variant/get.hpp>
-
-#include "visitors.hpp"
-#include "ast.hpp"
-#include "automata/lvastate.hpp"
+#include "parser/ast.hpp"
 #include "automata/lva.hpp"
+#include "automata/lvastate.hpp"
 #include "factories/factories.hpp"
-
-using boost::get;
+#include "charclass.hpp"
 
 namespace visitors {
 
-regex2LVA :: regex2LVA(std::unique_ptr<VariableFactory>& v, FilterFactory& f): vFact(std::move(v)), fFact(f) {}
+regex2LVA::regex2LVA(std::unique_ptr<VariableFactory>& v, FilterFactory& f): vFact(std::move(v)), fFact(f) {}
 
 LogicalVA& regex2LVA :: operator()(ast::altern const &a) const {
 	LogicalVA& A = (*this)(a.front());
@@ -121,102 +113,5 @@ LogicalVA& regex2LVA :: operator()(ast::anywhitespace const &a) const {
 	return *A;
 }
 
-regex2filters :: regex2filters() {
-	m_filterFactory = new FilterFactory();
-}
 
-FilterFactory& regex2filters :: operator()(ast::altern const &a) {
-	for(auto &elem: a) {
-		(*this)(elem);
-	}
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::concat const &c) {
-	for(auto &elem: c) {
-		(*this)(elem);
-	}
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::iter const &it) {
-	(*this)(it.expr);
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::group const &g) {
-	boost::apply_visitor(*this, g);
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::parenthesis const &p) {
-	(*this)(p.root);
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::assignation const &a) {
-	(*this)(a.root);
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::atom const &a) {
-	boost::apply_visitor(*this, a);
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::charset const &cs) {
-	m_filterFactory->addFilter(CharClass(cs));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(char const &a) {
-	m_filterFactory->addFilter(CharClass(a));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::anychar const &a) {
-	m_filterFactory->addFilter(CharClass(ANYCHAR, false));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::anydigit const &a) {
-	m_filterFactory->addFilter(CharClass(ANYDIGIT, false));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::nondigit const &a) {
-	m_filterFactory->addFilter(CharClass(ANYDIGIT, true));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::anyword const &a) {
-	m_filterFactory->addFilter(CharClass(ANYWORD, false));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::nonword const &a)  {
-	m_filterFactory->addFilter(CharClass(ANYWORD, true));
-
-	return *m_filterFactory;
-}
-
-FilterFactory& regex2filters :: operator()(ast::anywhitespace const &a)  {
-	m_filterFactory->addFilter(CharClass(ANYSPACE, false));
-
-	return *m_filterFactory;
-}
-
-} // Namespace visitors
-
+} // end namespace visitors
