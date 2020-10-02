@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 
   rematch::Match_ptr match, match2;
 
-  int count = 0;
+  // int count = 0;
 
   match = rgx.find(doc);
 

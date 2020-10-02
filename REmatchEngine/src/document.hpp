@@ -21,6 +21,8 @@ class Document {
   virtual sz_t size() const = 0;
   virtual bool getline(std::string &str) = 0;
 
+  virtual ~Document() = default;
+
   virtual std::string_view get_view(size_t pos, size_t endpos) = 0;
 }; // end class Document
 
@@ -35,6 +37,8 @@ class StrDocument : public Document {
 
   StrDocument(const char* str)
       : data_(str), size_(str == nullptr ? 0 : strlen(str)), current_(str) {}
+
+	virtual ~StrDocument() = default;
 
   Document::const_iterator begin() const {return data_;}
   Document::const_iterator end() const {return data_ + size_;}
@@ -71,6 +75,8 @@ class FileDocument : public Document {
 
   FileDocument(std::istream &is)
       : data_(&is), size_(0) {}
+
+	virtual ~FileDocument() = default;
 
   virtual Document::sz_t size() const {return size_;}
 

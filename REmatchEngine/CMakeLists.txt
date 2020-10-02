@@ -30,8 +30,8 @@ endif()
 # add_definitions(-DNOPT_CROSSPROD)
 # add_definitions(-DNOPT_OFFSET)
 
-include_directories(src)
-include_directories(SYSTEM thirdparty)
+include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/thirdparty)
 
 if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
 	find_package(Boost 1.58)

@@ -14,6 +14,8 @@
 #include "automata/lva.hpp"
 #include "factories/factories.hpp"
 
+#include "parser/visitors/variable_factory_visitor.hpp"
+
 using boost::get;
 
 namespace visitors {
@@ -26,11 +28,11 @@ struct bad_regex: public std::exception {
 
 struct regex2LVA : boost::static_visitor<LogicalVA&> {
 	private:
-		VariableFactory& vFact;
+		std::shared_ptr<VariableFactory> vFact;
 		FilterFactory& fFact;
 	public:
 
-		regex2LVA(VariableFactory& v, FilterFactory& f);
+		regex2LVA(std::unique_ptr<VariableFactory> &v, FilterFactory& f);
 
 		LogicalVA &operator()(ast::altern const &a) const;
 		LogicalVA &operator()(ast::concat const &c) const;
@@ -47,16 +49,6 @@ struct regex2LVA : boost::static_visitor<LogicalVA&> {
 		LogicalVA &operator()(ast::anyword const &a) const;
 		LogicalVA &operator()(ast::nonword const &a) const;
 		LogicalVA &operator()(ast::anywhitespace const &a) const;
-};
-
-struct regex2vars : boost::static_visitor<VariableFactory&> {
-		VariableFactory &operator()(ast::altern const &a) const;
-		VariableFactory &operator()(ast::concat const &c) const;
-		VariableFactory &operator()(ast::iter const &it) const;
-		VariableFactory &operator()(ast::group const &g) const;
-		VariableFactory &operator()(ast::parenthesis const &p) const;
-		VariableFactory &operator()(ast::assignation const &a) const;
-		VariableFactory &operator()(ast::atom const &a) const;
 };
 
 struct regex2filters : boost::static_visitor<FilterFactory&> {

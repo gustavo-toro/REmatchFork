@@ -27,9 +27,9 @@ LogicalVA :: LogicalVA()
   states.push_back(init_state_);
 }
 
-LogicalVA :: LogicalVA(VariableFactory &vFact, FilterFactory &fFact)
+LogicalVA :: LogicalVA(vf_sptr vf, FilterFactory &fFact)
      : init_state_(new LVAState()),
-      v_factory_(&vFact),
+      v_factory_(vf),
       f_factory_(&fFact) {
   init_state_->setInitial(true);
   states.push_back(init_state_);
@@ -50,9 +50,9 @@ LogicalVA :: LogicalVA(const char &a) {
   init_state_->addFilter(coding, fState);
 }
 
-LogicalVA :: LogicalVA(const char &a, VariableFactory &vFact, FilterFactory &fFact)
+LogicalVA :: LogicalVA(const char &a, vf_sptr vf, FilterFactory &fFact)
      : init_state_(new LVAState()),
-      v_factory_(&vFact),
+      v_factory_(vf),
       f_factory_(&fFact) {
   init_state_->setInitial(true);
   states.push_back(init_state_);
@@ -68,9 +68,9 @@ LogicalVA :: LogicalVA(const char &a, VariableFactory &vFact, FilterFactory &fFa
   init_state_->addFilter(coding, fState);
 }
 
-LogicalVA :: LogicalVA(int spec, bool negated, VariableFactory &vFact, FilterFactory &fFact)
+LogicalVA :: LogicalVA(int spec, bool negated, vf_sptr vf, FilterFactory &fFact)
      : init_state_(new LVAState()),
-      v_factory_(&vFact),
+      v_factory_(vf),
       f_factory_(&fFact) {
   init_state_->setInitial(true);
   states.push_back(init_state_);

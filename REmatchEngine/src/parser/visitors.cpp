@@ -16,7 +16,7 @@ using boost::get;
 
 namespace visitors {
 
-regex2LVA :: regex2LVA(VariableFactory& v, FilterFactory& f): vFact(v), fFact(f) {}
+regex2LVA :: regex2LVA(std::unique_ptr<VariableFactory>& v, FilterFactory& f): vFact(std::move(v)), fFact(f) {}
 
 LogicalVA& regex2LVA :: operator()(ast::altern const &a) const {
 	LogicalVA& A = (*this)(a.front());
@@ -120,55 +120,6 @@ LogicalVA& regex2LVA :: operator()(ast::anywhitespace const &a) const {
 	LogicalVA* A = new LogicalVA(ANYSPACE, false, vFact, fFact);
 	return *A;
 }
-
-VariableFactory& regex2vars :: operator()(ast::altern const &a) const {
-	VariableFactory& V = (*this)(a.front());
-	if(a.size()>1) {
-		for (size_t i = 1; i < a.size(); ++i)
-			if(!(V == (*this)(a[i]))) {
-				throw bad_regex();
-			}; // Check for functional regex
-	}
-	return V;
-}
-
-VariableFactory& regex2vars :: operator()(ast::concat const &c) const {
-	VariableFactory& V = (*this)(c.front());
-	if(c.size()>1) {
-		for (size_t i = 1; i < c.size(); ++i) {
-			V.merge((*this)(c[i])); // Checking for functional regex inside merge
-		}
-	}
-	return V;
-}
-
-VariableFactory& regex2vars :: operator()(ast::iter const &it) const {
-	VariableFactory& V = (*this)(it.expr);
-	if(!it.repetitions.empty()){
-		assert(V.isEmpty()); // Check for functional regex
-	}
-	return V;
-}
-
-VariableFactory& regex2vars :: operator()(ast::group const &g) const {
-	return boost::apply_visitor(*this, g);
-}
-
-VariableFactory&  regex2vars :: operator()(ast::parenthesis const &p) const {
-	return (*this)(p.root);
-}
-
-VariableFactory&  regex2vars :: operator()(ast::assignation const &a) const {
-	VariableFactory& V = (*this)(a.root);
-	assert(!V.isMember(a.var)); // Check for functional regex
-	V.addVar(a.var);
-	return V;
-}
-
-VariableFactory&  regex2vars :: operator()(ast::atom const &a) const {
-	return *(new VariableFactory());
-}
-
 
 regex2filters :: regex2filters() {
 	m_filterFactory = new FilterFactory();
