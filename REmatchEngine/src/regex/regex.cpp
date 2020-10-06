@@ -29,7 +29,7 @@ Match_ptr RegEx::findIter(const std::string &text) {
   return eval_->next();
 }
 
-Match_ptr RegEx::findIter(std::istream &is) {
+Match_ptr RegEx::findIterFile(std::istream &is) {
   if(eval_ == nullptr) {
     eval_ = std::make_unique<Evaluator>(*this, is, Evaluator::kAllFlags & flags_);
   }
@@ -38,7 +38,9 @@ Match_ptr RegEx::findIter(std::istream &is) {
 
 
 Match_ptr RegEx::find(const std::string &text) {
-  return Evaluator(*this, text, flags_ & Evaluator::kEarlyOutput).next();
+  auto eval = Evaluator(*this, text, flags_ & Evaluator::kEarlyOutput);
+
+  return eval.next();
 }
 
 

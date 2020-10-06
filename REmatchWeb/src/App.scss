@@ -29,12 +29,15 @@ hsl(234, 96%, 67%),
     background-color: nth($colors, $i+1) !important;
     color: black !important;
     padding: .15rem .1rem;
+    border-bottom: .5rem solid nth($colors, $i+1);  
+    border-top: .5rem solid nth($colors, $i+1);
     @for $j from $i+1 to length($colors) {
       &.m#{$j} {
         border-bottom: .5rem solid nth($colors, $i+1);
         @for $k from $j+1 to length($colors) {
           &.m#{$k} {
-            border-top: .5rem solid nth($colors, $i+1);
+            border-bottom: .5rem solid nth($colors, $i+1);
+            border-top: .5rem solid nth($colors, $j+1);
           }
         }
       }
@@ -67,12 +70,12 @@ hsl(234, 96%, 67%),
 
   #textEditor & {
     padding: .5rem 0;
-    height: 30vh;
+    height: 25vh;
   }
 }
 
 #textEditor {
-  height: 30vh;
+  height: 25vh;
   position: relative;
 }
 

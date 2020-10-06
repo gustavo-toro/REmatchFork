@@ -4,6 +4,7 @@ file(GLOB sources
         ${CMAKE_CURRENT_SOURCE_DIR}/det/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/factories/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/visitors/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/parser_automata/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/regex/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/structs/*.cpp
@@ -12,6 +13,7 @@ file(GLOB sources
 set(BUILD_TARGETS
   rematch
   generate
+  test-regex
 )
 
 if(SWIG) # Only set shared library target

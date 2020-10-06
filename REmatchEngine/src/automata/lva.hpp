@@ -10,6 +10,8 @@ class FilterFactory;
 class LVAState;
 
 class LogicalVA {
+  using vf_uptr = std::unique_ptr<VariableFactory>;
+  using vf_sptr = std::shared_ptr<VariableFactory>;
   /* A basic implementation of a Variable Automaton  */
  public:
   std::vector<LVAState*> states;
@@ -18,14 +20,14 @@ class LogicalVA {
   // Empty LogicalVA construction (only one LVAState)
   LogicalVA();
 
-  LogicalVA(VariableFactory &vFact, FilterFactory &fFact);
+  LogicalVA(vf_sptr vFact, FilterFactory &fFact);
 
   LogicalVA(std::string pattern, bool raw=false);
 
   // Atomic LogicalVA construction
   LogicalVA(const char &a);
-  LogicalVA(const char &a, VariableFactory &vFact, FilterFactory &fFact);
-  LogicalVA(int spec, bool negated, VariableFactory &vFact, FilterFactory &fFact);
+  LogicalVA(const char &a, vf_sptr vf, FilterFactory &fFact);
+  LogicalVA(int spec, bool negated, vf_sptr vf, FilterFactory &fFact);
 
   // Copy constructor
   // LogicalVA(const LogicalVA &A);
@@ -54,7 +56,7 @@ class LogicalVA {
 
   LVAState* init_state_;
 
-  std::shared_ptr<VariableFactory> v_factory_;
+  vf_sptr v_factory_;
   std::shared_ptr<FilterFactory> f_factory_;
 };
 

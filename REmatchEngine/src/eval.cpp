@@ -51,9 +51,13 @@ void Evaluator::init() {
 }
 
 void Evaluator::initAutomaton(size_t i) {
-  DFA().initState()->visited = i+1;
-  if( i == 0)
+  if( i == 0) {
+    for(auto &state: DFA().states)
+      state->visited = 0;
     DFA().initState()->currentL->add(Evaluator::memory_manager_.alloc());
+  }
+
+  DFA().initState()->visited = i+1;
 
   current_states_.clear();
   current_states_.push_back(DFA().initState());
