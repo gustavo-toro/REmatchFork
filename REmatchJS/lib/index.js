@@ -1,5 +1,5 @@
 const Module = require('./rematch_wasm.js');
-
+// const Module = require('../../REmatchEngine/bin/rematch_wasm.js');
 const { RegEx, RegExOptions } = Module;
 
 let early_output;
