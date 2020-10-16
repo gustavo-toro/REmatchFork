@@ -17,31 +17,9 @@
 
 // using namespace boost::multiprecision;
 
-DetManager::DetManager(std::string pattern, bool raw_automata) {
-	LogicalVA lva = regex2LVA(pattern);
-
-	if (raw_automata) lva.adapt_capture_jumping();
-
-	nfa_ = std::make_unique<ExtendedVA>(lva);
-	dfa_ = std::make_unique<DetAutomaton>(*nfa_);
-
-	variable_factory_ = nfa_->varFactory();
-	filter_factory_ = nfa_->filterFactory();
-
-	// Init determinization
-	std::set<LVAState*> new_subset;
-	new_subset.insert(nfa_->initState());
-
-	SetState* ss = new SetState(*nfa_, new_subset);
-	DetState *q = dfa_->initState();
-	q->setSubset(ss);
-
-	dstates_table_[ss->bitstring] = q;
-
-	if(q->isFinal) {
-		dfa_->finalStates.push_back(q);
-	}
-	computeCaptures(q);
+DetManager::DetManager(const std::string &pattern, Anchor anchor, bool raw_automata)
+	:	pattern_(pattern), anchor_(anchor), raw_automata_(raw_automata)	{
+	init_automata();
 }
 
 void DetManager :: computeFullDetAutomaton() {
@@ -334,8 +312,6 @@ DetState* DetManager :: getNextDetState(DetState* &s , char a, size_t idx) {
 	}
 
 	return q;
-
-
 }
 
 DetState* DetManager ::getNextDetState(DetState* s, char a) {
@@ -363,4 +339,47 @@ DetState* DetManager ::getNextDetState(DetState* s, char a) {
 
 BitsetWrapper DetManager :: applyFilters(char a) {
 	return filter_factory_->applyFilters(a);
+}
+
+
+void DetManager::init_dfa() {
+	// Init determinization
+	std::set<LVAState*> new_subset;
+	new_subset.insert(nfa_->initState());
+
+	SetState* ss = new SetState(*nfa_, new_subset);
+	DetState *q = dfa_->initState();
+	q->setSubset(ss);
+
+	dstates_table_[ss->bitstring] = q;
+
+	if(q->isFinal) {
+		dfa_->finalStates.push_back(q);
+	}
+	computeCaptures(q);
+}
+
+void DetManager::init_automata() {
+	LogicalVA lva = regex2LVA(pattern_);
+	if (raw_automata_) lva.adapt_capture_jumping();
+
+	lva.adapt_anchors(anchor_);
+
+	nfa_ = std::make_unique<ExtendedVA>(lva);
+	dfa_ = std::make_unique<DetAutomaton>(*nfa_);
+
+	variable_factory_ = nfa_->varFactory();
+	filter_factory_ = nfa_->filterFactory();
+
+	init_dfa();
+
+	// Reset NFA to DFA states table
+	dstates_table_.clear();
+}
+
+void DetManager::set_anchor(Anchor a) {
+	if(a != anchor_) {
+		anchor_ = a;
+		init_automata();
+	}
 }

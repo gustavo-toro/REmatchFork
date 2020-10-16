@@ -86,6 +86,21 @@ LogicalVA :: LogicalVA(int spec, bool negated, vf_sptr vf, FilterFactory &fFact)
   init_state_->addFilter(coding, fState);
 }
 
+void LogicalVA::adapt_anchors(Anchor &anchor) {
+  if(anchor == Anchor::kBothAnchors)
+    return;
+
+  auto anychar_code = f_factory_->addFilter(CharClass(ANYCHAR, false));
+  // Need to unanchor the begining
+	init_state_->addFilter(anychar_code, init_state_);
+  if(anchor == Anchor::kUnanchored) {
+    // Also unanchor the end states
+    for(auto &state: finalStates) {
+      state->addFilter(anychar_code, state);
+    }
+  }
+}
+
 void LogicalVA::adapt_capture_jumping() {
   std::vector<LVAState*> stack;
   LVAState *reached_state;

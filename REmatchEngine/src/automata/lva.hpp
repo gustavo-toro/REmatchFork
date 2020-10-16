@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+#include "anchors.hpp"
+
 class VariableFactory;
 class FilterFactory;
 class LVAState;
@@ -34,6 +36,9 @@ class LogicalVA {
 
   // Computes epsilon transitions between capture states.
   void adapt_capture_jumping();
+
+  // Adds transitions according to an anchor
+  void adapt_anchors(Anchor &anchor);
 
   // LogicalVA operations, all modify the current LogicalVA to get the result
   // (the operations are inplace)

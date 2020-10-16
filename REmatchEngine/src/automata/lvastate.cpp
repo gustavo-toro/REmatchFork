@@ -64,13 +64,19 @@ void LVAState::addCapture(std::bitset<32> code, LVAState* next) {
   next->incidentCaptures.push_back(sp);
 }
 
-void LVAState::addFilter(unsigned int code, LVAState* next) {
-  for(auto const& filter: this->f)
-    if(filter->code == code && filter->next == next) return;
+std::pair<bool, std::shared_ptr<LVAFilter>> LVAState::addFilter(unsigned int code,
+                                                                LVAState* next) {
+  for(auto const& filter: this->f) {
+    if(filter->code == code && filter->next == next) {
+      return std::make_pair(true, filter);
+    }
+  }
 
   auto sp = std::make_shared<LVAFilter>(this, code, next);
   f.push_back(sp);
   next->incidentFilters.push_back(sp);
+
+  return std::make_pair(false, sp);
 }
 
 unsigned int LVAState::ID = 0;

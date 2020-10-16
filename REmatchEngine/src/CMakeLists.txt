@@ -14,6 +14,7 @@ set(BUILD_TARGETS
   rematch
   generate
   test-regex
+  test-anchors
 )
 
 if(SWIG) # Only set shared library target

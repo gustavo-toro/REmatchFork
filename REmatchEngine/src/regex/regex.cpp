@@ -6,9 +6,10 @@ namespace rematch {
 
 RegEx::RegEx(std::string pattern, rematch::RegExOptions rgx_opts)
     : pattern_(pattern),
-      dman_(pattern),
-      raw_dman_(pattern, 1),
-      flags_(parseFlags(rgx_opts)) {}
+      dman_(pattern, rgx_opts.anchors()),
+      raw_dman_(pattern, rgx_opts.anchors(), 1),
+      flags_(parseFlags(rgx_opts)),
+      anchors_(rgx_opts.anchors()) {}
 
 // Explicitly declared here for correct use of unique_ptr later
 RegEx::~RegEx() {}

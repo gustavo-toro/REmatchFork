@@ -39,12 +39,6 @@ class RegEx {
     kSaveAnchors = 1<<4
   };
 
-  enum Anchor {
-    UNANCHORED,
-    ANCHOR_START,
-    ANCHOR_BOTH
-  };
-
   // Calls the evaluator to get first
   Match_ptr find(const std::string &text);
 
@@ -83,6 +77,8 @@ class RegEx {
 
   // Regex flags.
   flags_t flags_;
+
+  Anchor anchors_;
 
   // Is DFA fully computed.
   bool full_dfa_;
