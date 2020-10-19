@@ -14,6 +14,8 @@ class LVAState;
 class LogicalVA {
   using vf_uptr = std::unique_ptr<VariableFactory>;
   using vf_sptr = std::shared_ptr<VariableFactory>;
+
+  using ff_sptr = std::shared_ptr<FilterFactory>;
   /* A basic implementation of a Variable Automaton  */
  public:
   std::vector<LVAState*> states;
@@ -22,14 +24,16 @@ class LogicalVA {
   // Empty LogicalVA construction (only one LVAState)
   LogicalVA();
 
-  LogicalVA(vf_sptr vFact, FilterFactory &fFact);
+  LogicalVA(vf_sptr vFact, ff_sptr fFact);
 
-  LogicalVA(std::string pattern, bool raw=false);
+  // LogicalVA(std::string pattern, bool raw=false);
 
   // Atomic LogicalVA construction
   LogicalVA(const char &a);
-  LogicalVA(const char &a, vf_sptr vf, FilterFactory &fFact);
-  LogicalVA(int spec, bool negated, vf_sptr vf, FilterFactory &fFact);
+  LogicalVA(const char &a, vf_sptr vf, ff_sptr fFact);
+  LogicalVA(int spec, bool negated, vf_sptr vf, ff_sptr fFact);
+
+  LogicalVA(const LogicalVA &A);
 
   // Copy constructor
   // LogicalVA(const LogicalVA &A);
@@ -49,6 +53,7 @@ class LogicalVA {
   void strict_kleene();                    // Equivalent to R+ in VarRegEx
   void optional();                         // Equivalent to R? in VarRegEx
   void assign(std::string varName);  // Equivalent to !x{R} in VarRegEx
+  void repeat(int min, int max);
 
   std::string pprint();
 
@@ -62,7 +67,7 @@ class LogicalVA {
   LVAState* init_state_;
 
   vf_sptr v_factory_;
-  std::shared_ptr<FilterFactory> f_factory_;
+  ff_sptr f_factory_;
 };
 
 #endif

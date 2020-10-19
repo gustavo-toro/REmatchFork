@@ -9,8 +9,8 @@ int main(int argc, char *argv[]) {
   rgx_opts.set_start_anchor(false);
   rgx_opts.set_end_anchor(false);
 
-  rematch::RegEx rgx("!x{[.].}", rgx_opts);
-  const std::string doc = ".a";
+  rematch::RegEx rgx("!x{.<3,>}", rgx_opts);
+  const std::string doc = "aabcad";
 
   rematch::Match_ptr match;
 

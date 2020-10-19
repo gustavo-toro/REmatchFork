@@ -360,12 +360,12 @@ void DetManager::init_dfa() {
 }
 
 void DetManager::init_automata() {
-	LogicalVA lva = regex2LVA(pattern_);
-	if (raw_automata_) lva.adapt_capture_jumping();
+	auto lva = regex2LVA(pattern_);
+	if (raw_automata_) lva->adapt_capture_jumping();
 
-	lva.adapt_anchors(anchor_);
+	lva->adapt_anchors(anchor_);
 
-	nfa_ = std::make_unique<ExtendedVA>(lva);
+	nfa_ = std::make_unique<ExtendedVA>(*lva);
 	dfa_ = std::make_unique<DetAutomaton>(*nfa_);
 
 	variable_factory_ = nfa_->varFactory();

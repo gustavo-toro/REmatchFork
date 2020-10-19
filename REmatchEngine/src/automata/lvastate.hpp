@@ -72,6 +72,9 @@ class LVAState {
     std::list<std::shared_ptr<LVAFilter>> incidentFilters;
 
     LVAState();
+
+    LVAState(const LVAState& s);
+
     void init();
     LVAState* nextLVAState(unsigned int code);
     void addCapture(std::bitset<32> code, LVAState* next);
@@ -80,7 +83,7 @@ class LVAState {
     // returns an std::pair containing a boolean seted to if the filter was already
     // in the transition table, and an std::shared_ptr to the added (or found)
     // filter.
-    std::pair<bool, std::shared_ptr<LVAFilter>> addFilter(unsigned int code, LVAState* next);
+    void addFilter(unsigned int code, LVAState* next);
     void addEpsilon(LVAState* next);
     void setFinal(bool b);
     void setInitial(bool b);

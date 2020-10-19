@@ -30,6 +30,19 @@ LVAState::LVAState()
   id = ID++;
 }
 
+// A copy of an LVAState doesn't inherit the original's transitions,
+// that's work for the LogicalVA to do.
+LVAState::LVAState(const LVAState& s)
+  : tempMark(false),
+    colorMark('w'),
+    visitedBy(0),
+    isFinal(s.isFinal),
+    isInit(s.isInit),
+    isSuperFinal(s.isSuperFinal) {
+  id = ID++;
+}
+
+
 bool LVAState::operator==(const LVAState &rhs) const { return id == rhs.id;}
 
 
@@ -64,19 +77,16 @@ void LVAState::addCapture(std::bitset<32> code, LVAState* next) {
   next->incidentCaptures.push_back(sp);
 }
 
-std::pair<bool, std::shared_ptr<LVAFilter>> LVAState::addFilter(unsigned int code,
-                                                                LVAState* next) {
+void LVAState::addFilter(unsigned int code, LVAState* next) {
   for(auto const& filter: this->f) {
     if(filter->code == code && filter->next == next) {
-      return std::make_pair(true, filter);
+      return;
     }
   }
 
   auto sp = std::make_shared<LVAFilter>(this, code, next);
   f.push_back(sp);
   next->incidentFilters.push_back(sp);
-
-  return std::make_pair(false, sp);
 }
 
 unsigned int LVAState::ID = 0;

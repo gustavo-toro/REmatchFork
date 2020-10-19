@@ -42,6 +42,12 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
         using qi::omit;
         using qi::matches;
 
+        using qi::_1;
+        using qi::_2;
+        using qi::_3;
+        using qi::_4;
+
+
         using qi::on_error;
         using qi::fail;
         using qi::debug;
@@ -59,9 +65,14 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
 
         concat_ = +(iter_);
 
-        iter_ = group_ >> rep_;
+        iter_ = group_ >> *rep_;
 
-        rep_ = *(char_('?') | char_('*') | char_('+'));
+        rep_ = lit('?')[_val = ast::repetition(0,1)] |
+               lit('*')[_val = ast::repetition(0,-1)] |
+               lit('+')[_val = ast::repetition(1,-1)] |
+               ('<' >> uint_ >> '>')[_val = construct<ast::repetition>(_1,_1)]  |
+               ('<' >> uint_ >> ",>" ) [_val = construct<ast::repetition>(_1,-1)] |
+               ('<' >> uint_ >> ',' >> uint_ >> '>')[_val = construct<ast::repetition>(_1,_2)];
 
         group_ =  (parenthesis_) | (assign_) | (atom_) ;
 
@@ -80,7 +91,6 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
                 | symb_
                 ) ; // Here we construct the atomic automaton
 
-        // TODO: Revisar
         symb_ = (unesc_char_ |
                 "\\" >> char_("\\+*?(){}[]|!.-") |
                 ~char_("\\+*?(){}[]|.") // Anything but '+*?(){}[]|.'
@@ -166,7 +176,7 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
     qi::rule<It, ast::iter()> iter_;
     qi::rule<It, ast::group()> group_;
     qi::rule<It, ast::parenthesis()> parenthesis_;
-    qi::rule<It, std::vector<char>()> rep_;
+    qi::rule<It, ast::repetition()> rep_;
     qi::rule<It, std::string()> var_;
     qi::rule<It, ast::atom()> atom_;
     qi::rule<It, ast::assignation()> assign_;
