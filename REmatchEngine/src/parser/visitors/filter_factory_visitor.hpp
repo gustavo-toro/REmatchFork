@@ -8,27 +8,30 @@
 
 namespace visitors {
 
-struct regex2filters : boost::static_visitor<FilterFactory&> {
+using ff_ptr = std::unique_ptr<FilterFactory>;
+
+struct regex2filters : boost::static_visitor<void> {
 	private:
-		FilterFactory *m_filterFactory;
+		ff_ptr filter_factory_;
 	public:
 		regex2filters();
+		void operator()(ast::altern const &a);
+		void operator()(ast::concat const &c);
+		void operator()(ast::iter const &it);
+		void operator()(ast::group const &g);
+		void operator()(ast::parenthesis const &p);
+		void operator()(ast::assignation const &a);
+		void operator()(ast::atom const &a);
+		void operator()(ast::charset const &cs);
+		void operator()(char const &a);
+		void operator()(ast::anychar const &a);
+		void operator()(ast::anydigit const &a);
+		void operator()(ast::nondigit const &a);
+		void operator()(ast::anyword const &a);
+		void operator()(ast::nonword const &a);
+		void operator()(ast::anywhitespace const &a);
 
-		FilterFactory &operator()(ast::altern const &a);
-		FilterFactory &operator()(ast::concat const &c);
-		FilterFactory &operator()(ast::iter const &it);
-		FilterFactory &operator()(ast::group const &g);
-		FilterFactory &operator()(ast::parenthesis const &p);
-		FilterFactory &operator()(ast::assignation const &a);
-		FilterFactory &operator()(ast::atom const &a);
-		FilterFactory &operator()(ast::charset const &cs);
-		FilterFactory &operator()(char const &a);
-		FilterFactory &operator()(ast::anychar const &a);
-		FilterFactory &operator()(ast::anydigit const &a);
-		FilterFactory &operator()(ast::nondigit const &a);
-		FilterFactory &operator()(ast::anyword const &a);
-		FilterFactory &operator()(ast::nonword const &a);
-		FilterFactory &operator()(ast::anywhitespace const &a);
+		ff_ptr get_factory();
 };
 
 } // end namespace visitors

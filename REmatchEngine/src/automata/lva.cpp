@@ -13,12 +13,6 @@
 #include "factories/factories.hpp"
 #include "parser/parser.hpp"
 
-
-LogicalVA::LogicalVA(std::string pattern, bool raw) {
-  *this = regex2LVA(pattern);
-  if(raw) adapt_capture_jumping();
-}
-
 LogicalVA :: LogicalVA()
     : init_state_(new LVAState()),
       v_factory_(std::make_shared<VariableFactory>()),
@@ -27,10 +21,10 @@ LogicalVA :: LogicalVA()
   states.push_back(init_state_);
 }
 
-LogicalVA :: LogicalVA(vf_sptr vf, FilterFactory &fFact)
+LogicalVA :: LogicalVA(vf_sptr vf, ff_sptr ff)
      : init_state_(new LVAState()),
       v_factory_(vf),
-      f_factory_(&fFact) {
+      f_factory_(ff) {
   init_state_->setInitial(true);
   states.push_back(init_state_);
 }
@@ -50,10 +44,10 @@ LogicalVA :: LogicalVA(const char &a) {
   init_state_->addFilter(coding, fState);
 }
 
-LogicalVA :: LogicalVA(const char &a, vf_sptr vf, FilterFactory &fFact)
+LogicalVA :: LogicalVA(const char &a, vf_sptr vf, ff_sptr ff)
      : init_state_(new LVAState()),
       v_factory_(vf),
-      f_factory_(&fFact) {
+      f_factory_(ff) {
   init_state_->setInitial(true);
   states.push_back(init_state_);
 
@@ -68,10 +62,10 @@ LogicalVA :: LogicalVA(const char &a, vf_sptr vf, FilterFactory &fFact)
   init_state_->addFilter(coding, fState);
 }
 
-LogicalVA :: LogicalVA(int spec, bool negated, vf_sptr vf, FilterFactory &fFact)
+LogicalVA :: LogicalVA(int spec, bool negated, vf_sptr vf, ff_sptr ff)
      : init_state_(new LVAState()),
       v_factory_(vf),
-      f_factory_(&fFact) {
+      f_factory_(ff) {
   init_state_->setInitial(true);
   states.push_back(init_state_);
 
@@ -84,6 +78,82 @@ LogicalVA :: LogicalVA(int spec, bool negated, vf_sptr vf, FilterFactory &fFact)
 
   // Connect initState with fState
   init_state_->addFilter(coding, fState);
+}
+
+LogicalVA::LogicalVA(const LogicalVA &A)
+  : init_state_(new LVAState(*A.init_state_)),
+    v_factory_(A.v_factory_),
+    f_factory_(A.f_factory_) {
+
+  states.push_back(init_state_);
+
+  // A simple Depth-First Search on the graph of the copied automaton while
+  // constructing the copy's graph.
+
+  // Iterative Search using stack for cleaness in function definitions,
+  std::vector<std::pair<LVAState*, LVAState*>> stack_;
+
+  for(auto& state: A.states)
+    state->tempMark = false;
+
+  stack_.push_back(std::make_pair(init_state_, A.init_state_));
+  A.init_state_->tempMark = true;
+
+  while(!stack_.empty()) {
+    auto cpair = stack_.back(); stack_.pop_back();
+
+    for(auto& filt: cpair.second->f) {
+      if(filt->next->tempMark) continue;
+      LVAState* ns = new LVAState(*filt->next);
+
+      this->states.push_back(ns);
+      if(ns->isFinal) this->finalStates.push_back(ns);
+
+      cpair.first->addFilter(filt->code, ns);
+
+      stack_.push_back(std::make_pair(ns, filt->next));
+      filt->next->tempMark = true;
+    }
+    for(auto& cap: cpair.second->c) {
+      if(cap->next->tempMark) continue;
+      LVAState* ns = new LVAState(*cap->next);
+
+      this->states.push_back(ns);
+      if(ns->isFinal) this->finalStates.push_back(ns);
+
+      cpair.first->addCapture(cap->code, ns);
+
+      stack_.push_back(std::make_pair(ns, cap->next));
+      cap->next->tempMark = true;
+    }
+    for(auto& eps: cpair.second->e) {
+      if(eps->next->tempMark) continue;
+      LVAState* ns = new LVAState(*eps->next);
+
+      this->states.push_back(ns);
+      if(ns->isFinal) this->finalStates.push_back(ns);
+
+      cpair.first->addEpsilon(ns);
+
+      stack_.push_back(std::make_pair(ns, eps->next));
+      eps->next->tempMark = true;
+    }
+  }
+}
+
+void LogicalVA::adapt_anchors(Anchor &anchor) {
+  if(anchor == Anchor::kBothAnchors)
+    return;
+
+  auto anychar_code = f_factory_->addFilter(CharClass(ANYCHAR, false));
+  // Need to unanchor the begining
+	init_state_->addFilter(anychar_code, init_state_);
+  if(anchor == Anchor::kUnanchored) {
+    // Also unanchor the end states
+    for(auto &state: finalStates) {
+      state->addFilter(anychar_code, state);
+    }
+  }
 }
 
 void LogicalVA::adapt_capture_jumping() {
@@ -210,6 +280,36 @@ void LogicalVA :: optional() {
   {
     finalStates.push_back(init_state_);
     init_state_->setFinal(true);
+  }
+}
+
+void LogicalVA::repeat(int min, int max) {
+  LogicalVA copied(*this);
+  if(min == 0 && max > 0) {
+    optional();
+  } else if (min == 0 && max == -1) {
+    kleene();
+  } else if (min == 1 && max == -1) {
+    strict_kleene();
+  }
+
+  for(int i=1; i < min-1; i++) {
+    LogicalVA copied_automaton(copied);
+    cat(copied_automaton);
+  }
+
+  // Last one may be a loop
+  if(min > 1) {
+    LogicalVA copied_automaton(copied);
+    if(max == -1)
+      copied_automaton.strict_kleene();
+    cat(copied_automaton);
+  }
+
+  for(int i=(min <= 1)? 1 :min; i < max; i++) {
+    LogicalVA copied_automaton(copied);
+    copied_automaton.optional();
+    cat(copied_automaton);
   }
 }
 

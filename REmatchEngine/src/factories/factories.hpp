@@ -121,7 +121,9 @@ class FilterFactory {
 
 		bool inIntersection(char a, BitsetWrapper charBitset);
 
-		void addFilter(CharClass cs);
+		// Adds the CharClass cs to the hash table and returns it. If cs is already
+		// stored then is only returned.
+		int addFilter(CharClass cs);
 
 		int getCode(CharClass cs);
 

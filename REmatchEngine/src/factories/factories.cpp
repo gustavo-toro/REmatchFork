@@ -180,14 +180,20 @@ string FilterFactory :: pprint() {
 }
 
 
-void FilterFactory :: addFilter(CharClass cs) {
-	if(!codeMap.count(cs)) {
+int FilterFactory::addFilter(CharClass cs) {
+	auto found = codeMap.find(cs);
+	int foundCode;
+	if(found == codeMap.end()) {
 		// cout << "Adding filter " << cs.label << " to code " << numFilters << endl;
 
 		codeMap[cs] = numFilters;
 		filterMap[numFilters] = cs;
-		numFilters++;
+		foundCode = numFilters++;
+	} else {
+		foundCode = found->second;
 	}
+
+	return foundCode;
 }
 
 int FilterFactory :: getCode(CharClass cs) {
