@@ -1,5 +1,5 @@
 const Module = require('./rematch_wasm.js');
-// const Module = require('../../REmatchEngine/bin/rematch_wasm.js');
+// const Module = require('../../REmatchEngine/embuild/bin/rematch_wasm.js');
 const { RegEx, RegExOptions } = Module;
 
 let early_output;
@@ -12,21 +12,24 @@ let save_anchors;
 class Regex {
   constructor(pattern, options) {
     this.pattern = pattern
-    this.rgx_object = new RegEx(pattern)
     this.options = options
   }
   find(string) {
-    let result = new Match(this.rgx_object.find(string));
+    let rgx = new RegEx(this.pattern, this.options);
+    let result = new Match(rgx.findIter(string));
     if (result.obj == null) {
-      return null
-    }
+        return null
+      }
+    result.str = string
     return result
   }
 
   *findIter(string) {
     let match;
-    while (match = this.rgx_object.findIter(string)) {
+    let rgx_object = new RegEx(pattern, options)
+    while (match = rgx_object.findIter(string)) {
       match = new Match(match)
+      match.str = string
       if (match.obj == null) {
         return null
       }
@@ -45,10 +48,8 @@ class Regex {
 
   }
   search(string) {
-    let result = new Match(this.rgx_object.find(string));
-    if (result.obj == null) {
-      return null
-    }
+    let rgx = new RegEx(this.pattern, this.options);
+    let result = rgx.findIter(string);
     return result
   }
   fullmatch(string) {
@@ -76,22 +77,21 @@ class Regex {
 class Match {
   constructor(obj) {
     this.obj = obj
+    this.str = null
   }
   convert(varb) {
-    if (varb.isInteger) {
-      throw new Error('Access by variable index is not available')
-      // varb = varb - 1; // si?
-      return this.obj.variables()[varb];
+    if (Number.isInteger(varb)) {
+      return this.obj.variables().get(varb);
     }
     return varb
   }
   start(varb) {
     varb = this.convert(varb);
-    return this.obj.start(varb)
+    return this.span(varb)[0]
   }
   end(varb) {
     varb = this.convert(varb);
-    return this.obj.end(varb)
+    return this.span(varb)[1]
   }
   span(varb) {
     varb = this.convert(varb);
@@ -99,25 +99,23 @@ class Match {
   }
   group(varb) {
     varb = this.convert(varb);
-    return this.obj.group(varb)
+    return this.str.slice(this.start(varb), this.end(varb))
   }
   groups() {
-    throw new Error('Method not available')
     let content = [];
     let vars = this.obj.variables();
-    for (let i = 0; i < vars.length; i++) {
-      const varb = vars[i];
-      content.push(this.obj.group(varb))
+    for (let i = 0; i < vars.size(); i++) {
+      const varb = vars.get(i);
+      content.push(this.group(varb))
     }
     return content
   }
   groupdict() {
-    throw new Error('Method not available')
     let dic = {};
     let vars = this.obj.variables();
-    for (let i = 0; i < vars.length; i++) {
-      const varb = vars[i];
-      dic[varb] = this.obj.group(varb);
+    for (let i = 0; i < vars.size(); i++) {
+      const varb = vars.get(i);
+      dic[varb] = this.group(varb);
     }
     return dic
   }
@@ -187,3 +185,30 @@ module.exports = {
   find: find,
   search: search
 }
+try {
+  // let rgx = '.*!x{..}.*'
+  // let rgx1 = compile(rgx);
+  // console.log('Result: ', rgx1.find('aaa').group(0))
+  // console.log('Result: ', rgx1.find('aaa').groupdict())
+  // console.log('Result: ', rgx1.find('aaa').groups())
+
+  // let rgx2 = '.*!x{..}.*'
+  // let rgx3 = compile(rgx2);
+  // console.log('Result: ', rgx3.find('\naaa').group(0))
+
+  // rgx2 = '.*!x{a}.*'
+  // rgx3 = compile(rgx2, multi_line=true);
+  // console.log('Result: ', rgx3.find('a\naa').group(0))
+
+  // let rgx2 = compile('.*!x{ly}.*');
+  // const text1 = "He was carefully disguised but captured quickly by police.";
+  // for (let r of rgx2.findIter(text1)) {
+  //   console.log(r.span('x'))
+  // }
+  // l = []
+  // console.log(l[0])
+
+} catch (error) {
+  console.log(error)
+}
+
