@@ -72,12 +72,11 @@ hsl(234, 96%, 67%),
 
 .CodeMirror {
   font-size: 22px;
-
   .CodeMirror-scroll {
     padding-top: .5rem;
   }
 
-  #queryEditor & {
+  .queryEditor & {
     overflow: hidden !important;
     height: auto;
     padding: .5rem;
@@ -127,16 +126,23 @@ hsl(234, 96%, 67%),
   margin-left: 1rem;
 }
 
-.versusContainer {
-  margin-top: 2rem;
+.paperLite {
   overflow: hidden;
-  .codeContainer {
-    display: flex;
-    .code {
-      flex: 1;
-      font-family: consolas;
-      font-size: 18px;
-      padding: 1rem;
+  .CodeMirror {
+    font-size: 18px;
+  }
+  .textEditor {
+    .CodeMirror{
+      height: 200px;
     }
+    height: 200px;
+  }
+  .pagination {
+    margin: .5rem auto;
+    display: flex;
+    justify-content: center;
+  }
+  .results {
+    margin: 1rem;
   }
 }

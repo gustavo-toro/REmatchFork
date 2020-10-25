@@ -566,14 +566,14 @@ code {
   padding-top: .5rem;
 }
 
-#queryEditor .CodeMirror {
+.queryEditor .CodeMirror {
   overflow: hidden !important;
   height: auto;
   padding: .5rem;
 }
 
-#queryEditor .CodeMirror pre::after,
-#queryEditor .CodeMirror pre::before {
+.queryEditor .CodeMirror pre::after,
+.queryEditor .CodeMirror pre::before {
   content: ".*";
   color: #888888;
 }
@@ -616,23 +616,33 @@ code {
   margin-left: 1rem;
 }
 
-.versusContainer {
-  margin-top: 2rem;
+.paperLite {
   overflow: hidden;
 }
 
-.versusContainer .codeContainer {
+.paperLite .CodeMirror {
+  font-size: 18px;
+}
+
+.paperLite .textEditor {
+  height: 200px;
+}
+
+.paperLite .textEditor .CodeMirror {
+  height: 200px;
+}
+
+.paperLite .pagination {
+  margin: .5rem auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
-.versusContainer .codeContainer .code {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  font-family: consolas;
-  font-size: 18px;
-  padding: 1rem;
+.paperLite .results {
+  margin: 1rem;
 }
 /*# sourceMappingURL=App.css.map */

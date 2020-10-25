@@ -71,7 +71,6 @@ class MainInterface extends Component {
       scrollbarStyle: null,
       smartIndent: false,
       indentWithTabs: true,
-      showInvisibles: false,
       undoDepth: 100,
       viewportMargin: 10,
       extraKeys: {
@@ -195,7 +194,7 @@ class MainInterface extends Component {
             </Grid>
 
             <Grid item sm={10} xs={8}>
-              <div id="queryEditor"></div>
+              <div id="queryEditor" className="queryEditor"></div>
             </Grid>
 
             <Grid item sm={2} xs={4}>
