@@ -1,3 +1,4 @@
+/* Main */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -12,9 +13,8 @@ code {
     monospace;
 }
 
-
-$colors: 
-#03DAC6,
+/* MainInterface */
+$colors: #03DAC6,
 #FCE938,
 hsl(354, 62%, 58%),
 hsl(234, 96%, 67%),
@@ -29,11 +29,13 @@ hsl(234, 96%, 67%),
     background-color: nth($colors, $i+1) !important;
     color: black !important;
     padding: .15rem .1rem;
-    border-bottom: .5rem solid nth($colors, $i+1);  
+    border-bottom: .5rem solid nth($colors, $i+1);
     border-top: .5rem solid nth($colors, $i+1);
+
     @for $j from $i+1 to length($colors) {
       &.m#{$j} {
         border-bottom: .5rem solid nth($colors, $i+1);
+
         @for $k from $j+1 to length($colors) {
           &.m#{$k} {
             border-bottom: .5rem solid nth($colors, $i+1);
@@ -43,11 +45,13 @@ hsl(234, 96%, 67%),
       }
     }
   }
+
   .th#{$i} {
     background-color: nth($colors, $i+1) !important;
     color: black !important;
     font-weight: bolder !important;
   }
+
   .cm-m#{$i} {
     color: nth($colors, $i+1) !important;
   }
@@ -55,14 +59,18 @@ hsl(234, 96%, 67%),
 
 .CodeMirror {
   font-size: 22px;
+
   .CodeMirror-scroll {
     padding-top: .5rem;
   }
+
   #queryEditor & {
     overflow: hidden !important;
     height: auto;
     padding: .5rem;
-    pre::after, pre::before {
+
+    pre::after,
+    pre::before {
       content: ".*";
       color: #888888;
     }
@@ -81,6 +89,7 @@ hsl(234, 96%, 67%),
 
 .bottomContainer {
   height: 50vh;
+
   .resultContainer {
     overflow: auto;
   }
@@ -103,4 +112,19 @@ hsl(234, 96%, 67%),
   z-index: 5000;
   bottom: 2rem;
   right: 2rem;
+}
+
+/* AboutInterface */
+.versusContainer {
+  margin-top: 2rem;
+  overflow: hidden;
+  .codeContainer {
+    display: flex;
+    .code {
+      flex: 1;
+      font-family: consolas;
+      font-size: 18px;
+      padding: 1rem;
+    }
+  }
 }
