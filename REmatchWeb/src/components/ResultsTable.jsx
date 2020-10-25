@@ -163,7 +163,7 @@ const ResultsTable = ({
           </Select>
         </Grid>
       </Grid>
-      <TableContainer style={{ height: '40vh', oveflow: 'auto' }}>
+      <TableContainer className="tableContainer">
         <Table stickyHeader size="small">
           <colgroup>
             {schema.map((_, schIdx) => (

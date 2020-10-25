@@ -547,6 +547,17 @@ code {
   color: #7f34f0 !important;
 }
 
+.mainPaper {
+  overflow: hidden;
+  margin: 96px 0;
+}
+
+.sectionTitle {
+  color: black;
+  background-color: #03DAC6;
+  padding: .5rem 0 .5rem 1rem;
+}
+
 .CodeMirror {
   font-size: 22px;
 }
@@ -569,26 +580,16 @@ code {
 
 #textEditor .CodeMirror {
   padding: .5rem 0;
-  height: 25vh;
+  height: 300px;
 }
 
 #textEditor {
-  height: 25vh;
+  height: 300px;
   position: relative;
 }
 
-.bottomContainer {
-  height: 50vh;
-}
-
-.bottomContainer .resultContainer {
-  overflow: auto;
-}
-
-.logo {
-  display: block;
-  margin: 1rem auto;
-  height: 3rem;
+.tableContainer {
+  height: 300px;
 }
 
 .uploadButton {
@@ -605,6 +606,16 @@ code {
 }
 
 /* AboutInterface */
+.appBar {
+  background-color: #212121 !important;
+}
+
+.logo {
+  display: block;
+  height: 36px;
+  margin-left: 1rem;
+}
+
 .versusContainer {
   margin-top: 2rem;
   overflow: hidden;

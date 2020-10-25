@@ -9,6 +9,7 @@ import {
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+import Navbar from './components/Navbar';
 import AboutInterface from './components/AboutInterface';
 import MainInterface from './components/Maininterface';
 
@@ -24,7 +25,7 @@ const darkTheme = createMuiTheme({
     },
     background: {
       paper: '#212121',
-      default: '#353535',
+      default: '#424242',
     }
   },
 });
@@ -34,15 +35,15 @@ const App = () => {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Router>
-        <nav style={{ backgroundColor: 'rgb(3, 218, 198)' }}>
+        <Navbar/>
+        {/*
+        
           <Link to="/">
-            Home
-            </Link>
+          Home
+          </Link>
           <br />
-          <Link to="/about">
-            About
-            </Link>
-        </nav>
+          
+        */}
         <Switch>
           <Route path="/about">
             <AboutInterface />

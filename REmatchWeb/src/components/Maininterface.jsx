@@ -20,9 +20,6 @@ import CodeMirror from 'codemirror';
 import 'codemirror/theme/material-darker.css';
 import 'codemirror/addon/mode/simple';
 
-/* Assets */
-import Logo from '../assets/logo-dark.png';
-
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
@@ -46,6 +43,10 @@ CodeMirror.defineSimpleMode('rematchQuery', {
       regex: /(\.\+|\.\*|\.|\+)/,
       token: 'm1'
     },
+    {
+      regex: /<[0-9]+(,[0-9]+)?>/,
+      token: 'm5'
+    },
   ]
 });
 
@@ -63,7 +64,7 @@ class MainInterface extends Component {
   }
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById('queryEditor'), {
-      value: '!a{[A-Z][a-z]+} !b{is} !c{..} !d{ex[a-z]+} !e{.+}!f{!}',
+      value: '!a{[A-Z][a-z]+} !b{[a-z]<2>} !c{..} !d{ex[a-z]<0,42>} !e{.+}!f{!}',
       mode: 'rematchQuery',
       theme: 'material-darker',
       lineNumbers: false,
@@ -177,7 +178,7 @@ class MainInterface extends Component {
 
   render() {
     return (
-      <Container>
+      <Container maxWidth="lg">
         <Backdrop
           open={this.state.uploadingFile}
           style={{ zIndex: 6000, display: 'flex', flexDirection: 'column' }}
@@ -185,8 +186,7 @@ class MainInterface extends Component {
           <CircularProgress color="primary" size="3rem" />
           <h2 style={{ color: '#fff' }}>Loading ({this.state.fileProgress}%)</h2>
         </Backdrop>
-        <img className="logo" src={Logo} alt="REmatch" />
-        <Paper elevation={5} style={{ overflow: 'hidden' }}>
+        <Paper elevation={5} className="mainPaper">
 
           <Grid container>
             {/* Expression */}
