@@ -4,101 +4,75 @@
 
 namespace visitors {
 
-regex2filters :: regex2filters() {
-	m_filterFactory = new FilterFactory();
+regex2filters::regex2filters() {
+	filter_factory_ = std::make_unique<FilterFactory>();
 }
 
-FilterFactory& regex2filters :: operator()(ast::altern const &a) {
-	for(auto &elem: a) {
+ff_ptr regex2filters::get_factory() {
+	return std::move(filter_factory_);
+}
+
+void regex2filters::operator()(ast::altern const &a) {
+	for(auto &elem: a)
 		(*this)(elem);
-	}
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::concat const &c) {
+void regex2filters::operator()(ast::concat const &c) {
 	for(auto &elem: c) {
 		(*this)(elem);
 	}
-
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::iter const &it) {
+void regex2filters::operator()(ast::iter const &it) {
 	(*this)(it.expr);
-
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::group const &g) {
+void regex2filters::operator()(ast::group const &g) {
 	boost::apply_visitor(*this, g);
-
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::parenthesis const &p) {
+void regex2filters::operator()(ast::parenthesis const &p) {
 	(*this)(p.root);
-
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::assignation const &a) {
+void regex2filters::operator()(ast::assignation const &a) {
 	(*this)(a.root);
-
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::atom const &a) {
+void regex2filters::operator()(ast::atom const &a) {
 	boost::apply_visitor(*this, a);
-
-	return *m_filterFactory;
 }
 
-FilterFactory& regex2filters :: operator()(ast::charset const &cs) {
-	m_filterFactory->addFilter(CharClass(cs));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::charset const &cs) {
+	filter_factory_->addFilter(CharClass(cs));
 }
 
-FilterFactory& regex2filters :: operator()(char const &a) {
-	m_filterFactory->addFilter(CharClass(a));
-
-	return *m_filterFactory;
+void regex2filters::operator()(char const &a) {
+	filter_factory_->addFilter(CharClass(a));
 }
 
-FilterFactory& regex2filters :: operator()(ast::anychar const &a) {
-	m_filterFactory->addFilter(CharClass(ANYCHAR, false));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::anychar const &a) {
+	filter_factory_->addFilter(CharClass(ANYCHAR, false));
 }
 
-FilterFactory& regex2filters :: operator()(ast::anydigit const &a) {
-	m_filterFactory->addFilter(CharClass(ANYDIGIT, false));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::anydigit const &a) {
+	filter_factory_->addFilter(CharClass(ANYDIGIT, false));
 }
 
-FilterFactory& regex2filters :: operator()(ast::nondigit const &a) {
-	m_filterFactory->addFilter(CharClass(ANYDIGIT, true));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::nondigit const &a) {
+	filter_factory_->addFilter(CharClass(ANYDIGIT, true));
 }
 
-FilterFactory& regex2filters :: operator()(ast::anyword const &a) {
-	m_filterFactory->addFilter(CharClass(ANYWORD, false));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::anyword const &a) {
+	filter_factory_->addFilter(CharClass(ANYWORD, false));
 }
 
-FilterFactory& regex2filters :: operator()(ast::nonword const &a)  {
-	m_filterFactory->addFilter(CharClass(ANYWORD, true));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::nonword const &a)  {
+	filter_factory_->addFilter(CharClass(ANYWORD, true));
 }
 
-FilterFactory& regex2filters :: operator()(ast::anywhitespace const &a)  {
-	m_filterFactory->addFilter(CharClass(ANYSPACE, false));
-
-	return *m_filterFactory;
+void regex2filters::operator()(ast::anywhitespace const &a)  {
+	filter_factory_->addFilter(CharClass(ANYSPACE, false));
 }
 
 } // end namespace visitors

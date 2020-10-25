@@ -1,9 +1,9 @@
 {
-  "name": "REmatchJS",
+  "name": "rematch",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "git": "https://github.com/mpbascunan/new_library.git",
+  "main": "lib/index.js",
+  "git": "https://github.com/REmatchChile/REmatch/tree/master/REmatchJS",
   "scripts": {
     "test": "mocha"
   },

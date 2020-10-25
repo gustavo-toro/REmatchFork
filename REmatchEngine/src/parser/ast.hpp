@@ -11,9 +11,9 @@ Description:
 #include <set>
 #include <vector>
 #include <string>
-#include <boost/tuple/tuple.hpp> // for charset
+#include <iostream>
+
 #include <boost/fusion/adapted.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
 #include <boost/variant.hpp>     // for tree nodes
 #include <boost/optional.hpp>    // for multiplicity upperbound
 
@@ -33,12 +33,12 @@ struct charset {
 };
 
 // Special classes
-struct anychar {};
-struct anydigit {};
-struct nondigit {};
-struct anyword {};
-struct nonword {};
-struct anywhitespace {};
+struct anychar {friend std::ostream& operator<<(std::ostream& os, const anychar& a);};
+struct anydigit {friend std::ostream& operator<<(std::ostream& os, const anydigit& a);};
+struct nondigit {friend std::ostream& operator<<(std::ostream& os, const nondigit& a);};
+struct anyword {friend std::ostream& operator<<(std::ostream& os, const anyword& a);};
+struct nonword {friend std::ostream& operator<<(std::ostream& os, const nonword& a);};
+struct anywhitespace {friend std::ostream& operator<<(std::ostream& os, const anywhitespace& a);};
 
 // Recursive structs
 struct parenthesis;
@@ -53,10 +53,20 @@ using group =  boost::variant<
     boost::recursive_wrapper<assignation>,
     atom>;
 
+
+struct repetition {
+    repetition(int s, int e): start_(s), end_(e) {}
+
+    repetition(): start_(-1), end_(-1) {}
+
+    int start_;
+    int end_;
+};
+
 // Iter
 struct iter {
     group expr;
-    std::vector<char> repetitions;
+    std::vector<repetition> repetitions;
 };
 
 // Concat and altern
@@ -69,6 +79,8 @@ struct parenthesis {
     parenthesis() = default;
 
     parenthesis(altern root): root(std::move(root)) {}
+
+    friend std::ostream& operator<<(std::ostream& os, const parenthesis& p);
 };
 
 struct assignation {
@@ -90,7 +102,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::charset,
 
 BOOST_FUSION_ADAPT_STRUCT(ast::iter,
         (ast::group, expr)
-        (std::vector<char>, repetitions))
+        (std::vector<ast::repetition>, repetitions))
 
 BOOST_FUSION_ADAPT_STRUCT(ast::assignation,
         (std::string, var)

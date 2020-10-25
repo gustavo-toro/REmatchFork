@@ -32,13 +32,18 @@ bool doParse(const std::string& input, ast::altern &data)
 };
 
 
-LogicalVA& regex2LVA(std::string regex) {
+std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
 	ast::altern tree;
 
  	doParse(regex, tree);
 
 	std::unique_ptr<VariableFactory> v = visitors::regex2vars()(tree);
-	FilterFactory& f = visitors::regex2filters()(tree);
 
-	return visitors::regex2LVA(v,f)(tree);
+    auto v1 = visitors::regex2filters();
+    v1(tree);
+	std::unique_ptr<FilterFactory> f = v1.get_factory();
+
+    auto A = visitors::regex2LVA(v,f)(tree);
+
+	return A;
 }

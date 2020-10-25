@@ -25,6 +25,8 @@ CharClass :: CharClass(): special(0), negated(false), label("") {}
 CharClass :: CharClass(const char &a): special(0), negated(false) {
 	if (a == '\n')
 		label = "\\n";
+	else if(a == '.')
+		label = "\\.";
 	else
 		label = string(1, a);
 	singles.insert(a);
@@ -106,7 +108,7 @@ bool CharClass :: operator==(const CharClass& rhs) const {
 	return label == rhs.label; 
 }
 
-string CharClass :: print() {return label;}
+string CharClass::print() {return label;}
 
 void CharClass :: updateLabel() {
 	set<char>::iterator it_single;

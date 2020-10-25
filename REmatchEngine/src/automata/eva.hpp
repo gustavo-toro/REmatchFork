@@ -98,6 +98,7 @@ class ExtendedVA {
 
 	size_t currentID;
 
+
 };
 
 #endif
