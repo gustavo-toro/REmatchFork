@@ -3,11 +3,18 @@ import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Pagination from '@material-ui/lab/Pagination';
+import Button from '@material-ui/core/Button';
+
+import PlayArrow from '@material-ui/icons/PlayArrow';
 
 /* CodeMirror */
 import CodeMirror from 'codemirror';
 import 'codemirror/theme/material-darker.css';
 import 'codemirror/addon/mode/simple';
+
+const WORKPATH = `${process.env.PUBLIC_URL}/liteWork.js`;
+const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
+let worker = new Worker(WORKPATH);
 
 CodeMirror.defineSimpleMode('rematchQuery', {
   start: [
@@ -38,15 +45,18 @@ class LiteViewer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      query: props.query,
+      rematch: props.rematch,
       text: props.text,
       idx: props.idx,
+      idle: true,
+      schema: [],
+      matches: [],
     };
   }
 
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById(`queryEditor-${this.props.idx}`), {
-      value: this.props.query,
+      value: this.props.rematch,
       mode: 'rematchQuery',
       theme: 'material-darker',
       lineNumbers: false,
@@ -68,23 +78,74 @@ class LiteViewer extends Component {
       undoDepth: 100,
       viewportMargin: 15,
       readOnly: 'nocursor',
+      lineWrapping: true,
     });
+    this.setState({ queryEditor, textEditor });
   }
+
+  getText(span) {
+    return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1]))
+  }
+
+  handleRun() {
+    this.setState({ idle: false });
+    worker.postMessage({
+      text: this.state.textEditor.getValue(),
+      query: this.state.queryEditor.getValue(),
+    });
+    worker.onmessage = (m) => {
+      switch (m.data.type) {
+        case 'SCHEMA':
+          this.setState({ schema: m.data.payload });
+          break;
+        case 'MATCHES':
+          this.setState({ matches: m.data.payload });
+        default:
+          break;
+      }
+    }
+  }
+
   render() {
     return (
-      <Paper className="paperLite">
-        <div className="queryEditor" id={`queryEditor-${this.props.idx}`}></div>
-        <Divider variant="middle"/>
-        <div className="textEditor" id={`textEditor-${this.props.idx}`}></div>
-        <Divider variant="middle"/>
-        <div className="results">
-          Result blabla
-        </div>
-        <Divider variant="middle"/>
-        <div className="pagination" >
-          <Pagination count={10} size="small" />
-        </div>
-      </Paper>
+      <div>
+        <Paper className="paperLite">
+          <div className="queryContainer">
+            <div className="queryEditor" id={`queryEditor-${this.props.idx}`}></div>
+          </div>
+          <Divider variant="middle" />
+          <div className="textEditor" id={`textEditor-${this.props.idx}`}></div>
+          <Divider variant="middle" />
+
+
+          <div className="results">
+            {
+              (this.state.idle) ? (
+                <div className="buttonContainer">
+                  <Button
+                    color="primary"
+                    startIcon={<PlayArrow />}
+                    onClick={this.handleRun.bind(this)}
+                    size="large"
+                  >
+                    Run
+                </Button>
+                </div>) : (
+                  <div className="list">
+                    {this.state.matches.map((match, idxMatch) => (
+                      <div key={idxMatch} className="resultRow">
+                        {Object.keys(match).map((variable, idxVariable) => (
+                          <div key={idxVariable} className={`cm-m${idxVariable} resultItem`}>{variable}: {this.getText(match[variable])}</div>
+                        ))
+                        }
+                      </div>
+                    ))}
+                  </div>
+                )
+            }
+          </div>
+        </Paper>
+      </div>
     )
   }
 }

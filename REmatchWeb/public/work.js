@@ -27,7 +27,7 @@ this.onmessage = (m) => {
 
         while ((match = rgx.findIter(m.data.text))) {
 
-            schema.forEach((variable) => {
+            schema.forEach(variable => {
                 currMatch.push(match.span(variable));
             });
             

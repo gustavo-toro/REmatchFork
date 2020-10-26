@@ -207,7 +207,10 @@ class MainInterface extends Component {
                   style={{
                     width: '100%',
                     height: '100%',
-                  }}>
+                    borderRadius: 0,
+                  }}
+                  disableTouchRipple
+                >
                   Run
                 </Button>
               </Tooltip>

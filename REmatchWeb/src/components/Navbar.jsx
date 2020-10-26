@@ -19,12 +19,12 @@ const Navbar = () => (
         edge="start">
         <Menu />
       </IconButton>
-      <Link to ="/">
+      <Link to="/">
         <img className="logo" src={Logo} alt="REmatch" />
-        <Link to="/about" style={{color: 'yellow', right: 0, position: 'relative'}}>
-          ABOUT (ESTO ES TEMPORAL)
-        </Link>
       </Link>
+      <Link to="/about" style={{ color: 'yellow', right: 0, position: 'relative' }}>
+        ABOUT (ESTO ES TEMPORAL)
+        </Link>
     </Toolbar>
   </AppBar>
 )

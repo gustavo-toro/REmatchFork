@@ -1,3 +1,4 @@
+@import url('./scrollbar.css');
 /* Main */
 body {
   margin: 0;
@@ -18,7 +19,7 @@ $darker: #212121;
 /* MainInterface */
 $colors: #03DAC6,
 #FCE938,
-hsl(354, 62%, 58%),
+hsl(354, 86%, 60%),
 hsl(234, 96%, 67%),
 #20BA56,
 #f5a0ff,
@@ -64,7 +65,7 @@ hsl(234, 96%, 67%),
   margin: 1.5*64px 0;
 }
 
-.sectionTitle { 
+.sectionTitle {
   color: black;
   background-color: nth($colors, 1);
   padding: .5rem 0 .5rem 1rem;
@@ -72,6 +73,7 @@ hsl(234, 96%, 67%),
 
 .CodeMirror {
   font-size: 22px;
+
   .CodeMirror-scroll {
     padding-top: .5rem;
   }
@@ -79,13 +81,15 @@ hsl(234, 96%, 67%),
   .queryEditor & {
     overflow: hidden !important;
     height: auto;
-    padding: .5rem;
-
+    padding: .5rem 0;
+    margin-left: .5rem;
+    /*
     pre::after,
     pre::before {
       content: ".*";
       color: #888888;
     }
+    */
   }
 
   #textEditor & {
@@ -120,6 +124,7 @@ hsl(234, 96%, 67%),
 .appBar {
   background-color: $darker !important;
 }
+
 .logo {
   display: block;
   height: 36px;
@@ -127,22 +132,64 @@ hsl(234, 96%, 67%),
 }
 
 .paperLite {
-  overflow: hidden;
+  transition: all .5s ease-in-out;
+
+  .queryContainer {
+    display: flex;
+    padding: 0 1rem;
+  }
+
   .CodeMirror {
     font-size: 18px;
   }
-  .textEditor {
-    .CodeMirror{
-      height: 200px;
-    }
-    height: 200px;
+
+  .queryEditor {
+    flex: 1;
   }
+
+  .textEditor {
+    padding-right: 1rem;
+
+    .CodeMirror {
+      height: 150px;
+    }
+
+    height: 150px;
+  }
+
   .pagination {
-    margin: .5rem auto;
+    margin: 1rem auto;
     display: flex;
     justify-content: center;
   }
+
   .results {
-    margin: 1rem;
+    padding: 1rem;
+    height: 150px;
+    overflow-y: scroll;
+    .buttonContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+    .list {
+      width: 100%;
+      table-layout: fixed;
+      font-family: monospace;
+      font-size: 14px;
+
+      .resultRow {
+        display: flex;
+        align-items: center;
+
+        .resultItem {
+          flex: 1;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
   }
 }
