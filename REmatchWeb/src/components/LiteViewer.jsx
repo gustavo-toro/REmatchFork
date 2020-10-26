@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import Pagination from '@material-ui/lab/Pagination';
 import Button from '@material-ui/core/Button';
 
 import PlayArrow from '@material-ui/icons/PlayArrow';
@@ -99,6 +98,7 @@ class LiteViewer extends Component {
           break;
         case 'MATCHES':
           this.setState({ matches: m.data.payload});
+          break;
         default:
           break;
       }

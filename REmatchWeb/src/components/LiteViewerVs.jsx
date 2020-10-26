@@ -116,6 +116,7 @@ class LiteViewerVs extends Component {
         case 'MATCHES':
           this.setState({ rematchMatches: m.data.payload });
           this.regexRun();
+          break;
         default:
           break;
       }

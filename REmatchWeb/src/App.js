@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -36,14 +35,6 @@ const App = () => {
       <CssBaseline />
       <Router>
         <Navbar/>
-        {/*
-        
-          <Link to="/">
-          Home
-          </Link>
-          <br />
-          
-        */}
         <Switch>
           <Route path="/about">
             <AboutInterface />
