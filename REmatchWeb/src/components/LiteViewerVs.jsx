@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import Pagination from '@material-ui/lab/Pagination';
 import Button from '@material-ui/core/Button';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import PlayArrow from '@material-ui/icons/PlayArrow';
 
@@ -15,7 +16,7 @@ import 'codemirror/addon/mode/simple';
 const WORKPATH = `${process.env.PUBLIC_URL}/liteWork.js`;
 let worker = new Worker(WORKPATH);
 
-CodeMirror.defineSimpleMode('rematchQuery', {
+CodeMirror.defineSimpleMode('REmatchQuery', {
   start: [
     {
       regex: /(![A-Za-z0-9]+\{|\})/,
@@ -40,16 +41,28 @@ CodeMirror.defineSimpleMode('rematchQuery', {
   ]
 });
 
-class LiteViewer extends Component {
+CodeMirror.defineSimpleMode('RegExQuery', {
+  start: [
+    {
+      regex: /./,
+      token: 'm0'
+    },
+  ]
+});
+
+class LiteViewerVs extends Component {
   constructor(props) {
     super(props);
     this.state = {
       rematch: props.rematch,
+      regex: props.regex,
       text: props.text,
       idx: props.idx,
       idle: true,
       schema: [],
-      matches: [],
+      rematchMatches: [],
+      regexMatches: [],
+      tab: 0,
     };
   }
 
@@ -86,6 +99,9 @@ class LiteViewer extends Component {
     return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1]))
   }
 
+  regexRun() {
+    this.setState({ regexMatches: this.state.textEditor.getValue().match(new RegExp(this.state.regex)) });
+  }
   handleRun() {
     this.setState({ idle: false });
     worker.postMessage({
@@ -98,17 +114,34 @@ class LiteViewer extends Component {
           this.setState({ schema: m.data.payload });
           break;
         case 'MATCHES':
-          this.setState({ matches: m.data.payload});
+          this.setState({ rematchMatches: m.data.payload });
+          this.regexRun();
         default:
           break;
       }
     }
   }
 
+  handleTabChange() {
+    this.state.queryEditor.setOption('mode', (this.state.tab === 1) ? 'REmatchQuery' : 'RegExQuery');
+    this.state.queryEditor.setValue((this.state.tab === 1) ? this.state.rematch : this.state.regex);
+    this.setState(prevState => ({ tab: prevState.tab ^ 1 }));
+  }
+
   render() {
     return (
       <div>
         <Paper className="paperLite">
+          <Tabs
+            value={this.state.tab}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={this.handleTabChange.bind(this)}
+            variant="fullWidth"
+          >
+            <Tab label="REmatch" className="liteTab" />
+            <Tab label="RegEx" className="liteTab" />
+          </Tabs>
           <div className="queryContainer">
             <div className="queryEditor" id={`queryEditor-${this.props.idx}`}></div>
           </div>
@@ -131,14 +164,16 @@ class LiteViewer extends Component {
                 </Button>
                 </div>) : (
                   <div className="list">
-                    {this.state.matches.map((match, idxMatch) => (
+                    {(this.state.tab === 0) ? (this.state.rematchMatches.map((match, idxMatch) => (
                       <div key={idxMatch} className="resultRow">
                         {Object.keys(match).map((variable, idxVariable) => (
                           <div key={idxVariable} className={`cm-m${idxVariable} resultItem`}>{variable}: {this.getText(match[variable])}</div>
                         ))
                         }
-                      </div>
-                    ))}
+                      </div>))) :
+                      (this.state.regexMatches.map((match, idxMatch) => (
+                        <div key={idxMatch} className="resultItem">{match}</div>
+                      )))}
                   </div>
                 )
             }
@@ -149,4 +184,4 @@ class LiteViewer extends Component {
   }
 }
 
-export default LiteViewer;
+export default LiteViewerVs;

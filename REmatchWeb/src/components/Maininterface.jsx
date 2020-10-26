@@ -25,7 +25,7 @@ const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
 
 /* CODEMIRROR MODE DEFINITION */
-CodeMirror.defineSimpleMode('rematchQuery', {
+CodeMirror.defineSimpleMode('REmatchQuery', {
   start: [
     {
       regex: /(![A-Za-z0-9]+\{|\})/,
@@ -65,7 +65,7 @@ class MainInterface extends Component {
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById('queryEditor'), {
       value: '!a{[A-Z][a-z]+} !b{[a-z]<2>} !c{..} !d{ex[a-z]<0,42>} !e{.+}!f{!}',
-      mode: 'rematchQuery',
+      mode: 'REmatchQuery',
       theme: 'material-darker',
       lineNumbers: false,
       scrollbarStyle: null,

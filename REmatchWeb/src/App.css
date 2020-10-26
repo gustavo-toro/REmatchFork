@@ -622,6 +622,12 @@ code {
 .paperLite {
   -webkit-transition: all .5s ease-in-out;
   transition: all .5s ease-in-out;
+  font-size: 14px;
+}
+
+.paperLite .liteTab {
+  text-transform: none;
+  font-family: monospace;
 }
 
 .paperLite .queryContainer {
@@ -632,7 +638,7 @@ code {
 }
 
 .paperLite .CodeMirror {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .paperLite .queryEditor {
@@ -648,16 +654,6 @@ code {
 
 .paperLite .textEditor .CodeMirror {
   height: 150px;
-}
-
-.paperLite .pagination {
-  margin: 1rem auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
 }
 
 .paperLite .results {
@@ -683,7 +679,6 @@ code {
   width: 100%;
   table-layout: fixed;
   font-family: monospace;
-  font-size: 14px;
 }
 
 .paperLite .results .list .resultRow {
