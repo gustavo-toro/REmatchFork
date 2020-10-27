@@ -3,7 +3,9 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef linux
 #include <sys/resource.h>
+#endif
 
 #include "interface.hpp"
 #include "parser/parser.hpp"
@@ -113,14 +115,20 @@ void Interface::benchmarkRun() {
 
 	totTime = initAutomataTime + evaluateTime;
 
+	std::string memoryUsed;
+
+	#ifdef linux
 	// GET MEMORY USAGE
 	struct rusage usage;
 	int ret;
-	std::string memoryUsed;
+	
 	ret = getrusage(RUSAGE_SELF, &usage);
 	if(ret == 0) {
 		memoryUsed = formatMem(usage.ru_maxrss*1024);
 	}
+	#endif
+
+
 
 	/************************ Output Measurments ************************/
 
