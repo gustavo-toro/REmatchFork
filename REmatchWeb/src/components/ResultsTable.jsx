@@ -30,11 +30,11 @@ const ResultsTable = ({
   });
 
   const handleChangePage = (_, newPage) => {
-    setState((prevState) => ({ ...prevState, page: newPage - 1 }));
+    setState(prevState => ({ ...prevState, page: newPage - 1 }));
   }
 
   const handleChangeRowsPerPage = (e) => {
-    setState({ page: 0, rowsPerPage: e.target.value });
+    setState(prevState => ({ ...prevState, page: 0, rowsPerPage: e.target.value }));
   }
 
   const handleMarkText = (row) => {
@@ -67,7 +67,7 @@ const ResultsTable = ({
 
   useEffect(() => {
     if (matches.length === 0) {
-      setState((prevState) => ({ ...prevState, page: 0 }));
+      setState(prevState => ({ ...prevState, page: 0 }));
     }
   }, [matches]);
 
@@ -88,7 +88,7 @@ const ResultsTable = ({
 
   useEffect(() => {
     if (matches.length === 0) {
-      setState((prevState) => ({ ...prevState, page: 0 }));
+      setState(prevState => ({ ...prevState, page: 0 }));
     }
   }, [matches]);
 
@@ -96,7 +96,7 @@ const ResultsTable = ({
     <>
       <Backdrop 
         open={state.open} 
-        onClick={() => setState({...state, open: false})}
+        onClick={() => setState(prevState => ({...prevState, open: false}))}
         style={{ zIndex: 6000, display: 'flex', gap: '1rem' }}>
         <Button
           color="primary"
@@ -142,7 +142,7 @@ const ResultsTable = ({
               color="primary" 
               variant="text"
               startIcon={<GetApp />} 
-              onClick={() => setState({...state, open: true})} 
+              onClick={() => setState(prevState => ({...prevState, open: true}))} 
               style={{ 
                 width: '100%',
                 height: '100%',
@@ -163,7 +163,7 @@ const ResultsTable = ({
           </Select>
         </Grid>
       </Grid>
-      <TableContainer style={{ height: '40vh', oveflow: 'auto' }}>
+      <TableContainer className="tableContainer">
         <Table stickyHeader size="small">
           <colgroup>
             {schema.map((_, schIdx) => (
@@ -200,8 +200,8 @@ const ResultsTable = ({
                       <TableCell key={idxCol} style={{ padding: 0 }}>
                         <div style={{ padding: '6px 24px 6px 16px' }}>
                           {(match.length > 36)
-                            ? match.slice(0, 36) + '...'
-                            : match}
+                            ? match.slice(0, 36).replaceAll(' ', '␣') + '...'
+                            : match.replaceAll(' ', '␣')}
                         </div>
                       </TableCell>)
                   }
