@@ -47,7 +47,7 @@ CodeMirror.defineSimpleMode('RegExQuery', {
   ]
 });
 
-class LiteViewerVs extends Component {
+class LiteViewer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,8 +66,8 @@ class LiteViewerVs extends Component {
 
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById(`queryEditor-${this.props.idx}`), {
-      value: this.props.rematch,
-      mode: 'rematchQuery',
+      value: (this.state.rematch) ? this.props.rematch : this.props.regex,
+      mode: (this.state.rematch) ? 'REmatchQuery' : 'RegExQuery',
       theme: 'material-darker',
       lineNumbers: false,
       scrollbarStyle: null,
@@ -97,14 +97,11 @@ class LiteViewerVs extends Component {
     return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1])).replace(' ', '␣');
   }
 
-  regexRun() {
+  runRegEx() {
     this.setState({ regexMatches: this.state.textEditor.getValue().match(new RegExp(this.state.regex)) });
   }
-  handleRun() {
-    if (this.state.rematch) {
-      this.runRematch();
-    }
-    this.setState({ idle: false });
+
+  runREmatch() {
     this.state.worker.postMessage({
       text: this.state.textEditor.getValue(),
       query: this.state.rematch,
@@ -116,7 +113,6 @@ class LiteViewerVs extends Component {
           break;
         case 'MATCHES':
           this.setState({ rematchMatches: m.data.payload });
-          this.regexRun();
           break;
         default:
           break;
@@ -124,25 +120,42 @@ class LiteViewerVs extends Component {
     }
   }
 
+  handleRun() {
+    if (this.state.rematch) {
+      this.runREmatch();
+    }
+    if (this.state.regex) {
+      this.runRegEx();
+    }
+    this.setState({ idle: false });
+  }
+
   handleTabChange() {
-    this.state.queryEditor.setOption('mode', (this.state.tab === 1) ? 'REmatchQuery' : 'RegExQuery');
-    this.state.queryEditor.setValue((this.state.tab === 1) ? this.state.rematch : this.state.regex);
-    this.setState(prevState => ({ tab: prevState.tab ^ 1 }));
+    if (this.state.rematch && this.state.regex) {
+      this.state.queryEditor.setOption('mode', (this.state.tab === 1) ? 'REmatchQuery' : 'RegExQuery');
+      this.state.queryEditor.setValue((this.state.tab === 1) ? this.state.rematch : this.state.regex);
+      this.setState(prevState => ({ tab: prevState.tab ^ 1 }));
+    }
   }
 
   render() {
     return (
       <div>
-        <Paper className="paperLite">
+        <Paper className="paperLite" elevation={3}>
           <Tabs
             value={this.state.tab}
             indicatorColor="primary"
             textColor="primary"
             onChange={this.handleTabChange.bind(this)}
             variant="fullWidth"
+            disabled
           >
-            <Tab label="REmatch" className="liteTab" />
-            <Tab label="RegEx" className="liteTab" />
+            {(this.state.rematch) ?
+              <Tab label="REmatch" className="liteTab" style={{cursor: (this.state.regex) ? 'pointer' : 'default'}}/>
+              : null}
+            {(this.state.regex) ?
+              <Tab label="RegEx" className="liteTab" style={{cursor: (this.state.rematch) ? 'pointer' : 'default'}}/>
+              : null}
           </Tabs>
           <div className="queryContainer">
             <div className="queryEditor" id={`queryEditor-${this.props.idx}`}></div>
@@ -166,7 +179,7 @@ class LiteViewerVs extends Component {
                 </Button>
                 </div>) : (
                   <div className="list">
-                    {(this.state.tab === 0) ? (this.state.rematchMatches.map((match, idxMatch) => (
+                    {(this.state.tab === 0 && this.state.rematch != null) ? (this.state.rematchMatches.map((match, idxMatch) => (
                       <div key={idxMatch} className="resultRow">
                         {Object.keys(match).map((variable, idxVariable) => (
                           <div key={idxVariable} className={`cm-m${idxVariable} resultItem`}>{variable}: {this.getText(match[variable])}</div>
@@ -186,4 +199,4 @@ class LiteViewerVs extends Component {
   }
 }
 
-export default LiteViewerVs;
+export default LiteViewer;

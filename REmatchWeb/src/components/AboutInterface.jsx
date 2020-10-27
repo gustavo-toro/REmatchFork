@@ -2,10 +2,9 @@ import React from 'react';
 
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 
-import LiteViewerREmatch from './LiteViewerREmatch';
-import LiteViewerVs from './LiteViewerVs';
+import LiteViewer from './LiteViewer';
 
 import english from '../text/english';
 import { Divider } from '@material-ui/core';
@@ -27,12 +26,18 @@ const AboutInterface = () => {
         <Typography variant="body2" align="justify">
           {english.section1.body1}
         </Typography>
-        <Typography variant="body2" align="center">
-          <p>John Cook: +1983847673, john@cook.org</p>
-          <p>Mark Twain: +56987346712, twai@hotmail.com</p>
-          <p>Eduardo Hem: +56933671832, hem@rumbar.com</p>
+      </div>
+      <Paper className="codeBlock" elevation={3}>
+        <p>John Cook: +1983847673, john@cook.org</p>
+        <p>Mark Twain: +56987346712, twai@hotmail.com</p>
+        <p>Eduardo Hem: +56933671832, hem@rumbar.com</p>
+      </Paper>
+      <div className="sectionContainer">
+        <Typography variant="body2" align="justify">
+          {english.section1.body2}
         </Typography>
       </div>
+      <br/>
       {/* WHAT IS REMATCH? */}
       <Typography variant="h5" color="primary" align="center">
         {english.section2.title}
@@ -52,7 +57,7 @@ const AboutInterface = () => {
         <Typography variant="body2" align="justify">
           {english.section2.example1}
         </Typography>
-        <LiteViewerVs
+        <LiteViewer
           idx="example1"
           worker={worker}
           text={english.section2.text1}
@@ -67,11 +72,17 @@ const AboutInterface = () => {
         <Typography variant="body2" align="justify">
           {english.section2.example2}
         </Typography>
-        <LiteViewerVs
+        <LiteViewer
           idx="example2"
           worker={worker}
           text={english.section2.text2}
           rematch={english.section2.rematch2}
+        />
+        <LiteViewer
+          idx="example3"
+          worker={worker}
+          text="queseyo"
+          regex="."
         />
       </div>
     </Container>

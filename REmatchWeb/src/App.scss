@@ -134,7 +134,7 @@ hsl(234, 96%, 67%),
 .paperLite {
   transition: all .5s ease-in-out;
   font-size: 14px;
-  width: 500px;
+  width: 90%;
   margin: 2rem auto;
   .liteTab {
     text-transform: none;
@@ -192,4 +192,12 @@ hsl(234, 96%, 67%),
 
 .sectionContainer {
   padding: .5rem 0;
+}
+
+.codeBlock {
+  font-family: consolas;
+  text-align: center;
+  padding: .5rem;
+  margin: 1rem auto;
+  width: 90%;
 }
