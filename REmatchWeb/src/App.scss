@@ -61,9 +61,12 @@ hsl(234, 96%, 67%),
   }
 }
 
+.mainContainer {
+  padding: 1.5*64px 0;
+}
+
 .mainPaper {
   overflow: hidden;
-  margin: 1.5*64px 0;
 }
 
 .sectionTitle {
@@ -74,10 +77,6 @@ hsl(234, 96%, 67%),
 
 .CodeMirror {
   font-size: 22px;
-
-  .CodeMirror-scroll {
-    padding-top: .5rem;
-  }
 
   .queryEditor & {
     overflow: hidden !important;
@@ -135,6 +134,8 @@ hsl(234, 96%, 67%),
 .paperLite {
   transition: all .5s ease-in-out;
   font-size: 14px;
+  width: 500px;
+  margin: 2rem auto;
   .liteTab {
     text-transform: none;
     font-family: monospace;
@@ -145,16 +146,17 @@ hsl(234, 96%, 67%),
   }
   .CodeMirror {
     font-size: 14px;
+    text-align: justify;
   }
   .queryEditor {
     flex: 1;
   }
   .textEditor {
-    padding-right: 1rem;
     .CodeMirror {
-      height: 150px;
+      height: 250px;
+      padding: .5rem 1rem;
     }
-    height: 150px;
+    height: 250px;
   }
   .results {
     padding: 1rem;
@@ -186,4 +188,8 @@ hsl(234, 96%, 67%),
       }
     }
   }
+}
+
+.sectionContainer {
+  padding: .5rem 0;
 }

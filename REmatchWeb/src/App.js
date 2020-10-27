@@ -11,6 +11,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Navbar from './components/Navbar';
 import AboutInterface from './components/AboutInterface';
 import MainInterface from './components/Maininterface';
+import 'fontsource-roboto';
 
 /* MATERIAL UI DARK THEME */
 const darkTheme = createMuiTheme({

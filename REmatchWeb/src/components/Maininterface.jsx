@@ -177,7 +177,7 @@ class MainInterface extends Component {
 
   render() {
     return (
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className="mainContainer">
         <Backdrop
           open={this.state.uploadingFile}
           style={{ zIndex: 6000, display: 'flex', flexDirection: 'column' }}

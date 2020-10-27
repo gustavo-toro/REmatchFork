@@ -548,9 +548,12 @@ code {
   color: #7f34f0 !important;
 }
 
+.mainContainer {
+  padding: 96px 0;
+}
+
 .mainPaper {
   overflow: hidden;
-  margin: 96px 0;
 }
 
 .sectionTitle {
@@ -561,10 +564,6 @@ code {
 
 .CodeMirror {
   font-size: 22px;
-}
-
-.CodeMirror .CodeMirror-scroll {
-  padding-top: .5rem;
 }
 
 .queryEditor .CodeMirror {
@@ -623,6 +622,8 @@ code {
   -webkit-transition: all .5s ease-in-out;
   transition: all .5s ease-in-out;
   font-size: 14px;
+  width: 500px;
+  margin: 2rem auto;
 }
 
 .paperLite .liteTab {
@@ -639,6 +640,7 @@ code {
 
 .paperLite .CodeMirror {
   font-size: 14px;
+  text-align: justify;
 }
 
 .paperLite .queryEditor {
@@ -648,12 +650,12 @@ code {
 }
 
 .paperLite .textEditor {
-  padding-right: 1rem;
-  height: 150px;
+  height: 250px;
 }
 
 .paperLite .textEditor .CodeMirror {
-  height: 150px;
+  height: 250px;
+  padding: .5rem 1rem;
 }
 
 .paperLite .results {
@@ -697,5 +699,9 @@ code {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.sectionContainer {
+  padding: .5rem 0;
 }
 /*# sourceMappingURL=App.css.map */

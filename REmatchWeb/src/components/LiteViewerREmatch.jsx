@@ -11,9 +11,6 @@ import CodeMirror from 'codemirror';
 import 'codemirror/theme/material-darker.css';
 import 'codemirror/addon/mode/simple';
 
-const WORKPATH = `${process.env.PUBLIC_URL}/liteWork.js`;
-let worker = new Worker(WORKPATH);
-
 CodeMirror.defineSimpleMode('rematchQuery', {
   start: [
     {
@@ -39,7 +36,7 @@ CodeMirror.defineSimpleMode('rematchQuery', {
   ]
 });
 
-class LiteViewer extends Component {
+class LiteViewerREmatch extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,6 +46,7 @@ class LiteViewer extends Component {
       idle: true,
       schema: [],
       matches: [],
+      worker: props.worker,
     };
   }
 
@@ -69,7 +67,7 @@ class LiteViewer extends Component {
       value: this.state.text,
       mode: 'text/plain',
       theme: 'material-darker',
-      lineNumbers: true,
+      lineNumbers: false,
       scrollbarStyle: 'native',
       smartIndent: false,
       indentWithTabs: true,
@@ -82,16 +80,16 @@ class LiteViewer extends Component {
   }
 
   getText(span) {
-    return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1]))
+    return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1])).replace(' ', '␣');
   }
 
   handleRun() {
     this.setState({ idle: false });
-    worker.postMessage({
+    this.state.worker.postMessage({
       text: this.state.textEditor.getValue(),
       query: this.state.rematch,
     });
-    worker.onmessage = (m) => {
+    this.state.worker.onmessage = (m) => {
       switch (m.data.type) {
         case 'SCHEMA':
           this.setState({ schema: m.data.payload });
@@ -149,4 +147,4 @@ class LiteViewer extends Component {
   }
 }
 
-export default LiteViewer;
+export default LiteViewerREmatch;
