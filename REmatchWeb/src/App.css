@@ -612,10 +612,15 @@ code {
   background-color: #212121 !important;
 }
 
+.appBar .button {
+  text-decoration: none;
+  color: #03DAC6;
+  margin-left: 1rem;
+}
+
 .logo {
   display: block;
   height: 36px;
-  margin-left: 1rem;
 }
 
 .paperLite {

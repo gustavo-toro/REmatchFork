@@ -7,7 +7,6 @@ import Paper from '@material-ui/core/Paper';
 import LiteViewer from './LiteViewer';
 
 import english from '../text/english';
-import { Divider } from '@material-ui/core';
 
 const WORKPATH = `${process.env.PUBLIC_URL}/liteWork.js`;
 let worker = new Worker(WORKPATH);

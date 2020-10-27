@@ -123,12 +123,16 @@ hsl(234, 96%, 67%),
 /* AboutInterface */
 .appBar {
   background-color: $darker !important;
+  .button {
+    text-decoration: none;
+    color: nth($colors, 1);
+    margin-left: 1rem;
+  }
 }
 
 .logo {
   display: block;
   height: 36px;
-  margin-left: 1rem;
 }
 
 .paperLite {
