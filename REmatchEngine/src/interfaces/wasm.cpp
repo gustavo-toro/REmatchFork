@@ -35,6 +35,8 @@ EMSCRIPTEN_BINDINGS() {
     .property("dot_nl", &rematch::RegExOptions::dot_nl, &rematch::RegExOptions::set_dot_nl)
     .property("early_output", &rematch::RegExOptions::early_output, &rematch::RegExOptions::set_early_output)
     .property("save_anchors", &rematch::RegExOptions::save_anchors, &rematch::RegExOptions::set_save_anchors)
+    .property("end_anchor", &rematch::RegExOptions::end_anchor, &rematch::RegExOptions::set_end_anchor)
+    .property("start_anchor", &rematch::RegExOptions::start_anchor, &rematch::RegExOptions::set_start_anchor)
     ;
 
   emscripten::class_<rematch::RegEx>("RegEx")
