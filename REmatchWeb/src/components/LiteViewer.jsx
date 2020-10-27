@@ -94,7 +94,7 @@ class LiteViewer extends Component {
   }
 
   getText(span) {
-    return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1])).replace(' ', '␣');
+    return this.state.textEditor.getRange(this.state.textEditor.posFromIndex(span[0]), this.state.textEditor.posFromIndex(span[1])).replaceAll(' ', '␣');
   }
 
   runRegEx() {

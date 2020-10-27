@@ -9,7 +9,9 @@ this.onmessage = (m) => {
   let match;
   let rgxOptions = new RegExOptions();
   rgxOptions.early_output = false;
-  let rgx = new RegEx(`.*${m.data.query}.*`, rgxOptions);
+  rgxOptions.start_anchor = true;
+  rgxOptions.end_anchor = true;
+  let rgx = new RegEx(m.data.query, rgxOptions);
   
   /* THIS SHOULD BE IN RegEx OBJECT */
   let schema = [...m.data.query.matchAll(/!([A-Za-z0-9]+)/g)].map((m) => (m[1]));
