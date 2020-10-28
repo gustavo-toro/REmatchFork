@@ -18,7 +18,7 @@ using namespace std;
 %}
 
 %inline %{
-typedef long unsigned int size_t;
+// typedef long unsigned int size_t;
 %}
 
 %template(PairSize) std::pair<size_t,size_t>;
