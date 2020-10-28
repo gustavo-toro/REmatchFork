@@ -5,11 +5,9 @@
 
 namespace rematch {
 
-MemManager Evaluator::memory_manager_{};
-
 Evaluator::Evaluator(RegEx &rgx, std::istream& input,
                      uint8_t flags)
-    : rgx_(rgx),
+    : rgx_(&rgx),
       text_(std::make_unique<FileDocument>(input)),
       early_output_(flags & kEarlyOutput),
       line_by_line_(flags & kLineByLine),
@@ -25,7 +23,7 @@ Evaluator::Evaluator(RegEx &rgx, std::istream& input,
 
 Evaluator::Evaluator(RegEx &rgx, const std::string &text,
                      uint8_t flags)
-    : rgx_(rgx),
+    : rgx_(&rgx),
       text_(std::make_unique<StrDocument>(text)),
       early_output_(flags & kEarlyOutput),
       line_by_line_(flags & kLineByLine),
@@ -123,7 +121,7 @@ Evaluator::inlinedNext(bool early_output, bool line_by_line) {
     }
     if(!output_nodelist_.empty()) {
       enumerator_->addNodeList(output_nodelist_);
-      Evaluator::memory_manager_.addPossibleGarbage(output_nodelist_.head);
+      memory_manager_.addPossibleGarbage(output_nodelist_.head);
     }
 
     if(((i_pos_-i_start_) == line_.size()   &&  line_by_line_) ||
@@ -171,7 +169,7 @@ bool Evaluator::match() {
     nextState = currentState->nextState(a);
 
     if(nextState == nullptr) // Then maybe a determinization is needed
-      nextState = rgx_.rawDetManager().getNextDetState(currentState, a);
+      nextState = rgx_->rawDetManager().getNextDetState(currentState, a);
 
     if (nextState->isSuperFinal)
       return true;
@@ -201,7 +199,7 @@ inline void Evaluator::capture(size_t i, bool early_output) {
       capture_counter_++;
       nextState = capture->next;
 
-      newNode = Evaluator::memory_manager_.alloc(capture->S, i,
+      newNode = memory_manager_.alloc(capture->S, i,
                                        currentState->copiedList->head,
                                        currentState->copiedList->tail);
       // Early output case
@@ -243,7 +241,7 @@ inline void Evaluator::reading(char a, size_t i, bool early_output) {
     nextState = currentState->nextState(a);
 
     if(nextState == nullptr) { // Then maybe a determinization is needed
-      nextState = rgx_.detManager().getNextDetState(currentState, a);
+      nextState = rgx_->detManager().getNextDetState(currentState, a);
     }
 
     if(early_output && nextState->isSuperFinal) {  // Early Output check
@@ -281,6 +279,9 @@ inline void Evaluator::reading(char a, size_t i, bool early_output) {
     }
   }
 }
+
+DetAutomaton& Evaluator::rawDFA() {return rgx_->rawDetManager().DFA();}
+DetAutomaton& Evaluator::DFA() {return rgx_->detManager().DFA();}
 
 
 // Callers of inline versions

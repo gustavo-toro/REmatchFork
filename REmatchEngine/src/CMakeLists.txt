@@ -12,7 +12,7 @@ file(GLOB sources
 
 set(BUILD_TARGETS
   rematch
-  generate
+  # generate
   test-regex
   test-anchors
 )

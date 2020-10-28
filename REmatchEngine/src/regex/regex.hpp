@@ -12,10 +12,9 @@
 #include "automata/detautomaton.hpp"
 #include "regex/regex_options.hpp"
 #include "automata/lva.hpp"
+#include "evaliter.hpp"
 
 namespace rematch {
-
-class Evaluator;
 
 class RegEx {
 
@@ -42,8 +41,8 @@ class RegEx {
   // Calls the evaluator to get first
   Match_ptr find(const std::string &text);
 
-  Match_ptr findIter(const std::string &text);
-  Match_ptr findIterFile(std::istream& is);
+  EvaluatorIter findIter(const std::string &text);
+  EvaluatorIter findIterFile(std::istream& is);
 
   int varCount() const {return dman_.varFactory()->size();}
 
@@ -59,9 +58,6 @@ class RegEx {
   DetManager& rawDetManager() {return raw_dman_;};
 
   // Stats passed to interface
-
-  size_t capture_counter() const;
-  size_t reading_counter() const;
 
   private:
 
@@ -82,8 +78,6 @@ class RegEx {
 
   // Is DFA fully computed.
   bool full_dfa_;
-
-  std::unique_ptr<Evaluator> eval_;
 
 }; // end class Regex
 

@@ -16,6 +16,7 @@
 #include "timer.hpp"
 #include "regex/regex.hpp"
 #include "regex/regex_options.hpp"
+#include "eval.hpp"
 
 using namespace rematch;
 
@@ -57,26 +58,30 @@ void Interface::normalRun() {
 		std::string doc(file2str(document_filename_));
 		if(options_.output_option() == NMAPPINGS) {
 			size_t noutputs = 0;
-			while((match_ptr = regex.findIter(doc))) {
+			auto finditer = regex.findIter(doc);
+			while((match_ptr = finditer.next())) {
 				noutputs++;
 			}
 			std::cout << noutputs << '\n';
 		}
 		else {
-			while((match_ptr = regex.findIter(doc))) {
+			auto finditer = regex.findIter(doc);
+			while((match_ptr = finditer.next())) {
 				std::cout << *match_ptr << '\n';
 			}
 		}
 	} else {
 		if(options_.output_option() == NMAPPINGS) {
 			size_t noutputs = 0;
-			while((match_ptr = regex.findIterFile(*document_stream_))) {
+			auto finditer = regex.findIterFile(*document_stream_);
+			while((match_ptr = finditer.next())) {
 				noutputs++;
 			}
 			std::cout << noutputs << '\n';
 		}
 		else {
-			while((match_ptr = regex.findIterFile(*document_stream_))) {
+			auto finditer = regex.findIterFile(*document_stream_);
+			while((match_ptr = finditer.next())) {
 				std::cout << *match_ptr << '\n';
 			}
 		}
@@ -102,12 +107,13 @@ void Interface::benchmarkRun() {
 
 	numOfSpans = 0;
 
-	while((match_ptr = regex.findIterFile(*document_stream_))) {
+	auto finditer = regex.findIterFile(*document_stream_);
+	while((match_ptr = finditer.next())) {
 		numOfSpans++;
 	}
 
-	numOfCaptures = regex.capture_counter();
-	numOfReadings = regex.reading_counter();
+	numOfCaptures = 0;
+	numOfReadings = 0;
 
 	evaluateTime = t.elapsed(); 			// Evaluation time
 

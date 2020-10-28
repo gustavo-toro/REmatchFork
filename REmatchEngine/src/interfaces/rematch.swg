@@ -13,6 +13,7 @@
 #include "regex/regex.hpp"
 #include "regex/regex_options.hpp"
 #include "match.hpp"
+#include "eval.hpp"
 using namespace rematch;
 using namespace std;
 %}
@@ -56,20 +57,22 @@ class Match {
   size_t start(std::string varname) const;
   size_t end(std::string varname) const;
   Span span(std::string var) const;
-  std::string group(std::string var) const;
-  std::string * doc() const;
   std::vector<std::string> variables() const;
 }; // end class Match
+
+class EvaluatorIter {
+ public:
+  Match_ptr next();
+  Evaluator() = default;
+}; // end class Evaluator
 
 class RegEx {
  public:
   RegEx(std::string regex, RegExOptions opt = RegExOptions());
   ~RegEx();
   Match_ptr find(const std::string &text);
-  Match_ptr findIter(const std::string &text);
-  int varCount() const;
+  EvaluatorIter findIter(const std::string &text);
   std::vector<std::string> varScheme();
-  std::string pattern() const;
 }; // end class Regex
 
 #endif // SWIG

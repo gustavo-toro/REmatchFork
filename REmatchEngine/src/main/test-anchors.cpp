@@ -16,7 +16,9 @@ int main(int argc, char *argv[]) {
 
   int count = 0;
 
-  while(match = rgx.findIter(doc)) {
+  auto eval_iter = rgx.findIter(doc);
+
+  while(match = eval_iter.next()) {
     std::cout << *match << '\n';
     count++;
   }

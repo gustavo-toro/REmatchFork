@@ -17,3 +17,15 @@ while match:
     print("!{}:".format(var), match.span(var), end='\t')
   print("")
   match = rgx.findIter(document)
+
+
+def findIter(pattern, doc):
+  rgx = RegEx(pattern);
+  findIter = rgx.findIter()
+  while True:
+    yield rgx.findIter(doc);
+
+
+
+findIter(".*x{a}.*", "aa")
+findIter("x{a}", "aa")

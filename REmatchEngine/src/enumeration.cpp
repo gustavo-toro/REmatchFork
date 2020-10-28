@@ -11,11 +11,11 @@
 
 namespace rematch {
 
-Enumerator::Enumerator(RegEx &rgx, std::string &doc)
+Enumerator::Enumerator(std::shared_ptr<RegEx> rgx, std::string &doc)
     : doc_(doc),
       rgx_(rgx),
       n_mappings_(0),
-      data_(rgx_.varCount(), std::pair<size_t, size_t>(0, 0)) {}
+      data_(rgx_->varCount(), std::pair<size_t, size_t>(0, 0)) {}
 
 
 void Enumerator::addNodeList(NodeList &startList) {
@@ -39,18 +39,18 @@ Match_ptr Enumerator :: next() {
     if(node->isNodeEmpty()) {
       n_mappings_++;
 #ifndef SWIG
-      return std::make_unique<Match>(doc_, data_, rgx_.varScheme());
+      return std::make_unique<Match>(doc_, data_, rgx_->varScheme());
 #else
-      return new Match(&doc_, data_, rgx_.varScheme());
+      return new Match(&doc_, data_, rgx_->varScheme());
 #endif
     }
 
     if(node->start != nullptr) {
       for(size_t j=0; j < data_.size(); j++) {
         if(node->S[2*j])
-          data_[j].first = node->i - rgx_.detManager().varFactory()->getOffset(2*j);
+          data_[j].first = node->i - rgx_->detManager().varFactory()->getOffset(2*j);
         if(node->S[2*j+1])
-          data_[j].second = node->i - rgx_.detManager().varFactory()->getOffset(2*j+1);
+          data_[j].second = node->i - rgx_->detManager().varFactory()->getOffset(2*j+1);
       }
       depth_stack_.emplace_back(node->start, node->end);
     }
