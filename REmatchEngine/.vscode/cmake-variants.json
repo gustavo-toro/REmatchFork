@@ -1,0 +1,38 @@
+{
+  "buildType": {
+    "default": "debug",
+    "description" : "Choose build type options",
+    "choices":{
+      "debug": {
+        "short" : "Debug",
+        "long" : "Build with debugging information",
+        "buildType" : "Debug"
+      },
+      "release": {
+        "short" : "Release",
+        "long" : "Build with performance optimizations",
+        "buildType" : "Release"
+      }
+    }
+  },
+  "SWIG": {
+    "default": "noswig",
+    "description" : "Choose if build with SWIG",
+    "choices": {
+      "noswig": {
+        "short" : "noSWIG",
+        "long" : "Build without SWIG",
+        "settings": {
+          "SWIG" : false
+        }
+      },
+      "swig": {
+        "short" : "SWIG",
+        "long" : "Build with SWIG",
+        "settings": {
+          "SWIG" : true
+        }
+      }
+    }
+  }
+}

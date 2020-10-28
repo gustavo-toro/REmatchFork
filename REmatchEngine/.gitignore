@@ -24,7 +24,6 @@ credentials.json
 scripts/*/settings.json
 datasets
 tmp
-.vscode
 .vs
 .VSCodeCounter/
 python/settings.json
