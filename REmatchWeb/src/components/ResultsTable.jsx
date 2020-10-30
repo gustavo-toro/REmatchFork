@@ -13,6 +13,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import Backdrop from '@material-ui/core/Backdrop';
+import Divider from '@material-ui/core/Divider';
 
 import GetApp from '@material-ui/icons/GetApp';
 
@@ -25,7 +26,7 @@ const ResultsTable = ({
 }) => {
   const [state, setState] = useState({
     page: 0,
-    rowsPerPage: 25,
+    rowsPerPage: 12,
     open: false,
   });
 
@@ -162,6 +163,17 @@ const ResultsTable = ({
           onChange={handleChangePage}
         />
       </div>
+      <Divider/>
+      <Button
+        disabled={(matches.length === 0)}
+        color="primary"
+        variant="text"
+        startIcon={<GetApp />}
+        onClick={() => setState(prevState => ({ ...prevState, open: true }))}
+        className="exportButton">
+        Export matches
+      </Button>
+
 
 
       {/* 
