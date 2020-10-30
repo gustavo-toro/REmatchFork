@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 
 enable_testing()
 
@@ -29,7 +29,7 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 
 if(SWIG)
-	find_package(SWIG 4.0 COMPONENTS python)
+	find_package(SWIG 3.0 COMPONENTS python)
 	find_package(Python3 REQUIRED COMPONENTS Development)
 	include(${SWIG_USE_FILE})
 	# Add support for .swg file
