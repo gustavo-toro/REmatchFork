@@ -703,63 +703,25 @@ code {
   padding: 1rem;
 }
 
-/*
-.CodeMirror {
-  font-size: inherit;
-
-  .queryEditor & {
-    overflow: hidden !important;
-    height: auto;
-    padding: 0;
-    margin-left: .5rem;
-  }
-  #textEditor & {
-    padding: .5rem 0;
-    height: 300px;
-  }
-}
-
-#textEditor {
-  height: 300px;
-  position: relative;
-}
-
-.tableContainer {
-  height: 300px;
-}
-
-.uploadButton {
-  border-radius: 50% !important;
-  padding: 1rem !important;
-  width: 3rem !important;
-  height: 3rem !important;
-  min-width: unset !important;
-  min-height: unset !important;
-  position: absolute !important;
-  z-index: 5000;
-  bottom: 2rem;
-  right: 2rem;
-}
-*/
 /* AboutInterface */
 .appBar {
   background-color: #212121 !important;
+}
+
+.appBar .logo {
+  display: block;
+  height: 36px;
+}
+
+.appBar .logo:hover {
+  -webkit-filter: drop-shadow(0 0 2px #03DAC6);
+          filter: drop-shadow(0 0 2px #03DAC6);
 }
 
 .appBar .button {
   text-decoration: none;
   color: #03DAC6;
   margin-left: 1rem;
-}
-
-.logo {
-  display: block;
-  height: 36px;
-}
-
-.logo:hover {
-  -webkit-filter: drop-shadow(0 0 2px #03DAC6);
-          filter: drop-shadow(0 0 2px #03DAC6);
 }
 
 .paperLite {
