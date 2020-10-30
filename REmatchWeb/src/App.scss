@@ -86,10 +86,10 @@ hsl(234, 96%, 67%),
 
 .mainPaper {
   overflow: hidden;
-  font-size: 16px;
+  font-size: 14px;
 
   .CodeMirror {
-    font-size: 16px;
+    font-size: 14px;
     text-align: justify;
   }
 
@@ -118,16 +118,59 @@ hsl(234, 96%, 67%),
   }
 
   #textEditor {
-    height: 300px;
+    height: 250px;
 
     .CodeMirror {
-      height: 300px;
+      height: 250px;
       padding: .5rem 1rem;
     }
   }
 
-  .tableCell {
-    background-color: transparent;
+  .headContainer {
+    padding: 0 1rem;
+
+    .matchesRow {
+      display: flex;
+      align-items: center;
+
+      .matchesItem {
+        padding: .5rem;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .matchesContainer {
+    padding: 0 1rem;
+    height: 300px;
+    overflow-y: scroll;
+
+    .matchesRow {
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, .2);
+        cursor: pointer;
+      }
+
+      .matchesItem {
+        padding: 0 .5rem;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .paginationContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
   }
 }
 
@@ -226,7 +269,7 @@ hsl(234, 96%, 67%),
     }
   }
 
-  .results {
+  .matches {
     padding: 1rem;
     height: 150px;
     overflow-y: scroll;
@@ -243,11 +286,11 @@ hsl(234, 96%, 67%),
       table-layout: fixed;
       font-family: monospace;
 
-      .resultRow {
+      .matchesRow {
         display: flex;
         align-items: center;
 
-        .resultItem {
+        .matchesItem {
           flex: 1;
           overflow: hidden;
           white-space: nowrap;

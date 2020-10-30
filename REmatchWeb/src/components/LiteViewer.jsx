@@ -75,7 +75,7 @@ class LiteViewer extends Component {
       indentWithTabs: true,
       undoDepth: 100,
       viewportMargin: 10,
-      //readOnly: 'nocursor',
+      readOnly: 'nocursor',
     });
     let textEditor = CodeMirror(document.getElementById(`textEditor-${this.props.idx}`), {
       value: this.state.text,
@@ -151,10 +151,10 @@ class LiteViewer extends Component {
             disabled
           >
             {(this.state.rematch) ?
-              <Tab label="REmatch" className="liteTab" style={{cursor: (this.state.regex) ? 'pointer' : 'default'}}/>
+              <Tab label="REmatch" className="liteTab" style={{ cursor: (this.state.regex) ? 'pointer' : 'default' }} />
               : null}
             {(this.state.regex) ?
-              <Tab label="RegEx" className="liteTab" style={{cursor: (this.state.rematch) ? 'pointer' : 'default'}}/>
+              <Tab label="RegEx" className="liteTab" style={{ cursor: (this.state.rematch) ? 'pointer' : 'default' }} />
               : null}
           </Tabs>
           <div className="queryContainer">
@@ -163,9 +163,7 @@ class LiteViewer extends Component {
           <Divider variant="middle" />
           <div className="textEditor" id={`textEditor-${this.props.idx}`}></div>
           <Divider variant="middle" />
-
-
-          <div className="results">
+          <div className="matches">
             {
               (this.state.idle) ? (
                 <div className="buttonContainer">
@@ -180,18 +178,16 @@ class LiteViewer extends Component {
                 </div>) : (
                   <div className="list">
                     {(this.state.tab === 0 && this.state.rematch != null) ? (this.state.rematchMatches.map((match, idxMatch) => (
-                      <div key={idxMatch} className="resultRow">
+                      <div key={idxMatch} className="matchesRow">
                         {Object.keys(match).map((variable, idxVariable) => (
-                          <div key={idxVariable} className={`cm-m${idxVariable} resultItem`}>{variable}: {this.getText(match[variable])}</div>
+                          <div key={idxVariable} className={`cm-m${idxVariable} matchesItem`}>{variable}: {this.getText(match[variable])}</div>
                         ))
                         }
                       </div>))) :
                       (this.state.regexMatches.map((match, idxMatch) => (
-                        <div key={idxMatch} className="resultItem">{match}</div>
+                        <div key={idxMatch} className="matchesItem">{match}</div>
                       )))}
-                  </div>
-                )
-            }
+                  </div>)}
           </div>
         </Paper>
       </div>

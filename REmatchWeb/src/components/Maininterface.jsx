@@ -66,7 +66,7 @@ class MainInterface extends Component {
   }
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById('queryEditor'), {
-      value: '!a{[A-Z][a-z]+} !b{[a-z]<2>} !c{..} !d{ex[a-z]<0,42>} !e{.+}!f{!}',
+      value: '.*!x{.+}!y{.+}.*',
       mode: 'REmatchQuery',
       placeholder: 'Enter your query...',
       theme: 'material-darker',
