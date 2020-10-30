@@ -241,6 +241,9 @@ hsl(234, 96%, 67%),
 .logo {
   display: block;
   height: 36px;
+  &:hover {
+    filter: drop-shadow(0 0 2px #03DAC6);
+  }
 }
 
 .paperLite {

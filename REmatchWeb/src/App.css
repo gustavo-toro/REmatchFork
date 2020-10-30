@@ -757,6 +757,11 @@ code {
   height: 36px;
 }
 
+.logo:hover {
+  -webkit-filter: drop-shadow(0 0 2px #03DAC6);
+          filter: drop-shadow(0 0 2px #03DAC6);
+}
+
 .paperLite {
   -webkit-transition: all .5s ease-in-out;
   transition: all .5s ease-in-out;
