@@ -548,8 +548,12 @@ code {
   color: #7f34f0 !important;
 }
 
+.invisible {
+  display: none;
+}
+
 .CodeMirror-scrollbar-filler {
-  background-color: transparent !important;
+  background-color: #212121 !important;
 }
 
 .CodeMirror pre.CodeMirror-placeholder {
@@ -561,10 +565,11 @@ code {
 }
 
 .backdrop {
-  z-index: 6000;
+  z-index: 6000 !important;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 1rem;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
@@ -593,7 +598,7 @@ code {
 }
 
 .mainPaper .queryContainer {
-  padding: 0 1rem;
+  padding: 0;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -601,6 +606,7 @@ code {
 }
 
 .mainPaper .queryContainer .queryEditor {
+  padding-left: 1rem;
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -610,6 +616,11 @@ code {
 .mainPaper .queryContainer .queryEditor .CodeMirror {
   height: auto;
   padding: .5rem 0;
+}
+
+.mainPaper .queryContainer .queryButton {
+  padding: .5rem 2.5rem;
+  border-radius: 0;
 }
 
 .mainPaper #textEditor {
@@ -686,7 +697,7 @@ code {
   padding: 1rem 0;
 }
 
-.mainPaper .exportButton {
+.mainPaper .fullButton {
   border-radius: 0;
   width: 100%;
   padding: 1rem;

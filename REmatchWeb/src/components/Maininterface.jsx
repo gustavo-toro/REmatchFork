@@ -190,17 +190,12 @@ class MainInterface extends Component {
         </Backdrop>
         <Paper elevation={5} className="mainPaper">
 
-          {/* Expression */}
-
-          {/*<SectionTitle title="Expression" />*/}
+          {/* QUERY */}
           <div className="sectionTitle">
             Query
           </div>
-
           <div className="queryContainer">
             <div id="queryEditor" className="queryEditor"></div>
-
-
             <Button
               className="queryButton"
               color="primary"
@@ -209,29 +204,31 @@ class MainInterface extends Component {
             >
               Run
             </Button>
-
           </div>
-          <Divider variant="middle" />
+          <Divider />
           {/* EDITOR */}
           <div className="sectionTitle">
             Text
           </div>
           <div id="textEditor"></div>
-          {/*<input accept="*" id="fileInput" type="file" style={{ display: 'none' }} onChange={this.handleFile} />
-            <label htmlFor="fileInput">
-              <Tooltip title="Upload a file">
-                <Button size="medium" variant="contained" component="span" color="primary" className="uploadButton">
-                  <Publish />
-                </Button>
-              </Tooltip>
-            </label>
-          */}
+          <input accept="*" id="fileInput" type="file" className="invisible" onChange={this.handleFile} />
+          <label htmlFor="fileInput">
+            <Button
+              color="primary"
+              variant="text"
+              component="span"
+              size="small"
+              startIcon={<Publish />}
+              className="fullButton">
+              Import file
+            </Button>
+          </label>
 
-          <Divider variant="middle" />
+          <Divider />
+          {/* RESULTS */}
           <div className="sectionTitle">
             Matches
           </div>
-
           <ResultsTable
             matches={this.state.matches}
             schema={this.state.schema}

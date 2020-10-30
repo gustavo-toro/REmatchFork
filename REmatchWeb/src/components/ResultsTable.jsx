@@ -98,7 +98,7 @@ const ResultsTable = ({
       <Backdrop
         open={state.open}
         onClick={() => setState(prevState => ({ ...prevState, open: false }))}
-        style={{ zIndex: 6000, display: 'flex', gap: '1rem' }}>
+        className="backdrop">
         <Button
           color="primary"
           style={{ fontWeight: 'bold' }}
@@ -163,14 +163,15 @@ const ResultsTable = ({
           onChange={handleChangePage}
         />
       </div>
-      <Divider/>
+
       <Button
         disabled={(matches.length === 0)}
         color="primary"
         variant="text"
+        size="small"
         startIcon={<GetApp />}
         onClick={() => setState(prevState => ({ ...prevState, open: true }))}
-        className="exportButton">
+        className="fullButton">
         Export matches
       </Button>
 

@@ -160,9 +160,9 @@ class LiteViewer extends Component {
           <div className="queryContainer">
             <div className="queryEditor" id={`queryEditor-${this.props.idx}`}></div>
           </div>
-          <Divider variant="middle" />
+          <Divider />
           <div className="textEditor" id={`textEditor-${this.props.idx}`}></div>
-          <Divider variant="middle" />
+          <Divider />
           <div className="matches">
             {
               (this.state.idle) ? (
