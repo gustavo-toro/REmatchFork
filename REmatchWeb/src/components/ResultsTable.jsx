@@ -127,6 +127,8 @@ const ResultsTable = ({
           Export as JSON
         </Button>
       </Backdrop>
+
+
       <Grid container>
         <Grid item md={8} sm={6} xs={12} style={{ padding: '.5rem 0', display: 'flex', alignItems: 'center' }}>
           <Pagination
@@ -136,6 +138,7 @@ const ResultsTable = ({
             onChange={handleChangePage}
           />
         </Grid>
+        {/* */}
         <Grid item md={2} sm={3} xs={6}>
           <Tooltip title="Export results">
             <Button 
@@ -174,14 +177,14 @@ const ResultsTable = ({
             {(matches.length > 0)
               ? <TableRow>
                 {schema.map((name, idxHead) => (
-                  <TableCell className={`th${idxHead}`} key={idxHead}>
+                  <TableCell className={`cm-m${idxHead} tableCell`} key={idxHead}>
                     {name}
                   </TableCell>
                 ))}
               </TableRow>
               :
               <TableRow>
-                <TableCell style={{ backgroundColor: 'transparent' }}>
+                <TableCell className="tableCell">
                   No matches
                 </TableCell>
               </TableRow>

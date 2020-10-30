@@ -75,7 +75,7 @@ class LiteViewer extends Component {
       indentWithTabs: true,
       undoDepth: 100,
       viewportMargin: 10,
-      readOnly: 'nocursor',
+      //readOnly: 'nocursor',
     });
     let textEditor = CodeMirror(document.getElementById(`textEditor-${this.props.idx}`), {
       value: this.state.text,

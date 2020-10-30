@@ -548,41 +548,97 @@ code {
   color: #7f34f0 !important;
 }
 
+.CodeMirror-scrollbar-filler {
+  background-color: transparent !important;
+}
+
+.CodeMirror pre.CodeMirror-placeholder {
+  color: #545454;
+}
+
 .mainContainer {
   padding: 96px 0;
 }
 
+.backdrop {
+  z-index: 6000;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.backdrop .loading {
+  margin-top: 1rem;
+}
+
 .mainPaper {
+  overflow: hidden;
+  font-size: 16px;
+}
+
+.mainPaper .CodeMirror {
+  font-size: 16px;
+  text-align: justify;
+}
+
+.mainPaper .sectionTitle {
+  padding: 1rem 1rem 0rem 1rem;
+  font-family: consolas;
+  font-size: 12px;
+  color: #868686;
+}
+
+.mainPaper .queryContainer {
+  padding: 0 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: auto;
+}
+
+.mainPaper .queryContainer .queryEditor {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   overflow: hidden;
 }
 
-.sectionTitle {
-  color: black;
-  background-color: #03DAC6;
-  padding: .5rem 0 .5rem 1rem;
-}
-
-.CodeMirror {
-  font-size: 22px;
-}
-
-.queryEditor .CodeMirror {
-  overflow: hidden !important;
+.mainPaper .queryContainer .queryEditor .CodeMirror {
   height: auto;
   padding: .5rem 0;
-  margin-left: .5rem;
-  /*
-    pre::after,
-    pre::before {
-      content: ".*";
-      color: #888888;
-    }
-    */
 }
 
-#textEditor .CodeMirror {
-  padding: .5rem 0;
+.mainPaper #textEditor {
   height: 300px;
+}
+
+.mainPaper #textEditor .CodeMirror {
+  height: 300px;
+  padding: .5rem 1rem;
+}
+
+.mainPaper .tableCell {
+  background-color: transparent;
+}
+
+/*
+.CodeMirror {
+  font-size: inherit;
+
+  .queryEditor & {
+    overflow: hidden !important;
+    height: auto;
+    padding: 0;
+    margin-left: .5rem;
+  }
+  #textEditor & {
+    padding: .5rem 0;
+    height: 300px;
+  }
 }
 
 #textEditor {
@@ -606,7 +662,7 @@ code {
   bottom: 2rem;
   right: 2rem;
 }
-
+*/
 /* AboutInterface */
 .appBar {
   background-color: #212121 !important;
@@ -631,6 +687,11 @@ code {
   margin: 2rem auto;
 }
 
+.paperLite .CodeMirror {
+  font-size: 14px;
+  text-align: justify;
+}
+
 .paperLite .liteTab {
   text-transform: none;
   font-family: monospace;
@@ -643,15 +704,16 @@ code {
   padding: 0 1rem;
 }
 
-.paperLite .CodeMirror {
-  font-size: 14px;
-  text-align: justify;
-}
-
-.paperLite .queryEditor {
+.paperLite .queryContainer .queryEditor {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  overflow: hidden;
+}
+
+.paperLite .queryContainer .queryEditor .CodeMirror {
+  height: auto;
+  padding: .5rem 0;
 }
 
 .paperLite .textEditor {

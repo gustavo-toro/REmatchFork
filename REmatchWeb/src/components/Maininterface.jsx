@@ -8,17 +8,19 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
+import Divider from '@material-ui/core/Divider';
 
 import { PlayArrow, Publish } from '@material-ui/icons';
 
 /* Project Components */
-import SectionTitle from './SectionTitle';
 import ResultsTable from './ResultsTable';
 
 /* CodeMirror */
 import CodeMirror from 'codemirror';
+import 'codemirror/addon/display/placeholder';
 import 'codemirror/theme/material-darker.css';
 import 'codemirror/addon/mode/simple';
+import { Typography } from '@material-ui/core';
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
@@ -66,6 +68,7 @@ class MainInterface extends Component {
     let queryEditor = CodeMirror(document.getElementById('queryEditor'), {
       value: '!a{[A-Z][a-z]+} !b{[a-z]<2>} !c{..} !d{ex[a-z]<0,42>} !e{.+}!f{!}',
       mode: 'REmatchQuery',
+      placeholder: 'Enter your query...',
       theme: 'material-darker',
       lineNumbers: false,
       scrollbarStyle: null,
@@ -87,6 +90,7 @@ class MainInterface extends Component {
     let textEditor = CodeMirror(document.getElementById('textEditor'), {
       value: 'This is an example text!',
       mode: 'text/plain',
+      placeholder: 'Enter your text...',
       theme: 'material-darker',
       lineNumbers: true,
       scrollbarStyle: 'native',
@@ -160,9 +164,6 @@ class MainInterface extends Component {
         case 'MATCHES':
           this.setState((prevState) => ({ matches: [...prevState.matches, ...m.data.payload] }));
           break;
-        case 'LAST_MATCHES':
-          this.setState((prevState) => ({ matches: [...prevState.matches, ...m.data.payload] }));
-          break;
         case 'ERROR':
           console.log('ERROR:', m.data.payload);
           worker.terminate();
@@ -177,79 +178,70 @@ class MainInterface extends Component {
 
   render() {
     return (
-      <Container maxWidth="lg" className="mainContainer">
+      <Container maxWidth="md" className="mainContainer">
         <Backdrop
+          className="backdrop"
           open={this.state.uploadingFile}
-          style={{ zIndex: 6000, display: 'flex', flexDirection: 'column' }}
         >
           <CircularProgress color="primary" size="3rem" />
-          <h2 style={{ color: '#fff' }}>Loading ({this.state.fileProgress}%)</h2>
+          <Typography component="div" variant="h5" className="loading">
+            Loading ({this.state.fileProgress}%)
+          </Typography>
         </Backdrop>
         <Paper elevation={5} className="mainPaper">
 
-          <Grid container>
-            {/* Expression */}
-            <Grid item xs={12}>
-              <SectionTitle title="Expression" />
-            </Grid>
+          {/* Expression */}
 
-            <Grid item sm={10} xs={8}>
-              <div id="queryEditor" className="queryEditor"></div>
-            </Grid>
+          {/*<SectionTitle title="Expression" />*/}
+          <div className="sectionTitle">
+            Query
+          </div>
 
-            <Grid item sm={2} xs={4}>
-              <Tooltip title="Run query">
-                <Button
-                  color="primary"
-                  variant="text"
-                  startIcon={<PlayArrow />}
-                  onClick={this.runWorker}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: 0,
-                  }}
-                  disableTouchRipple
-                >
-                  Run
+          <div className="queryContainer">
+            <div id="queryEditor" className="queryEditor"></div>
+
+
+            <Button
+              className="queryButton"
+              color="primary"
+              startIcon={<PlayArrow />}
+              onClick={this.runWorker}
+            >
+              Run
+            </Button>
+
+          </div>
+          <Divider variant="middle" />
+          {/* EDITOR */}
+          <div className="sectionTitle">
+            Text
+          </div>
+          <div id="textEditor"></div>
+          {/*<input accept="*" id="fileInput" type="file" style={{ display: 'none' }} onChange={this.handleFile} />
+            <label htmlFor="fileInput">
+              <Tooltip title="Upload a file">
+                <Button size="medium" variant="contained" component="span" color="primary" className="uploadButton">
+                  <Publish />
                 </Button>
               </Tooltip>
-            </Grid>
+            </label>
+          */}
 
-            {/* EDITOR */}
-            <Grid item xs={12}>
-              <SectionTitle title="Text" />
-            </Grid>
+          <Divider variant="middle" />
+          <div className="sectionTitle">
+            Matches
+          </div>
 
-            <Grid item xs={12}>
-              <div id="textEditor">
-                <input accept="*" id="fileInput" type="file" style={{ display: 'none' }} onChange={this.handleFile} />
-                <label htmlFor="fileInput">
-                  <Tooltip title="Upload a file">
-                    <Button size="medium" variant="contained" component="span" color="primary" className="uploadButton">
-                      <Publish />
-                    </Button>
-                  </Tooltip>
-                </label>
-              </div>
-            </Grid>
+          <ResultsTable
+            matches={this.state.matches}
+            schema={this.state.schema}
+            textEditor={this.state.textEditor}
+            addMarks={this.addMarks}
+            clearMarks={this.clearMarks}
+          />
 
-            {/* RESULTS */}
 
-            <Grid item xs={12}>
-              <SectionTitle title="Matches" />
-            </Grid>
 
-            <Grid item xs={12}>
-              <ResultsTable
-                matches={this.state.matches}
-                schema={this.state.schema}
-                textEditor={this.state.textEditor}
-                addMarks={this.addMarks}
-                clearMarks={this.clearMarks}
-              />
-            </Grid>
-          </Grid>
         </Paper>
       </Container>
     )
