@@ -8,11 +8,15 @@ Es importante mencionar que las expresiones regulares deben estar entre `.*` par
     
     .*correo@!dominio{gmail}.cl.*
 
-## __Instalación (En un futuro)__
+## __Uso__
 
-Puedes instalar la libreria desde [PyPI](http://link.com):
+Para usar esta interfaz primero se debe compilar el código de fuente de la carpeta [REmatchEngine](../REmatchEngine) utilizando SWIG/Python (revisar el README en esa carpeta para las instrucciones de compilación). 
 
-    pip install REmatch
+Suponiendo que ya se cuenta con `rematch.py` y `_rematchswiglib.so`, se deben colocar esos archivos junto a [`REmatch.py`](REmatch.py) en la misma carpeta. Luego de eso, se puede importar la interfaz creando un archivo `.py` y agregando:
+```python
+import REmatch as re
+
+```
 
 ## __Historial de versiones__
 
