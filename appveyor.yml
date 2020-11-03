@@ -28,6 +28,6 @@ build_script:
       md build
       cd build
 
-      cmake -DSWIG=1 -DBOOST_ROOT="C:\Libraries\boost_1_73_0" ..
+      cmake -DSWIG=true -DBOOST_ROOT="C:\Libraries\boost_1_73_0" ..
 
       REM "%PYTHON%\\python.exe" setup.py bdist_wheel
