@@ -1,0 +1,27 @@
+branches:
+  only:
+    - wheel
+
+environment:
+  global:
+    SWIG_VERSION: "4.0.2"
+  matrix:
+  - PYTHON: '"C:/Python35-x64"'
+  - PYTHON: '"C:/Python36-x64"'
+  - PYTHON: '"C:/Python37-x64"'
+  - PYTHON: '"C:/Python38-x64"'
+build:
+  verbosity: minimal
+
+build_script:
+  - cmd: |
+      "%PYTHON%/python.exe" -m pip install --upgrade pip
+      "%PYTHON%/python.exe" -m pip install --upgrade setuptools wheel numpy
+
+      7z x appveyor/swigwin-%SWIG_VERSION%.zip
+      SET PATH=swigwin-%SWIG_VERSION%;%PATH%
+
+      "%PYTHON%/python.exe" setup.py build
+
+      "%PYTHON%/python.exe" setup.py bdist_wheel
+

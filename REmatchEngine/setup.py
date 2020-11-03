@@ -31,7 +31,7 @@ for dirpath, dirnames, filenames in os.walk(os.path.join(root_dir, 'src')):
     srcs.extend([os.path.join(dirpath, f) for f in filenames if f.endswith('.cpp') ])
 
 
-filter_rgx = re.compile(r".*(main|benchmark)/[\w\-]*\.cpp|.*rematch_wrapper.cpp")
+filter_rgx = re.compile(r".*(main|benchmark)/[\w\-]*\.cpp|.*rematch_wrap.cpp")
 
 srcs = [p for p in srcs if not filter_rgx.fullmatch(p)]
 
