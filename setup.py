@@ -76,7 +76,7 @@ setup(
     url='https://github.com/REmatchChile/REmatch',
     author='Nicolás A. Van Sint Jan',
     author_email='nicovsj@uc.cl',
-    ext_modules=[rematch_module],
+    # ext_modules=[rematch_module],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
@@ -89,5 +89,5 @@ setup(
     package_data={'rematch': ['_rematch*']},
     cmdclass={'build_py': CustomBuildPy},
     python_requires='>=3.6, <4',
-    # distclass=BinaryDistribution,
+    distclass=BinaryDistribution,
 )

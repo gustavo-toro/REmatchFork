@@ -35,7 +35,7 @@ class Match:
         for var in self.variables:
             matches.append(self.match_object.group(var))
         return tuple(matches)
-    
+
     def groupdict(self):
         matches = dict()
         for var in self.variables:
@@ -67,20 +67,21 @@ class Regex:
     def find(self, string):
         return Match(self.RegEx.find(string))
 
-    def findall(self, string): # Retornar objetos match 
+    def findall(self, string): # Retornar objetos match
         matches = list()
+        it = self.RegEx.findIter(string)
         while True:
-            match = self.RegEx.findIter(string)
+            match = it.next()
             if match:
-                matches.append(Match(match)) 
+                matches.append(Match(match))
             else:
                 break
         return matches
 
     def finditer(self, string):
-        matches = list()
+        it = self.RegEx.findIter(string)
         while True:
-            match = self.RegEx.findIter(string) #yield
+            match = it.next() #yield
             if not match:
                 break
             else:
