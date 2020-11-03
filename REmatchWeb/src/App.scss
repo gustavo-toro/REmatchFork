@@ -21,7 +21,7 @@ $darker: #212121;
 /* MainInterface */
 $colors: #03DAC6,
 #FCE938,
-hsl(354, 86%, 60%),
+hsl(354, 100%, 72%),
 hsl(234, 96%, 67%),
 #20BA56,
 #f5a0ff,
@@ -33,33 +33,30 @@ hsl(234, 96%, 67%),
   .m#{$i} {
     background-color: nth($colors, $i+1) !important;
     color: black !important;
-    padding: .15rem .1rem;
-    border-bottom: .5rem solid nth($colors, $i+1);
-    border-top: .5rem solid nth($colors, $i+1);
-
+    border-top: 4px solid nth($colors, $i+1);
+    border-bottom: 4px solid nth($colors, $i+1);
     @for $j from $i+1 to length($colors) {
       &.m#{$j} {
-        border-bottom: .5rem solid nth($colors, $i+1);
-
+        border-top: 4px solid nth($colors, $i+1);
+        border-bottom: 4px solid nth($colors, $i+1);
         @for $k from $j+1 to length($colors) {
           &.m#{$k} {
-            border-bottom: .5rem solid nth($colors, $i+1);
-            border-top: .5rem solid nth($colors, $j+1);
+            border-top: 4px solid nth($colors, $j+1);
+            border-bottom: 4px solid nth($colors, $i+1);
           }
         }
       }
     }
   }
 
-  .th#{$i} {
-    background-color: nth($colors, $i+1) !important;
-    color: black !important;
-    font-weight: bolder !important;
-  }
-
   .cm-m#{$i} {
     color: nth($colors, $i+1) !important;
   }
+}
+
+.svgIcon {
+  width: 24px;
+  height: 24px;
 }
 
 .invisible {

@@ -6,7 +6,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 
 import GetApp from '@material-ui/icons/GetApp';
 
-const ResultsTable = ({
+const MatchesTable = ({
   matches,
   schema,
   textEditor,
@@ -39,11 +39,14 @@ const ResultsTable = ({
   }
 
   const exportCSV = () => {
-    let curr, CSVString = schema.join(',') + '\n';
+    let curr;
+    let CSVString = schema.join(',') + '\n';
+    let text;
     matches.forEach((match) => {
       curr = []
       match.forEach((span) => {
-        curr.push(textEditor.getRange(textEditor.posFromIndex(span[0]), textEditor.posFromIndex(span[1])));
+        text = textEditor.getRange(textEditor.posFromIndex(span[0]), textEditor.posFromIndex(span[1]))
+        curr.push(text.replaceAll(/\r?\n/g, '\\n'));
       })
       CSVString += curr.join(',') + '\n';
     })
@@ -58,11 +61,14 @@ const ResultsTable = ({
   }, [matches]);
 
   const exportJSON = () => {
-    let curr, JSONString = '[\n';
+    let curr;
+    let JSONString = '[\n';
+    let text;
     matches.forEach((match) => {
       curr = []
       match.forEach((span, idx) => {
-        curr.push(`\t\t'${schema[idx]}': '${textEditor.getRange(textEditor.posFromIndex(span[0]), textEditor.posFromIndex(span[1]))}'`);
+        text = `\t\t'${schema[idx]}': '${textEditor.getRange(textEditor.posFromIndex(span[0]), textEditor.posFromIndex(span[1]))}'`;
+        curr.push(text.replaceAll(/\r?\n/g, '\\n'));
       });
       JSONString += '\t{\n'
       JSONString += curr.join(',\n')
@@ -86,9 +92,9 @@ const ResultsTable = ({
         className="backdrop">
         <Button
           color="primary"
-          style={{ fontWeight: 'bold' }}
+          
           startIcon={
-            <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24">
+            <svg className="svgIcon" viewBox="0 0 24 24">
               <path fill="currentColor" d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2M18 20H6V4H13V9H18V20M10 19L12 15H9V10H15V15L13 19H10" />
             </svg>
           }
@@ -100,10 +106,9 @@ const ResultsTable = ({
         </Button>
         <Button
           color="secondary"
-          style={{ fontWeight: 'bold' }}
           startIcon={
             // src=https://materialdesignicons.com/
-            <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24">
+            <svg className="svgIcon" viewBox="0 0 24 24">
               <path fill="currentColor" d="M5,3H7V5H5V  10A2,2 0 0,1 3,12A2,2 0 0,1 5,14V19H7V21H5C3.93,20.73 3,20.1 3,19V15A2,2 0 0,0 1,13H0V11H1A2,2 0 0,0 3,9V5A2,2 0 0,1 5,3M19,3A2,2 0 0,1 21,5V9A2,2 0 0,0 23,11H24V13H23A2,2 0 0,0 21,15V19A2,2 0 0,1 19,21H17V19H19V14A2,2 0 0,1 21,12A2,2 0 0,1 19,10V5H17V3H19M12,15A1,1 0 0,1 13,16A1,1 0 0,1 12,17A1,1 0 0,1 11,16A1,1 0 0,1 12,15M8,15A1,1 0 0,1 9,16A1,1 0 0,1 8,17A1,1 0 0,1 7,16A1,1 0 0,1 8,15M16,15A1,1 0 0,1 17,16A1,1 0 0,1 16,17A1,1 0 0,1 15,16A1,1 0 0,1 16,15Z" />
             </svg>
           }
@@ -163,4 +168,4 @@ const ResultsTable = ({
   )
 }
 
-export default ResultsTable;
+export default MatchesTable;

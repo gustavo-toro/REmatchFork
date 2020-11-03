@@ -11,7 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import { PlayArrow, Publish } from '@material-ui/icons';
 
 /* Project Components */
-import ResultsTable from './ResultsTable';
+import MatchesTable from './MatchesTable';
 
 /* CodeMirror */
 import CodeMirror from 'codemirror';
@@ -52,7 +52,7 @@ CodeMirror.defineSimpleMode('REmatchQuery', {
 
 
 /* MAIN INTERFACE */
-class MainInterface extends Component {
+class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -78,13 +78,17 @@ class MainInterface extends Component {
         'Enter': this.runWorker,
       }
     });
-    queryEditor.on('beforeChange', (instance, change) => {
-      if (!["undo", "redo"].includes(change.origin)) {
-        let line = change.text.join("").replace(/\n/g, "");
+
+    queryEditor.on('beforeChange', (_, change) => {
+      if (!['undo', 'redo'].includes(change.origin)) {
+        let line = change.text.join("").replace(/\n/g, '');
         change.update(change.from, change.to, [line]);
       }
       return true;
     });
+
+    queryEditor.on('change', () => {this.clearMarks()});
+    
     let textEditor = CodeMirror(document.getElementById('textEditor'), {
       value: 'This is an example text!',
       mode: 'text/plain',
@@ -98,6 +102,9 @@ class MainInterface extends Component {
       undoDepth: 100,
       viewportMargin: 15,
     });
+
+    textEditor.on('change', () => {this.clearMarks()});
+    
     this.setState({
       queryEditor,
       textEditor,
@@ -227,7 +234,7 @@ class MainInterface extends Component {
           <div className="sectionTitle">
             Matches
           </div>
-          <ResultsTable
+          <MatchesTable
             matches={this.state.matches}
             schema={this.state.schema}
             textEditor={this.state.textEditor}
@@ -243,4 +250,4 @@ class MainInterface extends Component {
   }
 }
 
-export default MainInterface;
+export default Home;

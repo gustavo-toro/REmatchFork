@@ -98,6 +98,7 @@ class LiteViewer extends Component {
   }
 
   runRegEx() {
+    // arreglar
     this.setState({ regexMatches: this.state.textEditor.getValue().match(new RegExp(this.state.regex)) });
   }
 
