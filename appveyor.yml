@@ -21,7 +21,12 @@ build_script:
       7z x .\\appveyor\\swigwin-%SWIG_VERSION%.zip
       SET PATH=swigwin-%SWIG_VERSION%;%PATH%
 
-      "%PYTHON%\\python.exe" setup.py build
+      # "%PYTHON%\\python.exe" setup.py build
 
-      "%PYTHON%\\python.exe" setup.py bdist_wheel
+      md build
+      cd build
+
+      cmake -DSWIG=1 ..
+
+      # "%PYTHON%\\python.exe" setup.py bdist_wheel
 
