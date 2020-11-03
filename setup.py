@@ -9,6 +9,7 @@ from setuptools import setup, find_packages, Distribution
 from setuptools.command.build_py import build_py
 from distutils.file_util import copy_file
 import re
+import codecs
 import os.path
 import os
 from sysconfig import get_platform
@@ -49,7 +50,7 @@ rematch_module = Extension('_rematch',
                             )
 
 # Get the long description from the README file
-long_description = open(os.path.join(root_dir,'README.md')).read()
+long_description = codecs.open(os.path.join(root_dir,'README.md'), encoding='utf8').read()
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
