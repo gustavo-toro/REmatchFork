@@ -16,9 +16,9 @@ build:
 build_script:
   - cmd: |
       "%PYTHON%\\python.exe" -m pip install --upgrade pip
-      "%PYTHON%\\python.exe" -m pip install --upgrade setuptools wheel numpy
+      "%PYTHON%\\python.exe" -m pip install --upgrade setuptools wheel
 
-      7z x appveyor\\swigwin-%SWIG_VERSION%.zip
+      7z x .\\appveyor\\swigwin-%SWIG_VERSION%.zip
       SET PATH=swigwin-%SWIG_VERSION%;%PATH%
 
       "%PYTHON%\\python.exe" setup.py build
