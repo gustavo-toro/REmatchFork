@@ -3,9 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+env_test/
+
 # C extensions
 *.so
-
 # C++ extensions
 # Compiled Object files
 *.slo
@@ -32,6 +33,8 @@ exp/re2/.vscode
 exp/syn
 exp/doc.txt
 exp/*.rgx
+
+.vscode/settings.json
 
 # Distribution / packaging
 .Python

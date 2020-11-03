@@ -63,7 +63,6 @@ class Match {
 class EvaluatorIter {
  public:
   Match_ptr next();
-  Evaluator() = default;
 }; // end class Evaluator
 
 class RegEx {
