@@ -18,15 +18,16 @@ build_script:
       "%PYTHON%\\python.exe" -m pip install --upgrade pip
       "%PYTHON%\\python.exe" -m pip install --upgrade setuptools wheel
 
+      ECHO %PYTHON%
+
       7z x .\\appveyor\\swigwin-%SWIG_VERSION%.zip
       SET PATH=swigwin-%SWIG_VERSION%;%PATH%
 
-      # "%PYTHON%\\python.exe" setup.py build
+      REM "%PYTHON%\\python.exe" setup.py build
 
       md build
       cd build
 
-      cmake -DSWIG=1 ..
+      cmake -DSWIG=1 -DBOOST_ROOT="C:\Libraries\boost_1_73_0" ..
 
-      # "%PYTHON%\\python.exe" setup.py bdist_wheel
-
+      REM "%PYTHON%\\python.exe" setup.py bdist_wheel
