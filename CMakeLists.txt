@@ -30,7 +30,11 @@ set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 
 if(SWIG)
 	find_package(SWIG 4.0 COMPONENTS python)
-	find_package(Python3 REQUIRED COMPONENTS Development)
+	IF(PYTHON_VERSION)
+		find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Development)
+	else()
+		find_package(Python3 REQUIRED COMPONENTS Development)
+	endif()
 	include(${SWIG_USE_FILE})
 	# Add support for .swg file
 	set(SWIG_SOURCE_FILE_EXTENSIONS ".i" ".swg")
