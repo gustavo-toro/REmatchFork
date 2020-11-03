@@ -1,5 +1,4 @@
 import sys
-sys.path.insert(0, "../REmatchEngine/bin/SWIG")
 import rematch
 
 class Match:
