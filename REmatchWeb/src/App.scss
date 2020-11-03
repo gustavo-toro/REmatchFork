@@ -15,12 +15,13 @@ code {
     monospace;
 }
 
+$dark: #868686;
 $darker: #212121;
 
 /* MainInterface */
 $colors: #03DAC6,
 #FCE938,
-hsl(354, 86%, 60%),
+hsl(354, 100%, 72%),
 hsl(234, 96%, 67%),
 #20BA56,
 #f5a0ff,
@@ -32,28 +33,20 @@ hsl(234, 96%, 67%),
   .m#{$i} {
     background-color: nth($colors, $i+1) !important;
     color: black !important;
-    padding: .15rem .1rem;
-    border-bottom: .5rem solid nth($colors, $i+1);
-    border-top: .5rem solid nth($colors, $i+1);
-
+    border-top: 4px solid nth($colors, $i+1);
+    border-bottom: 4px solid nth($colors, $i+1);
     @for $j from $i+1 to length($colors) {
       &.m#{$j} {
-        border-bottom: .5rem solid nth($colors, $i+1);
-
+        border-top: 4px solid nth($colors, $i+1);
+        border-bottom: 4px solid nth($colors, $i+1);
         @for $k from $j+1 to length($colors) {
           &.m#{$k} {
-            border-bottom: .5rem solid nth($colors, $i+1);
-            border-top: .5rem solid nth($colors, $j+1);
+            border-top: 4px solid nth($colors, $j+1);
+            border-bottom: 4px solid nth($colors, $i+1);
           }
         }
       }
     }
-  }
-
-  .th#{$i} {
-    background-color: nth($colors, $i+1) !important;
-    color: black !important;
-    font-weight: bolder !important;
   }
 
   .cm-m#{$i} {
@@ -61,68 +54,148 @@ hsl(234, 96%, 67%),
   }
 }
 
+.svgIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.invisible {
+  display: none;
+}
+
+.CodeMirror-scrollbar-filler {
+  background-color: #212121 !important;
+}
+
+.CodeMirror pre.CodeMirror-placeholder {
+  color: #545454;
+}
+
 .mainContainer {
   padding: 1.5*64px 0;
 }
 
+.backdrop {
+  z-index: 6000 !important;
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+
+  .loading {
+    margin-top: 1rem;
+  }
+}
+
 .mainPaper {
   overflow: hidden;
-}
+  font-size: 14px;
 
-.sectionTitle {
-  color: black;
-  background-color: nth($colors, 1);
-  padding: .5rem 0 .5rem 1rem;
-}
+  .CodeMirror {
+    font-size: 14px;
+    text-align: justify;
+  }
 
-.CodeMirror {
-  font-size: 22px;
+  .sectionTitle {
+    padding: 1rem 1rem 0rem 1rem;
+    font-family: consolas;
+    font-size: 12px;
+    color: $dark;
+  }
 
-  .queryEditor & {
-    overflow: hidden !important;
+  .queryContainer {
+    padding: 0;
+    display: flex;
     height: auto;
-    padding: .5rem 0;
-    margin-left: .5rem;
-    /*
-    pre::after,
-    pre::before {
-      content: ".*";
-      color: #888888;
+
+    .queryEditor {
+      padding-left: 1rem;
+      flex: 1;
+      overflow: hidden;
+
+      .CodeMirror {
+        height: auto;
+        padding: .5rem 0;
+      }
     }
-    */
+    .queryButton {
+      padding: .5rem 2.5rem;
+      border-radius: 0;
+    }
   }
 
-  #textEditor & {
-    padding: .5rem 0;
-    height: 300px;
+  #textEditor {
+    height: 250px;
+
+    .CodeMirror {
+      height: 250px;
+      padding: .5rem 1rem;
+    }
   }
-}
 
-#textEditor {
-  height: 300px;
-  position: relative;
-}
+  .headContainer {
+    padding: 0 1rem;
 
-.tableContainer {
-  height: 300px;
-}
+    .matchesRow {
+      display: flex;
+      align-items: center;
 
-.uploadButton {
-  border-radius: 50% !important;
-  padding: 1rem !important;
-  width: 3rem !important;
-  height: 3rem !important;
-  min-width: unset !important;
-  min-height: unset !important;
-  position: absolute !important;
-  z-index: 5000;
-  bottom: 2rem;
-  right: 2rem;
+      .matchesItem {
+        padding: .5rem;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .matchesContainer {
+    padding: 0 1rem;
+    height: 250px;
+    overflow-y: scroll;
+
+    .matchesRow {
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, .2);
+        cursor: pointer;
+      }
+
+      .matchesItem {
+        padding: 0 .5rem;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .paginationContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 0;
+  }
+  .fullButton {
+    border-radius: 0;
+    width: 100%;
+    padding: 1rem;
+  }
 }
 
 /* AboutInterface */
 .appBar {
   background-color: $darker !important;
+  .logo {
+  display: block;
+  height: 36px;
+
+  &:hover {
+    filter: drop-shadow(0 0 2px #03DAC6);
+  }
+}
   .button {
     text-decoration: none;
     color: nth($colors, 1);
@@ -130,39 +203,47 @@ hsl(234, 96%, 67%),
   }
 }
 
-.logo {
-  display: block;
-  height: 36px;
-}
-
 .paperLite {
   transition: all .5s ease-in-out;
   font-size: 14px;
   width: 90%;
   margin: 2rem auto;
-  .liteTab {
-    text-transform: none;
-    font-family: monospace;
-  }
-  .queryContainer {
-    display: flex;
-    padding: 0 1rem;
-  }
+
   .CodeMirror {
     font-size: 14px;
     text-align: justify;
   }
-  .queryEditor {
-    flex: 1;
+
+  .liteTab {
+    text-transform: none;
+    font-family: monospace;
   }
+
+  .queryContainer {
+    display: flex;
+    padding: 0 1rem;
+
+    .queryEditor {
+      flex: 1;
+      overflow: hidden;
+
+      .CodeMirror {
+        height: auto;
+        padding: .5rem 0;
+      }
+    }
+  }
+
   .textEditor {
+    height: 250px;
+
     .CodeMirror {
       height: 250px;
       padding: .5rem 1rem;
     }
-    height: 250px;
   }
-  .results {
+
+  .matches {
     padding: 1rem;
     height: 150px;
     overflow-y: scroll;
@@ -179,11 +260,11 @@ hsl(234, 96%, 67%),
       table-layout: fixed;
       font-family: monospace;
 
-      .resultRow {
+      .matchesRow {
         display: flex;
         align-items: center;
 
-        .resultItem {
+        .matchesItem {
           flex: 1;
           overflow: hidden;
           white-space: nowrap;

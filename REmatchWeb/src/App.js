@@ -1,3 +1,15 @@
+/*
+
+TODO:
+* ABOUT ****
+
+* SEND A FINISHED MESSAGE FROM WORKER FOR ENABLING/DISABLING INPUT
+  ALSO DISPLAY PROCESSING OR SOMETHING TIEMPO
+* MESSAGE OF ERROR IF OOM
+* HANDLE EDIT QUERY/TEXT ** Matches (old)
+* SIDE DRAWER X
+*/
+
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -9,8 +21,8 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Navbar from './components/Navbar';
-import AboutInterface from './components/AboutInterface';
-import MainInterface from './components/Maininterface';
+import About from './components/About';
+import Home from './components/Home';
 import 'fontsource-roboto';
 
 /* MATERIAL UI DARK THEME */
@@ -38,10 +50,10 @@ const App = () => {
         <Navbar/>
         <Switch>
           <Route path="/about">
-            <AboutInterface />
+            <About />
           </Route>
           <Route path="/">
-            <MainInterface />
+            <Home />
           </Route>
         </Switch>
       </Router>
