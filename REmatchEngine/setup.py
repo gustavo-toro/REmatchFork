@@ -55,7 +55,7 @@ long_description = open(os.path.join(root_dir,'README.md')).read()
 # Fields marked as "Optional" may be commented out.
 
 class BinaryDistribution(Distribution):
-    def has_ext_modules(foo):
+    def has_ext_modules(self):
         return True
 
 class CustomBuildPy(build_py):
