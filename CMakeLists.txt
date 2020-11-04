@@ -38,7 +38,7 @@ if(SWIG)
 	include(${SWIG_USE_FILE})
 	# Add support for .swg file
 	set(SWIG_SOURCE_FILE_EXTENSIONS ".i" ".swg")
-	set(CMAKE_SWIG_OUTDIR "${PROJECT_SOURCE_DIR}/python/packages/rematch")
+	set(CMAKE_SWIG_OUTDIR "${PROJECT_SOURCE_DIR}/python/packages/rematchpy")
 endif()
 
 # add_definitions(-DNOPT_CROSSPROD)

@@ -62,13 +62,13 @@ class BinaryDistribution(Distribution):
 class CustomBuildPy(build_py):
     def run(self):
         self.run_command("build_ext")
-        copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
-                  os.path.join(root_dir, 'python/packages/rematch'))
+        # copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
+        #           os.path.join(root_dir, 'python/packages/rematchpy'))
         return super().run()
 
 setup(
     name='rematchpy',
-    version='0.0.1',
+    version='0.0.2',
     description='An information extraction focused regex library using '\
                 'constant-delay algorithms.' ,
     long_description=long_description,
@@ -85,8 +85,8 @@ setup(
     keywords='regex',
     packages=find_packages(where='python/packages'),
     package_dir={'':'python/packages',
-                 'rematch': 'python/packages/rematch'},
-    package_data={'rematch': ['_rematch*']},
+                 'rematchpy': 'python/packages/rematchpy'},
+    package_data={'rematchpy': ['_rematch*']},
     cmdclass={'build_py': CustomBuildPy},
     python_requires='>=3.6, <4',
     distclass=BinaryDistribution,

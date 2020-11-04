@@ -3,31 +3,58 @@ branches:
     - wheel
 
 environment:
+  USERNAME:
+    secure: rAR843Qwyh38SI4W0/DcjA==
+  PASSWORD:
+    secure: PG9eTxcUvb/zoFOMEbn/HA==
   global:
     SWIG_VERSION: "4.0.2"
   matrix:
-  - PYTHON: '"C:\\Python35-x64"'
-  - PYTHON: '"C:\\Python36-x64"'
-  - PYTHON: '"C:\\Python37-x64"'
-  - PYTHON: '"C:\\Python38-x64"'
+  - PYTHON: "C:/Python35-x64"
+    PYTHON_VERSION: "3.5"
+  - PYTHON: "C:/Python36-x64"
+    PYTHON_VERSION: "3.6"
+  - PYTHON: "C:/Python37-x64"
+    PYTHON_VERSION: "3.7"
+  - PYTHON: "C:/Python38-x64"
+    PYTHON_VERSION: "3.8"
+  - PYTHON: "C:/Python39-x64"
+    PYTHON_VERSION: "3.9"
 build:
   verbosity: minimal
 
 build_script:
   - cmd: |
-      "%PYTHON%\\python.exe" -m pip install --upgrade pip
-      "%PYTHON%\\python.exe" -m pip install --upgrade setuptools wheel
+      "%PYTHON%/python.exe" -m pip install --upgrade pip
+      "%PYTHON%/python.exe" -m pip install --upgrade setuptools wheel
 
       ECHO %PYTHON%
 
       7z x .\\appveyor\\swigwin-%SWIG_VERSION%.zip
       SET PATH=swigwin-%SWIG_VERSION%;%PATH%
 
-      REM "%PYTHON%\\python.exe" setup.py build
+      REM "%PYTHON%\python.exe" setup.py build
+
+      swig -swiglib
 
       md build
       cd build
 
-      cmake -DSWIG=true -DBOOST_ROOT="C:\Libraries\boost_1_73_0" ..
+      cmake -DSWIG=true -DPYTHON_VERSION="%PYTHON_VERSION%" -DBOOST_ROOT="C:\Libraries\boost_1_73_0" -DSWIG_DIR="C:\projects\rematch\swigwin-4.0.2\Lib" -DSWIG_EXECUTABLE="C:\projects\rematch\swigwin-4.0.2\swig.exe" ..
+      cmake --build . --config Release
 
-      REM "%PYTHON%\\python.exe" setup.py bdist_wheel
+      cd ..
+
+      copy build\src\Release\_rematch.pyd python\packages\rematch
+
+      "%PYTHON%\\python.exe" setup.py bdist_wheel
+
+deploy_script:
+  - ps: |
+      if($env:APPVEYOR_REPO_TAG -eq 'true') {
+        Write-Output ("Deploying " + $env:APPVEYOR_REPO_TAG_NAME + " to PyPI...")
+        &"${Env:PYTHON}/python.exe" -m pip install twine
+        &"${Env:PYTHON}/python.exe" -m twine upload -u ${Env:USERNAME} -p ${Env:PASSWORD} --repository testpypi dist/*.whl
+      } else {
+        Write-Output "No tag for deployment"
+      }

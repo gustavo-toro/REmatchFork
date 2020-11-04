@@ -1,8 +1,5 @@
-import sys
 import unittest
-sys.path.insert(0, "../")
-import REmatch as re
-
+import rematchpy as re
 
 class Test(unittest.TestCase):
 
@@ -15,17 +12,17 @@ class Test(unittest.TestCase):
         self.match_obj = self.regex_obj.find(string)
 
     #MatchObject tests
-    
+
     def test_start(self):
         self.assertEqual(self.match_obj.start('x'), 0)
         self.assertEqual(self.match_obj.start('y'), 4)
         self.assertEqual(self.match_obj.start('z'), 8)
-    
+
     def test_end(self):
         self.assertEqual(self.match_obj.end('x'), 3)
         self.assertEqual(self.match_obj.end('y'), 7)
         self.assertEqual(self.match_obj.end('z'), 13)
-    
+
     def test_span(self):
         self.assertTupleEqual(self.match_obj.span('x'), (0, 3))
         self.assertTupleEqual(self.match_obj.span('y'), (4, 7))
@@ -38,14 +35,14 @@ class Test(unittest.TestCase):
         self.assertEqual(self.match_obj.group(2), 'two')
         self.assertEqual(self.match_obj.group('z'), 'three')
         self.assertEqual(self.match_obj.group(3), 'three')
-    
+
     def test_gruops(self): #Agregar el group(0) cuando esté definida la sintaxis
         self.assertTupleEqual(self.match_obj.groups(), ('x', 'y', 'z'))
-    
+
     def test_groupdict(self):
         self.assertDictEqual(self.match_obj.groupdict(), {'x': 'one', 'y': 'two', 'z': 'three'})
-    
-    
+
+
     #RegexObject tests
 
     def test_find(self):
@@ -60,7 +57,7 @@ class Test(unittest.TestCase):
         #self.assertEqual(match.group('x'), 'abyss')
         #self.assertTupleEqual(match.groups(), ('x'))
         #self.assertDictEqual(match.groupdict(), {'x': 'abyss'})
-    
+
     '''
     def test_findall(self):
         regex_obj = re.compile('.*!x{teen}.*')
@@ -77,7 +74,7 @@ class Test(unittest.TestCase):
             #self.assertEqual(match.group('x'), 'teen')
             #self.assertTupleEqual(match.groups(), ('x'))
             #self.assertDictEqual(match.groupdict(), {'x': 'teen'})
-    
+
     def test_finditer(self):
         regex_obj = re.compile('.*!x{teen}.*')
         matches_iterator = regex_obj.finditer('fifteen, sixteen, seventeen,...')
@@ -120,7 +117,7 @@ class Test(unittest.TestCase):
         self.assertEqual(match.group('x'), 'abyss')
         self.assertTupleEqual(match.groups(), ('x'))
         self.assertDictEqual(match.groupdict(), {'x': 'abyss'})
-    
+
 
     def test_fullmatch(self):
         regex_obj = re.compile('.*!x{a...s}.*')
