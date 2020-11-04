@@ -62,14 +62,17 @@ class Match {
 
 class EvaluatorIter {
  public:
-  Match_ptr next();
+  Match next();
+  bool hasNext();
+
+  EvaluatorIter() = default;
 }; // end class Evaluator
 
 class RegEx {
  public:
   RegEx(std::string regex, RegExOptions opt = RegExOptions());
   ~RegEx();
-  Match_ptr find(const std::string &text);
+  Match find(const std::string &text);
   EvaluatorIter findIter(const std::string &text);
   std::vector<std::string> varScheme();
 }; // end class Regex

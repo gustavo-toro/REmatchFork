@@ -140,8 +140,8 @@ void check_spanners(rematch::RegEx &rgx, std::string document_file, std::string 
     std::set<std::set<std::string>> real_results;
     std::unique_ptr<rematch::Match> match_ptr;
     auto finditer = rgx.findIter(doc);
-    while(match_ptr = finditer.next()) {
-        std::string output = match_ptr->print();
+    while(finditer.hasNext()) {
+        std::string output = finditer.next().print();
         real_results.insert(parse_set(strip(output)));
     }
 

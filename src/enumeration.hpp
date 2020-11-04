@@ -32,7 +32,7 @@ class Enumerator {
     Enumerator(std::shared_ptr<RegEx> rgx, std::string &doc);
 
     // Get the next match according to the current state of the depth stack.
-    Match_ptr next();
+    Match next();
 
     // Returns if there is a next match according to the current state of
     // the depth stack.

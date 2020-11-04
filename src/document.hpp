@@ -33,37 +33,55 @@ class StrDocument : public Document {
       : data_(nullptr), size_(0), current_(0) {}
 
   StrDocument(const std::string &str)
-      : data_(str.data()), size_(str.size()), current_(str.data()) {}
+      : data_(str), size_(str.size()), current_(0) {
+        // std::cout << "[StrDoc] Check stored data:";
+        // for(size_t i = 0; i < size_; i++) {
+        //   std::cout << "'" << data_[i] << "' ";
+        // }
+        // std::cout << std::endl;
+      }
 
   StrDocument(const char* str)
-      : data_(str), size_(str == nullptr ? 0 : strlen(str)), current_(str) {}
+      : data_(str), size_(str == nullptr ? 0 : strlen(str)), current_(0) {}
 
-	virtual ~StrDocument() = default;
+  virtual ~StrDocument() = default;
 
-  Document::const_iterator begin() const {return data_;}
-  Document::const_iterator end() const {return data_ + size_;}
+  Document::const_iterator begin() const {return &data_[0];}
+  Document::const_iterator end() const {return &data_[0] + size_;}
 
   virtual Document::sz_t size() const {return size_;}
 
-  virtual void get(Document::ref c) {c = *current_++;}
+  virtual void get(Document::ref c) {
+    // std::cout << "[StrDoc] get() arg is '" << c << "'\n";
+    // std::cout << "[StrDoc] Check stored data:";
+    //   for(size_t i = 0; i < size_; i++) {
+    //     std::cout << "'" << data_[i] << "' ";
+    //   }
+    // std::cout << std::endl;
+    c = data_[current_];
+    // std::cout << "[StrDoc] Checking data_[current_]: '" << data_[current_] << "'\n";
+    // if(current_ < size_)
+      // std::cout << "[StrDoc] Checking next data_[current_]: '" << data_[current_+1] << "'\n";
+    current_++;
+  }
 
   virtual bool getline(std::string &str) {
-      if(current_ == end()) return false;
-      Document::const_ptr result = std::find(current_, data_ + size_, '\n');
-      std::memcpy(&str[0], current_, result - current_);
+      if(current_ == size_) return false;
+      Document::const_ptr result = std::find(&data_[current_], &data_[0] + size_, '\n');
+      std::memcpy(&str[0], &data_[current_], result - &data_[current_]);
       return true;
   }
 
-  virtual void reset() {current_ = data_;}
+  virtual void reset() {current_ = 0;}
 
   virtual std::string_view get_view(size_t pos, size_t endpos) {
-      return std::string_view(data_+pos, endpos-pos);
+      return std::string_view();
   }
 
  private:
-    Document::const_iterator data_;
+    const std::string data_;
     Document::sz_t size_;
-    Document::const_iterator current_;
+    Document::sz_t current_;
 
 }; // end class StrDocument
 

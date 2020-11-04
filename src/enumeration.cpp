@@ -25,24 +25,25 @@ void Enumerator::addNodeList(NodeList &startList) {
   }
 }
 
-Match_ptr Enumerator :: next() {
+Match Enumerator :: next() {
   while(!depth_stack_.empty()) {
     auto current = depth_stack_.back();
     Node* node = current.current_node;
 
     depth_stack_.pop_back();
 
+    // std::cout << "[Enum] DepthStack poped node state: ("
+    //           << rgx_->detManager().varFactory()->getVarUtil(node->S) << ','
+    //           << node->i << ")\n";
+
     if(node != current.end_node) {
+      // std::cout << "[Enum] Node wasn't end node.\n";
       depth_stack_.emplace_back(node->next, current.end_node);
     }
 
     if(node->isNodeEmpty()) {
       n_mappings_++;
-#ifndef SWIG
-      return std::make_unique<Match>(doc_, data_, rgx_->varScheme());
-#else
-      return new Match(&doc_, data_, rgx_->varScheme());
-#endif
+      return Match(doc_, data_, rgx_->varScheme());
     }
 
     if(node->start != nullptr) {

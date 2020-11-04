@@ -1,5 +1,5 @@
 import unittest
-import rematchpy as re
+from . import rematch as re
 
 class Test(unittest.TestCase):
 

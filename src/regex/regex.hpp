@@ -39,7 +39,7 @@ class RegEx {
   };
 
   // Calls the evaluator to get first
-  Match_ptr find(const std::string &text);
+  Match find(const std::string &text);
 
   EvaluatorIter findIter(const std::string &text);
   EvaluatorIter findIterFile(std::istream& is);

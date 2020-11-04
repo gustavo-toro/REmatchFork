@@ -65,28 +65,23 @@ class Regex:
         return rgx_opts
 
     def find(self, string):
-        return Match(self.RegEx.find(string))
+        try:
+            m = Match(next(self.RegEx.findIter(string)))
+        except StopIteration:
+            m = None
+        return m
 
     def findall(self, string): # Retornar objetos match
         matches = list()
         it = self.RegEx.findIter(string)
-        while True:
-            match = it.next()
-            if match:
-                matches.append(Match(match))
-            else:
-                break
+        while it.hasNext():
+            matches.append(Match(it.next()))
         return matches
 
     def finditer(self, string):
         it = self.RegEx.findIter(string)
-        while True:
-            match = it.next() #yield
-            if not match:
-                break
-            else:
-                yield match
-        # return match
+        while it.hasNext():
+            yield it.next() #yield
 
     def search(self, string):
         return self.find(string)

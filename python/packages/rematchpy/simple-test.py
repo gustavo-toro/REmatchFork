@@ -1,6 +1,6 @@
-import rematchpy.rematch as re
+import rematch as re
 
-regex = ".*!x{a}.*"
+regex = ".*!x{a+}.*"
 document = "aaaaaa"
 
 rgx = re.RegEx(regex)

@@ -26,7 +26,8 @@ class Evaluator {
     kAllFlags      = kEarlyOutput | kLineByLine
   };
 
-  Match_ptr next();
+  Match next();
+  bool hasNext();
 
   Evaluator(RegEx& rgx, std::istream& input, uint8_t eval_options=0);
   Evaluator(RegEx& rgx, const std::string& input, uint8_t eval_options=0);
@@ -35,10 +36,10 @@ class Evaluator {
 
   void init();
 
-  Match_ptr nextTT();
-  Match_ptr nextTF();
-  Match_ptr nextFT();
-  Match_ptr nextFF();
+  bool hasNextTT();
+  bool hasNextTF();
+  bool hasNextFT();
+  bool hasNextFF();
 
   void captureT(size_t i);
   void captureF(size_t i);
@@ -46,7 +47,7 @@ class Evaluator {
   void readingT(char a, size_t i);
   void readingF(char a, size_t i);
 
-  inline Match_ptr inlinedNext(bool early_output, bool line_by_line);
+  inline bool inlinedHasNext(bool early_output, bool line_by_line);
 
   inline void capture(size_t i, bool early_output);
   inline void reading(char a, size_t i, bool early_output);

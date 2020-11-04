@@ -9,7 +9,10 @@ RegEx::RegEx(std::string pattern, rematch::RegExOptions rgx_opts)
       dman_(pattern, rgx_opts.anchors()),
       raw_dman_(pattern, rgx_opts.anchors(), 1),
       flags_(parseFlags(rgx_opts)),
-      anchors_(rgx_opts.anchors()) {}
+      anchors_(rgx_opts.anchors()) {
+        // std::cout << "Regex pattern: \"" << pattern_ << "\"\n";
+        // std::cout << "Filter factory:\n" << dman_.filterFactory()->pprint() << "\n";
+      }
 
 // Explicitly declared here for correct use of unique_ptr later
 RegEx::~RegEx() {}
@@ -33,7 +36,7 @@ EvaluatorIter RegEx::findIterFile(std::istream &is) {
   return EvaluatorIter(eval);
 }
 
-Match_ptr RegEx::find(const std::string &text) {
+Match RegEx::find(const std::string &text) {
   auto eval = Evaluator(*this, text, flags_ & Evaluator::kEarlyOutput);
 
   return eval.next();

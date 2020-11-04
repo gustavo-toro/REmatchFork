@@ -59,7 +59,7 @@ class NodeList {
     void reset();
     void resetRefs();
     void resetAndAdd(Node*);
-    std::string pprint(VariableFactory *vf);
+    std::string pprint(std::shared_ptr<VariableFactory> vf);
 
     NodeList& operator=(const NodeList &nl);
 };

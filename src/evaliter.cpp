@@ -5,8 +5,15 @@
 
 namespace rematch {
 
-EvaluatorIter::EvaluatorIter(Evaluator* eval): eval_(eval) {}
+EvaluatorIter::EvaluatorIter(Evaluator* eval): eval_(eval) {
+}
 
-Match_ptr EvaluatorIter::next() {return eval_->next();}
+Match EvaluatorIter::next() {
+  return eval_->next();
+}
+
+bool EvaluatorIter::hasNext() {
+  return eval_->hasNext();
+}
 
 } // end namespace rematch

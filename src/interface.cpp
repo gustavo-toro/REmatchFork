@@ -53,36 +53,37 @@ void Interface::normalRun() {
 	RegExOptions rgx_opt;
 	rgx_opt.set_line_by_line(options_.line_by_line());
 	RegEx regex(pattern_, rgx_opt);
-	Match_ptr match_ptr;
 	if(!options_.line_by_line()) {
 		std::string doc(file2str(document_filename_));
 		if(options_.output_option() == NMAPPINGS) {
 			size_t noutputs = 0;
 			auto finditer = regex.findIter(doc);
-			while((match_ptr = finditer.next())) {
+			while(finditer.hasNext()) {
+				finditer.next();
 				noutputs++;
 			}
 			std::cout << noutputs << '\n';
 		}
 		else {
 			auto finditer = regex.findIter(doc);
-			while((match_ptr = finditer.next())) {
-				std::cout << *match_ptr << '\n';
+			while(finditer.hasNext()) {
+				std::cout << finditer.next() << '\n';
 			}
 		}
 	} else {
 		if(options_.output_option() == NMAPPINGS) {
 			size_t noutputs = 0;
 			auto finditer = regex.findIterFile(*document_stream_);
-			while((match_ptr = finditer.next())) {
+			while(finditer.hasNext()) {
+				finditer.next();
 				noutputs++;
 			}
 			std::cout << noutputs << '\n';
 		}
 		else {
 			auto finditer = regex.findIterFile(*document_stream_);
-			while((match_ptr = finditer.next())) {
-				std::cout << *match_ptr << '\n';
+			while(finditer.hasNext()) {
+				std::cout << finditer.next() << '\n';
 			}
 		}
 	}
@@ -108,7 +109,8 @@ void Interface::benchmarkRun() {
 	numOfSpans = 0;
 
 	auto finditer = regex.findIterFile(*document_stream_);
-	while((match_ptr = finditer.next())) {
+	while(finditer.hasNext()) {
+		finditer.next();
 		numOfSpans++;
 	}
 
@@ -127,7 +129,7 @@ void Interface::benchmarkRun() {
 	// GET MEMORY USAGE
 	struct rusage usage;
 	int ret;
-	
+
 	ret = getrusage(RUSAGE_SELF, &usage);
 	if(ret == 0) {
 		memoryUsed = formatMem(usage.ru_maxrss*1024);

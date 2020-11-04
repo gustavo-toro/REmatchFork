@@ -8850,7 +8850,7 @@ SWIGINTERN PyObject *_wrap_EvaluatorIter_next(PyObject *SWIGUNUSEDPARM(self), Py
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Match_ptr result;
+  Match result;
   
   if (!args) SWIG_fail;
   swig_obj[0] = args;
@@ -8860,9 +8860,30 @@ SWIGINTERN PyObject *_wrap_EvaluatorIter_next(PyObject *SWIGUNUSEDPARM(self), Py
   }
   arg1 = reinterpret_cast< EvaluatorIter * >(argp1);
   result = (arg1)->next();
+  resultobj = SWIG_NewPointerObj((new Match(static_cast< const Match& >(result))), SWIGTYPE_p_Match, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EvaluatorIter_hasNext(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  EvaluatorIter *arg1 = (EvaluatorIter *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  bool result;
   
-  resultobj = SWIG_NewPointerObj(new Match_ptr(std::move(result)), SWIGTYPE_p_std__unique_ptrT_Match_t, SWIG_POINTER_OWN);
-  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_EvaluatorIter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EvaluatorIter_hasNext" "', argument " "1"" of type '" "EvaluatorIter *""'"); 
+  }
+  arg1 = reinterpret_cast< EvaluatorIter * >(argp1);
+  result = (bool)(arg1)->hasNext();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
   return NULL;
@@ -9035,7 +9056,7 @@ SWIGINTERN PyObject *_wrap_RegEx_find(PyObject *SWIGUNUSEDPARM(self), PyObject *
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  Match_ptr result;
+  Match result;
   
   if (!SWIG_Python_UnpackTuple(args, "RegEx_find", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegEx, 0 |  0 );
@@ -9055,9 +9076,7 @@ SWIGINTERN PyObject *_wrap_RegEx_find(PyObject *SWIGUNUSEDPARM(self), PyObject *
     arg2 = ptr;
   }
   result = (arg1)->find((std::string const &)*arg2);
-  
-  resultobj = SWIG_NewPointerObj(new Match_ptr(std::move(result)), SWIGTYPE_p_std__unique_ptrT_Match_t, SWIG_POINTER_OWN);
-  
+  resultobj = SWIG_NewPointerObj((new Match(static_cast< const Match& >(result))), SWIGTYPE_p_Match, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -9242,6 +9261,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Match_swigregister", Match_swigregister, METH_O, NULL},
 	 { "Match_swiginit", Match_swiginit, METH_VARARGS, NULL},
 	 { "EvaluatorIter_next", _wrap_EvaluatorIter_next, METH_O, NULL},
+	 { "EvaluatorIter_hasNext", _wrap_EvaluatorIter_hasNext, METH_O, NULL},
 	 { "new_EvaluatorIter", _wrap_new_EvaluatorIter, METH_NOARGS, NULL},
 	 { "delete_EvaluatorIter", _wrap_delete_EvaluatorIter, METH_O, NULL},
 	 { "EvaluatorIter_swigregister", EvaluatorIter_swigregister, METH_O, NULL},
@@ -9361,6 +9381,7 @@ static PyMethodDef SwigMethods_proxydocs[] = {
 	 { "Match_swigregister", Match_swigregister, METH_O, NULL},
 	 { "Match_swiginit", Match_swiginit, METH_VARARGS, NULL},
 	 { "EvaluatorIter_next", _wrap_EvaluatorIter_next, METH_O, NULL},
+	 { "EvaluatorIter_hasNext", _wrap_EvaluatorIter_hasNext, METH_O, NULL},
 	 { "new_EvaluatorIter", _wrap_new_EvaluatorIter, METH_NOARGS, NULL},
 	 { "delete_EvaluatorIter", _wrap_delete_EvaluatorIter, METH_O, NULL},
 	 { "EvaluatorIter_swigregister", EvaluatorIter_swigregister, METH_O, NULL},

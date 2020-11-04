@@ -34,6 +34,7 @@ Evaluator::Evaluator(RegEx &rgx, const std::string &text,
       nlines_(0),
       capture_counter_(0),
       reading_counter_(0) {
+  // std::cout << "[Eval] Evaluator() init with StrDocument\n";
   init();
 }
 
@@ -68,13 +69,13 @@ void Evaluator::initAutomaton(size_t i) {
   else              captureF(i);
 }
 
-Match_ptr Evaluator::next() {
+bool Evaluator::hasNext() {
   // Decide which next to use.
-  static Match_ptr (Evaluator::*nexts[])() = {
-    &Evaluator::nextFF,
-    &Evaluator::nextFT,
-    &Evaluator::nextTF,
-    &Evaluator::nextTT,
+  static bool (Evaluator::*nexts[])() = {
+    &Evaluator::hasNextFF,
+    &Evaluator::hasNextFT,
+    &Evaluator::hasNextTF,
+    &Evaluator::hasNextTT,
   };
   int index = 2 * line_by_line_ +
               1 * early_output_;
@@ -82,22 +83,33 @@ Match_ptr Evaluator::next() {
   return (this->*nexts[index])();
 }
 
-inline Match_ptr
-Evaluator::inlinedNext(bool early_output, bool line_by_line) {
+Match Evaluator::next() {
+  return enumerator_->next();
+}
+
+inline bool
+Evaluator::inlinedHasNext(bool early_output, bool line_by_line) {
+
+  // std::cout << "[Eval] hasNext called with args: e_out=" << early_output
+  //           << ", lbl=" << line_by_line << '\n';
 
   if(enumerator_->hasNext())
-      return enumerator_->next();
+      return true;
 
   while (!document_ended_) {
 
-    char a;
+    char a = 0;
     output_nodelist_.reset();
 
     while(((i_pos_-i_start_) < line_.size() &&  line_by_line_) ||
           (i_pos_ < text_->size()             && !line_by_line_)) { // Main search loop
 
+      // std::cout << "[Eval] Character before iter: \'" << a << "'\n";
+
       if(line_by_line_)   a = line_[i_pos_-i_start_];
       else                text_->get(a);
+
+      // std::cout << "[Eval] Read an \"" << a << "\"\n";
 
       if(early_output_)   readingT(a, i_pos_);
       else                readingF(a, i_pos_);
@@ -113,13 +125,24 @@ Evaluator::inlinedNext(bool early_output, bool line_by_line) {
         if(!output_nodelist_.empty())
           break;
       }
+
+      // std::cout << "[Eval] Character after iter: \'" << a << "'\n";
     }
 
     for(auto &state: current_states_) {
-      if(state->isFinal)
+      // std::cout << "[Eval] State " << *state << " was on current_states.\n";
+      if(state->isFinal) {
+        // std::cout << "[Eval] Found that dstate " << *state << " is final "
+        //           << "and it's trying to append its NodeList: "
+        //           << state->currentL->pprint(rgx_->detManager().varFactory())
+        //           << '\n';
         output_nodelist_.append(state->currentL);
+      }
     }
     if(!output_nodelist_.empty()) {
+      // std::cout << "[Eval] Passing Output NodeList to Enum: "
+      //           << output_nodelist_.pprint(rgx_->detManager().varFactory())
+      //           << '\n' ;
       enumerator_->addNodeList(output_nodelist_);
       memory_manager_.addPossibleGarbage(output_nodelist_.head);
     }
@@ -148,11 +171,7 @@ Evaluator::inlinedNext(bool early_output, bool line_by_line) {
     }
   }
 
-    if(enumerator_->hasNext())
-      return enumerator_->next();
-
-    return nullptr;
-
+  return enumerator_->hasNext();
 }
 
 bool Evaluator::match() {
@@ -286,17 +305,17 @@ DetAutomaton& Evaluator::DFA() {return rgx_->detManager().DFA();}
 
 // Callers of inline versions
 
-Match_ptr Evaluator::nextFF() {
-  return inlinedNext(0, 0);
+bool Evaluator::hasNextFF() {
+  return inlinedHasNext(0, 0);
 }
-Match_ptr Evaluator::nextFT() {
-  return inlinedNext(0, 1);
+bool Evaluator::hasNextFT() {
+  return inlinedHasNext(0, 1);
 }
-Match_ptr Evaluator::nextTF() {
-  return inlinedNext(1, 0);
+bool Evaluator::hasNextTF() {
+  return inlinedHasNext(1, 0);
 }
-Match_ptr Evaluator::nextTT() {
-  return inlinedNext(1, 1);
+bool Evaluator::hasNextTT() {
+  return inlinedHasNext(1, 1);
 }
 void Evaluator::captureT(size_t i) {
   capture(i, 1);

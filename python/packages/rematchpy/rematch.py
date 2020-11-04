@@ -234,6 +234,7 @@ class EvaluatorIter(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
     next = _swig_new_instance_method(_rematch.EvaluatorIter_next)
+    hasNext = _swig_new_instance_method(_rematch.EvaluatorIter_hasNext)
 
     def __init__(self):
         _rematch.EvaluatorIter_swiginit(self, _rematch.new_EvaluatorIter())

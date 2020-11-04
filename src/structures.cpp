@@ -165,7 +165,7 @@ void NodeList :: resetAndAdd(Node* node) {
 
 bool NodeList :: empty() { return this->head == nullptr && this->tail == nullptr;}
 
-std::string NodeList :: pprint(VariableFactory *vf) {
+std::string NodeList :: pprint(std::shared_ptr<VariableFactory> vf) {
   std::stringstream ss;
   ss << "[";
   start();

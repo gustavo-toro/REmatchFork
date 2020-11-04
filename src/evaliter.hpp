@@ -12,7 +12,8 @@ class EvaluatorIter {
   EvaluatorIter() = default;
   EvaluatorIter(Evaluator* eval);
 
-  Match_ptr next();
+  Match next();
+  bool hasNext();
 
  private:
   Evaluator* eval_;
