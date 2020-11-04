@@ -68,7 +68,7 @@ class CustomBuildPy(build_py):
 
 setup(
     name='rematchpy',
-    version='0.0.2.1',
+    version='0.0.3',
     description='An information extraction focused regex library using '\
                 'constant-delay algorithms.' ,
     long_description=long_description,
