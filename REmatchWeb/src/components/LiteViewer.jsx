@@ -10,42 +10,6 @@ import PlayArrow from '@material-ui/icons/PlayArrow';
 
 /* CodeMirror */
 import CodeMirror from 'codemirror';
-import 'codemirror/theme/material-darker.css';
-import 'codemirror/addon/mode/simple';
-
-CodeMirror.defineSimpleMode('REmatchQuery', {
-  start: [
-    {
-      regex: /(![A-Za-z0-9]+\{|\})/,
-      token: 'm0'
-    },
-    {
-      regex: /(\\d)|(\\w)|(\\s)|(\\t)|(\\r)|(\\n)|(\\\()|(\\\))|(\\\[)|(\\\])|(\\\{)|(\\\})|(\\\.)|(\\-)|(\\_)/i,
-      token: 'm2'
-    },
-    {
-      regex: /(\(|\)|\||\[|\]|-)/,
-      token: 'm3'
-    },
-    {
-      regex: /(\.\+|\.\*|\.|\+)/,
-      token: 'm1'
-    },
-    {
-      regex: /<[0-9]+(,[0-9]+)?>/,
-      token: 'm5'
-    },
-  ]
-});
-
-CodeMirror.defineSimpleMode('RegExQuery', {
-  start: [
-    {
-      regex: /./,
-      token: 'm0'
-    },
-  ]
-});
 
 class LiteViewer extends Component {
   constructor(props) {

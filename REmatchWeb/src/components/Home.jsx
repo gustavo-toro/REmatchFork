@@ -17,39 +17,11 @@ import MatchesTable from './MatchesTable';
 import CodeMirror from 'codemirror';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/theme/material-darker.css';
-import 'codemirror/addon/mode/simple';
 import { Typography } from '@material-ui/core';
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
-
-/* CODEMIRROR MODE DEFINITION */
-CodeMirror.defineSimpleMode('REmatchQuery', {
-  start: [
-    {
-      regex: /(![A-Za-z0-9]+\{|\})/,
-      token: 'm0'
-    },
-    {
-      regex: /(\\d)|(\\w)|(\\s)|(\\t)|(\\r)|(\\n)|(\\\()|(\\\))|(\\\[)|(\\\])|(\\\{)|(\\\})|(\\\.)|(\\-)|(\\_)/i,
-      token: 'm2'
-    },
-    {
-      regex: /(\(|\)|\||\[|\]|-)/,
-      token: 'm3'
-    },
-    {
-      regex: /(\.\+|\.\*|\.|\+)/,
-      token: 'm1'
-    },
-    {
-      regex: /<[0-9]+(,[0-9]+)?>/,
-      token: 'm5'
-    },
-  ]
-});
-
 
 /* MAIN INTERFACE */
 class Home extends Component {
@@ -200,7 +172,7 @@ class Home extends Component {
             Query
           </div>
           <div className="queryContainer">
-            <div id="queryEditor" className="queryEditor"></div>
+            <div id="queryEditor"></div>
             <Button
               className="queryButton"
               color="primary"

@@ -139,7 +139,10 @@ const MatchesTable = ({
               {row.map((col, idxCol) => {
                 return (
                   <div key={idxCol} className="matchesItem">
-                    {textEditor.getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1])).replaceAll(' ', '␣')}
+                    {textEditor
+                      .getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1]))
+                      .replaceAll(' ', '␣')
+                      .replaceAll(/\r?\n/g, '¬')}
                   </div>)
               })}
             </div>))}

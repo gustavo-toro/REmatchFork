@@ -35,10 +35,12 @@ hsl(234, 96%, 67%),
     color: black !important;
     border-top: 4px solid nth($colors, $i+1);
     border-bottom: 4px solid nth($colors, $i+1);
+
     @for $j from $i+1 to length($colors) {
       &.m#{$j} {
         border-top: 4px solid nth($colors, $i+1);
         border-bottom: 4px solid nth($colors, $i+1);
+
         @for $k from $j+1 to length($colors) {
           &.m#{$k} {
             border-top: 4px solid nth($colors, $j+1);
@@ -107,7 +109,8 @@ hsl(234, 96%, 67%),
     display: flex;
     height: auto;
 
-    .queryEditor {
+
+    #queryEditor {
       padding-left: 1rem;
       flex: 1;
       overflow: hidden;
@@ -117,6 +120,7 @@ hsl(234, 96%, 67%),
         padding: .5rem 0;
       }
     }
+
     .queryButton {
       padding: .5rem 2.5rem;
       border-radius: 0;
@@ -172,12 +176,14 @@ hsl(234, 96%, 67%),
       }
     }
   }
+
   .paginationContainer {
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding: 1rem 0;
   }
+
   .fullButton {
     border-radius: 0;
     width: 100%;
@@ -185,17 +191,19 @@ hsl(234, 96%, 67%),
   }
 }
 
-/* AboutInterface */
+/* NavBar */
 .appBar {
   background-color: $darker !important;
-  .logo {
-  display: block;
-  height: 36px;
 
-  &:hover {
-    filter: drop-shadow(0 0 2px #03DAC6);
+  .logo {
+    display: block;
+    height: 36px;
+
+    &:hover {
+      filter: drop-shadow(0 0 2px #03DAC6);
+    }
   }
-}
+
   .button {
     text-decoration: none;
     color: nth($colors, 1);
@@ -203,6 +211,72 @@ hsl(234, 96%, 67%),
   }
 }
 
+/* LiteViewer */
+.viewerPaper {
+  width: 90%;
+  margin: 1rem auto;
+  font-size: 14px;
+  overflow: hidden;
+
+  .CodeMirror {
+    font-size: 14px;
+    text-align: justify;
+  }
+
+  .textEditor {
+    height: 260px;
+
+    .CodeMirror {
+      height: 260px;
+      padding: 1rem 1rem 1rem 0;
+    }
+  }
+
+  .queryContainer {
+    display: flex;
+    height: auto;
+
+    .button {
+      border-radius: 0;
+      padding:  0 1rem;
+    }
+
+    .queryEditor {
+      padding-left: 1rem;
+      flex: 1;
+      overflow: hidden;
+
+      .CodeMirror {
+        height: auto;
+        padding: .5rem 0;
+      }
+    }
+  }
+
+  .buttonContainer {
+    display: flex;
+
+    .button {
+      flex: 1;
+      border-radius: 0;
+      padding: .75rem 0;
+    }
+  }
+
+  .matchesContainer {
+    display: flex;
+    height: 150px;
+
+    .matches {
+      flex: 1;
+      padding: 1rem;
+      font-size: 12px;
+    }
+  }
+
+}
+
+/* asdasdsad*/
 .paperLite {
   transition: all .5s ease-in-out;
   font-size: 14px;
@@ -223,7 +297,7 @@ hsl(234, 96%, 67%),
     display: flex;
     padding: 0 1rem;
 
-    .queryEditor {
+    #queryEditor {
       flex: 1;
       overflow: hidden;
 
