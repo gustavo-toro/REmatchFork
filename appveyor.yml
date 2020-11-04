@@ -45,7 +45,7 @@ build_script:
 
       cd ..
 
-      copy build\src\Release\_rematch.pyd python\packages\rematch
+      copy build\src\Release\_rematch.pyd python\packages\rematchpy
 
       "%PYTHON%\\python.exe" setup.py bdist_wheel
 
