@@ -33,7 +33,7 @@ if(SWIG)
 	IF(PYTHON_VERSION)
 		find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Development)
 	else()
-		find_package(Python3 REQUIRED COMPONENTS Development)
+		find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 	endif()
 	include(${SWIG_USE_FILE})
 	# Add support for .swg file
