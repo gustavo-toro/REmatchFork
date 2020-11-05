@@ -29,7 +29,7 @@ const About = () => {
           worker={worker}
           text={english.section2.text1}
 
-          regex={'SoloRegEx'}
+          regex={'the'}
         />
         <Viewer
           idx="both"
@@ -37,7 +37,7 @@ const About = () => {
           text={english.section2.text1}
 
           rematch={'!x{ambos}'}
-          regex={'tipos :)'}
+          regex={'tipos'}
         />
       </div>
       {/* 5 MIN REGEX */}

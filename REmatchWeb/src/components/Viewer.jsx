@@ -27,13 +27,12 @@ class Viewer extends Component {
       value: this.state[type],
       mode: (type === 'rematch') ? 'REmatchQuery' : (type === 'regex') ? 'RegExQuery' : null,
       theme: 'material-darker',
-      lineNumbers: false,
       scrollbarStyle: null,
       smartIndent: false,
       indentWithTabs: true,
       undoDepth: 100,
       viewportMargin: 10,
-      lineNumbers: (type === 'text'),
+      lineNumbers: false,
       lineWrapping: (type === 'text'),
       //readOnly: 'nocursor',
     })
@@ -52,6 +51,34 @@ class Viewer extends Component {
     }
   }
 
+  runRegExp() {
+    let rgx = new RegExp(this.state.regex, 'g');
+    let match;
+    while ((match = rgx.exec(this.state.textEditor.getValue())) !== null) {
+      console.log(match.index, match.index + match[0].length);
+    }
+  }
+
+  runREmatch() {
+    this.state.worker.postMessage({
+      text: this.state.textEditor.getValue(),
+      query: this.state.rematch,
+    });
+    this.state.worker.onmessage = (m) => {
+      console.log(m.data);
+      switch (m.data.type) {
+        case 'SCHEMA':
+          this.setState({ schema: m.data.payload });
+          break;
+        case 'MATCHES':
+          this.setState({ rematchMatches: m.data.payload });
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
   render() {
     return (
       <Paper className="viewerPaper" elevation={3}>
@@ -59,20 +86,25 @@ class Viewer extends Component {
         <Divider />
         <div className="queryContainer">
           {(this.state.rematch) ?
-            <div className="queryEditor" id={`rematchEditor-${this.props.idx}`}></div>
+            <div
+              className={`queryEditor ${(this.state.rematch && this.state.regex) ? 'centered' : null}`}
+              id={`rematchEditor-${this.props.idx}`}></div>
             : null}
           {(this.state.rematch && this.state.regex) ?
             <Divider orientation="vertical" flexItem />
             : null}
           {(this.state.regex) ?
-            <div className="queryEditor" id={`regexEditor-${this.props.idx}`}></div>
+            <div
+              className={`queryEditor ${(this.state.rematch && this.state.regex) ? 'centered' : null}`}
+              id={`regexEditor-${this.props.idx}`}></div>
             : null}
           {!(this.state.rematch && this.state.regex) ?
             <Button
               className="button"
               color={this.state.rematch ? 'primary' : 'secondary'}
               startIcon={<PlayArrow />}
-              size="small">
+              size="small"
+              onClick={this.state.rematch ? this.runREmatch.bind(this) : this.runRegExp.bind(this)}>
               {(this.state.rematch) ? 'REmatch' : 'RegEx'}
             </Button>
             : null}
@@ -85,7 +117,8 @@ class Viewer extends Component {
                 className="button"
                 color="primary"
                 startIcon={<PlayArrow />}
-                size="small">
+                size="small"
+                onClick={this.runREmatch.bind(this)}>
                 REmatch
               </Button>
               <Divider orientation="vertical" flexItem />
@@ -93,7 +126,8 @@ class Viewer extends Component {
                 className="button"
                 color="secondary"
                 startIcon={<PlayArrow />}
-                size="small">
+                size="small"
+                onClick={this.runRegExp.bind(this)}>
                 RegEx
               </Button>
             </div>

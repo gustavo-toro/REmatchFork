@@ -2,7 +2,7 @@
 /* Main */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -529,6 +529,10 @@ code {
   display: none;
 }
 
+.CodeMirror {
+  font-family: 'Roboto Mono', monospace;
+}
+
 .CodeMirror-scrollbar-filler {
   background-color: #212121 !important;
 }
@@ -560,16 +564,15 @@ code {
 .mainPaper {
   overflow: hidden;
   font-size: 14px;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .mainPaper .CodeMirror {
   font-size: 14px;
-  text-align: justify;
 }
 
 .mainPaper .sectionTitle {
   padding: 1rem 1rem 0rem 1rem;
-  font-family: consolas;
   font-size: 12px;
   color: #868686;
 }
@@ -720,7 +723,7 @@ code {
 
 .viewerPaper .textEditor .CodeMirror {
   height: 260px;
-  padding: 1rem 1rem 1rem 0;
+  padding: 1rem;
 }
 
 .viewerPaper .queryContainer {
@@ -741,6 +744,14 @@ code {
       -ms-flex: 1;
           flex: 1;
   overflow: hidden;
+}
+
+.viewerPaper .queryContainer .queryEditor.centered {
+  padding-left: 0;
+}
+
+.viewerPaper .queryContainer .queryEditor.centered .CodeMirror {
+  text-align: center;
 }
 
 .viewerPaper .queryContainer .queryEditor .CodeMirror {
@@ -793,7 +804,7 @@ code {
 
 .paperLite .liteTab {
   text-transform: none;
-  font-family: monospace;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .paperLite .queryContainer {
@@ -872,7 +883,7 @@ code {
 }
 
 .codeBlock {
-  font-family: consolas;
+  font-family: 'Roboto Mono', monospace;
   text-align: center;
   padding: .5rem;
   margin: 1rem auto;

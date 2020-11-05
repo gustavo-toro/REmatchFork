@@ -135,7 +135,10 @@ const MatchesTable = ({
             state.page * state.rowsPerPage,
             state.page * state.rowsPerPage + state.rowsPerPage)
           : matches).map((row, idxRow) => (
-            <div key={idxRow} className="matchesRow" onClick={() => handleMarkText(row)}>
+            <div 
+              key={idxRow} 
+              className="matchesRow" 
+              onClick={() => handleMarkText(row)}>
               {row.map((col, idxCol) => {
                 return (
                   <div key={idxCol} className="matchesItem">
