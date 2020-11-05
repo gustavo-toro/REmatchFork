@@ -1,8 +1,3 @@
-"""A setuptools based setup module.
-See:
-https://packaging.python.org/guides/distributing-packages-using-setuptools/
-https://github.com/pypa/sampleproject
-"""
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages, Distribution
@@ -52,8 +47,6 @@ rematch_module = Extension('_rematch',
 # Get the long description from the README file
 long_description = codecs.open(os.path.join(root_dir,'README.md'), encoding='utf8').read()
 
-# Arguments marked as "Required" below must be included for upload to PyPI.
-# Fields marked as "Optional" may be commented out.
 
 class BinaryDistribution(Distribution):
     def has_ext_modules(self):
@@ -67,9 +60,9 @@ class CustomBuildPy(build_py):
         return super().run()
 
 setup(
-    name='rematchpy',
-    version='0.0.4',
-    description='An information extraction focused regex library using '\
+    name='pyrematch',
+    version='0.1.0',
+    description='An information extraction focused regex library that uses '\
                 'constant-delay algorithms.' ,
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -82,11 +75,12 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3'
     ],
-    keywords='regex',
+    keywords='regex, rematch',
+    license='MIT License',
     packages=find_packages(where='python/packages'),
     package_dir={'':'python/packages',
-                 'rematchpy': 'python/packages/rematchpy'},
-    package_data={'rematchpy': ['_rematch*']},
+                 'pyrematch': 'python/packages/pyrematch'},
+    package_data={'pyrematch': ['_rematch*']},
     cmdclass={'build_py': CustomBuildPy},
     python_requires='>=3.5, <4',
     distclass=BinaryDistribution,
