@@ -6,15 +6,16 @@ sys.path.append(os.path.abspath(dir_path + '/' + '../../build/Release/bin/SWIG')
 
 import rematch as re
 
-regex = ".*!y{b+}!x{a+}.*"
-document = "bbbbaaaabbbbbaaa"
+regex = ".*!x{.<3,>}!y{.<1,2>}.*"
+document = "aabcad"
 
 rgx = re.RegEx(regex)
-match = rgx.findIter(document)
+iterator = rgx.findIter(document)
+
+match = iterator.next()
 
 while match:
   for var in match.variables():
-    print("!{}:".format(var), match.span("x"), end='\t')
+    print("!{}:".format(var), match.span(var), end='\t')
   print("")
-  print(match.doc())
-  match = rgx.findIter(document)
+  match = iterator.next()

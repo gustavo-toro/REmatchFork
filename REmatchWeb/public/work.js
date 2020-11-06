@@ -15,7 +15,9 @@ this.onmessage = (m) => {
         let match;
         let rgxOptions = new RegExOptions();
         rgxOptions.early_output = true;
-        let rgx = new RegEx(`.*${m.data.query}.*`, rgxOptions);
+        rgxOptions.start_anchor = true;
+        rgxOptions.end_anchor = true;
+        let rgx = new RegEx(m.data.query, rgxOptions);
 
         /* THIS SHOULD BE IN RegEx OBJECT */
         let schema = [...m.data.query.matchAll(/!([A-Za-z0-9]+)/g)].map((m) => (m[1]));
@@ -27,7 +29,7 @@ this.onmessage = (m) => {
 
         while ((match = rgx.findIter(m.data.text))) {
 
-            schema.forEach((variable) => {
+            schema.forEach(variable => {
                 currMatch.push(match.span(variable));
             });
             
@@ -53,6 +55,8 @@ this.onmessage = (m) => {
                 payload: matches,
             });
         }
+
+        // Send a message of finished for disable/enable button
 
         rgxOptions.delete();
         rgx.delete();

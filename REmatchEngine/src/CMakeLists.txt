@@ -12,15 +12,15 @@ file(GLOB sources
 
 set(BUILD_TARGETS
   rematch
-  generate
+  # generate
   test-regex
   test-anchors
 )
 
 if(SWIG) # Only set shared library target
-  set(project_LIB "${PROJECT_NAME}swiglib")
-  set_property(SOURCE interfaces/rematch.swg PROPERTY CPLUSPLUS ON)
-  swig_add_library(${project_LIB} TYPE SHARED LANGUAGE python SOURCES interfaces/rematch.swg ${sources})
+  set(project_LIB "${PROJECT_NAME}")
+  set_property(SOURCE interfaces/rematch.i PROPERTY CPLUSPLUS ON)
+  swig_add_library(${project_LIB} TYPE SHARED LANGUAGE python SOURCES interfaces/rematch.i ${sources})
   set_property(TARGET ${project_LIB} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SWIG_OUTDIR})
   set_property(TARGET ${project_LIB} PROPERTY SWIG_COMPILE_OPTIONS -O)
   message("Output dir: ${CMAKE_SWIG_OUTDIR}")

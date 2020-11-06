@@ -9,6 +9,7 @@
 #include "automata/eva.hpp"
 #include "regex/regex.hpp"
 #include "match.hpp"
+#include "eval.hpp"
 
 #include <sstream>
 #include <istream>
@@ -138,7 +139,8 @@ void check_spanners(rematch::RegEx &rgx, std::string document_file, std::string 
 
     std::set<std::set<std::string>> real_results;
     std::unique_ptr<rematch::Match> match_ptr;
-    while(match_ptr = rgx.findIter(doc)) {
+    auto finditer = rgx.findIter(doc);
+    while(match_ptr = finditer.next()) {
         std::string output = match_ptr->print();
         real_results.insert(parse_set(strip(output)));
     }

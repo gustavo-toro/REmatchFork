@@ -12,6 +12,22 @@ The `/tests` folder contains all the automatic tests for our code.
 
 ### Build instructions
 
+#### Python/SWIG
+
+Assuming that you are in a Debian-based distro, first install the following dependencies:
+```
+sudo apt install g++ cmake swig libboost-dev python3-dev
+```
+After that, in this directory, run:
+```
+mkdir -pv build && cd build
+cmake -DSWIG=true ..
+make
+```
+After the compilation process there will be a `rematch.py` (the bindings interface) and a `_rematchswiglib.so` (the shared lib binary) in `build/bin/SWIG` that you can use for interfacing REmatch via Python.
+
+#### CLI tool
+
 ```
 cmake -H. -Bbuild/Release
 cmake --build build/Release

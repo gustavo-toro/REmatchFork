@@ -1,12 +1,13 @@
 import sys
-sys.path.insert(0, "../REmatchEngine/bin/SWIG")
+sys.path.insert(0, "../REmatchEngine/build/SWIG/bin/SWIG")
 import rematch
 
 class Match:
 
-    def __init__(self, match_object):
+    def __init__(self, match_object, string):
         self.match_object = match_object
         self.variables = match_object.variables()
+        self.string = string
         # self.__span = span
         # self.__start = start
         # self.__end = end
@@ -14,12 +15,12 @@ class Match:
     def start(self, capture):
         if str(capture).isnumeric():
             capture = self.variables[capture - 1]
-        return self.match_object.start(capture)
+        return self.match_object.span(capture)[0]
 
     def end(self, capture):
         if str(capture).isnumeric():
             capture = self.variables[capture - 1]
-        return self.match_object.end(capture)
+        return self.match_object.span(capture)[1]
 
     def span(self, capture):
         if str(capture).isnumeric():
@@ -29,18 +30,21 @@ class Match:
     def group(self, capture):
         if str(capture).isnumeric():
             capture = self.variables[capture - 1]
-        return self.match_object.group(capture)
+        span = self.match_object.span(capture)
+        return self.string[span[0]:span[1]]
 
     def groups(self):
         matches = []
         for var in self.variables:
-            matches.append(self.match_object.group(var))
+            span = self.match_object.span(var)
+            matches.append(self.string[span[0]:span[1]])
         return tuple(matches)
     
     def groupdict(self):
         matches = dict()
         for var in self.variables:
-            matches[var] = self.match_object.group(var)
+            span = self.match_object.span(var)
+            matches[var]= self.string[span[0]:span[1]]
         return matches
 
 class Regex:
@@ -66,46 +70,56 @@ class Regex:
         return rgx_opts
 
     def find(self, string):
-        return Match(self.RegEx.find(string))
+        evaluator = self.RegEx.findIter(string)
+        match = evaluator.next()
+        return Match(match, string)
 
     def findall(self, string): # Retornar objetos match 
         matches = list()
         while True:
             match = self.RegEx.findIter(string)
-            if match:
-                matches.append(Match(match)) 
-            else:
-                break
-        return matches
-
-    def finditer(self, string):
-        matches = list()
-        while True:
-            match = self.RegEx.findIter(string) #yield
             if not match:
                 break
             else:
-                yield match
-        # return match
+                matches.append(Match(match, string))
+        return matches
 
+    def finditer(self, string):
+        
+        regexIter = self.RegEx.findIter(string)
+        while True:
+            match = regexIter.next()
+            if not match:
+                break
+            else:
+                yield Match(match, string)
+        '''
+        while True:
+            match = self.RegEx.findIter(string)
+            if not match:
+                break
+            else:
+                yield Match(match, string)
+        '''
     def search(self, string):
         return self.find(string)
 
     def match(self, string):
-        self.rgx_opts.set_save_anchors(True)
-        self.RegEx = rematch.RegEx(self.pattern, self.rgx_opts)
-        match = self.RegEx.find(string)
-        if match.group(0) == string[:len(match.gruop(0))]:
-            return Match(match)
-        return None
+        if self.pattern[:2] == ".*":
+            pattern = self.pattern[2:]
+        else:
+            pattern = self.pattern
+        print(pattern)
+        regEx = rematch.RegEx(pattern, self.rgx_opts)
+        return Match(regEx.findIter(string), string)
 
     def fullmatch(self, string):
-        self.rgx_opts.set_save_anchors(True)
-        self.RegEx = rematch.RegEx(self.pattern, self.rgx_opts)
-        match = self.RegEx.find(string)
-        if match.group(0) == string:
-            return Match(match)
-        return None
+        if self.pattern[:2] == ".*" and self.pattern[-2:] == ".*":
+            pattern = self.pattern[2:-2]
+        else:
+            pattern = self.pattern
+        regEx = rematch.RegEx(pattern, self.rgx_opts)
+        return Match(regEx.findIter(string), string)
 
 def compile(pattern, **flags):
     return Regex(pattern, **flags)
