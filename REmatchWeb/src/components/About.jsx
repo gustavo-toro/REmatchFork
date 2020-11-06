@@ -22,22 +22,22 @@ const About = () => {
           worker={worker}
           text={english.section2.text1}
 
-          rematch={'!x{SoloREmatch}'}
+          rematch={'!x{.+}!y{.+}before..*'}
         />
         <Viewer
           idx="regex"
           worker={worker}
           text={english.section2.text1}
 
-          regex={'the'}
+          regex={'You'}
         />
         <Viewer
           idx="both"
           worker={worker}
           text={english.section2.text1}
 
-          rematch={'!x{ambos}'}
-          regex={'tipos'}
+          rematch={'!x{You}.*!y{.}.*'}
+          regex={'You'}
         />
       </div>
       {/* 5 MIN REGEX */}

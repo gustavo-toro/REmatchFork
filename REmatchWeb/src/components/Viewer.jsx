@@ -16,9 +16,12 @@ class Viewer extends Component {
       text: props.text,
       // If regex is used
       regex: props.regex,
+      regexMatches: [],
       // If rematch is used
       worker: props.worker,
       rematch: props.rematch,
+      schema: [],
+      rematchMatches: [],
     }
   }
 
@@ -34,7 +37,7 @@ class Viewer extends Component {
       viewportMargin: 10,
       lineNumbers: false,
       lineWrapping: (type === 'text'),
-      //readOnly: 'nocursor',
+      readOnly: 'nocursor',
     })
   }
 
@@ -51,6 +54,34 @@ class Viewer extends Component {
     }
   }
 
+  getText(span) {
+    return this.state.textEditor.getRange(
+      this.state.textEditor.posFromIndex(span[0]),
+      this.state.textEditor.posFromIndex(span[1]))
+      .replaceAll(' ', '␣')
+      .replaceAll(/\r?\n/g, '¬')
+  }
+
+  clearMarks = () => {
+    this.state.textEditor.getAllMarks().forEach((mark) => {
+      mark.clear();
+    });
+  }
+
+  markREmatch(match) {
+    let start, end;
+    this.clearMarks();
+    this.state.schema.forEach((variable, idx) => {
+      console.log(match[variable]);
+      start = this.state.textEditor.posFromIndex(match[variable][0]);
+      end = this.state.textEditor.posFromIndex(match[variable][1]);
+      this.state.textEditor.markText(start, end, {
+        className: `m${idx}`,
+      })
+    });
+
+  }
+
   runRegExp() {
     let rgx = new RegExp(this.state.regex, 'g');
     let match;
@@ -65,7 +96,6 @@ class Viewer extends Component {
       query: this.state.rematch,
     });
     this.state.worker.onmessage = (m) => {
-      console.log(m.data);
       switch (m.data.type) {
         case 'SCHEMA':
           this.setState({ schema: m.data.payload });
@@ -100,6 +130,7 @@ class Viewer extends Component {
             : null}
           {!(this.state.rematch && this.state.regex) ?
             <Button
+              disabled={this.state.rematchMatches.length !== 0 || this.state.regexMatches.length !== 0}
               className="button"
               color={this.state.rematch ? 'primary' : 'secondary'}
               startIcon={<PlayArrow />}
@@ -114,6 +145,7 @@ class Viewer extends Component {
           <>
             <div className="buttonContainer">
               <Button
+                disabled={this.state.rematchMatches.length !== 0}
                 className="button"
                 color="primary"
                 startIcon={<PlayArrow />}
@@ -137,9 +169,15 @@ class Viewer extends Component {
         <div className="matchesContainer">
           {(this.state.rematch) ?
             <div className="matches">
-              Match 1 REmatch blabla<br />
-            Match 2 REmatch blabla<br />
-            Match 3 REmatch blabla<br />
+              {this.state.rematchMatches.map((match, idxMatch) => (
+                <div key={idxMatch} className="matchesRow" onClick={() => { this.markREmatch(match) }}>
+                  {Object.keys(match).map((variable, idxVariable) => (
+                    <div key={idxVariable} className={`cm-m${idxVariable} matchesItem`}>
+                      {variable}: {this.getText(match[variable])}
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
             : null}
           {(this.state.rematch && this.state.regex) ?

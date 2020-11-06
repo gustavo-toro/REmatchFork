@@ -59,8 +59,8 @@ class Home extends Component {
       return true;
     });
 
-    queryEditor.on('change', () => {this.clearMarks()});
-    
+    queryEditor.on('change', () => { this.clearMarks() });
+
     let textEditor = CodeMirror(document.getElementById('textEditor'), {
       value: 'This is an example text!',
       mode: 'text/plain',
@@ -75,8 +75,8 @@ class Home extends Component {
       viewportMargin: 15,
     });
 
-    textEditor.on('change', () => {this.clearMarks()});
-    
+    textEditor.on('change', () => { this.clearMarks() });
+
     this.setState({
       queryEditor,
       textEditor,
@@ -91,10 +91,12 @@ class Home extends Component {
 
       this.state.textEditor.markText(start, end, {
         className: `m${idx}`,
-      }
-      );
+      });
     });
-    this.state.textEditor.scrollIntoView(start, 200);
+    this.state.textEditor.scrollIntoView({
+      from: start,
+      to: end
+    }, 200);
   }
 
   clearMarks = () => {

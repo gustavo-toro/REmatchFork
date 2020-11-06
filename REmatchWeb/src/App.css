@@ -638,7 +638,7 @@ code {
 .mainPaper .matchesContainer {
   padding: 0 1rem;
   height: 250px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .mainPaper .matchesContainer .matchesRow {
@@ -777,15 +777,41 @@ code {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  height: 150px;
+  height: 200px;
+  font-family: 'Roboto mono', monospace;
 }
 
 .viewerPaper .matchesContainer .matches {
+  overflow-y: auto;
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
   padding: 1rem;
   font-size: 12px;
+}
+
+.viewerPaper .matchesContainer .matches .matchesRow {
+  padding: .2rem;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.viewerPaper .matchesContainer .matches .matchesRow:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.viewerPaper .matchesContainer .matches .matchesRow .matchesItem {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* asdasdsad*/
@@ -838,7 +864,7 @@ code {
 .paperLite .matches {
   padding: 1rem;
   height: 150px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .paperLite .matches .buttonContainer {

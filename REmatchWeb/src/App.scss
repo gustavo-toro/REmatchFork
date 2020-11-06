@@ -157,7 +157,7 @@ hsl(234, 96%, 67%),
   .matchesContainer {
     padding: 0 1rem;
     height: 250px;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     .matchesRow {
       display: flex;
@@ -274,12 +274,32 @@ hsl(234, 96%, 67%),
 
   .matchesContainer {
     display: flex;
-    height: 150px;
+    height: 200px;
+    font-family: 'Roboto mono', monospace;
 
     .matches {
+      overflow-y: auto;
       flex: 1;
       padding: 1rem;
       font-size: 12px;
+
+      .matchesRow {
+        padding: .2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, .2);
+        }
+
+        .matchesItem {
+          flex: 1;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
 
@@ -329,7 +349,7 @@ hsl(234, 96%, 67%),
   .matches {
     padding: 1rem;
     height: 150px;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     .buttonContainer {
       display: flex;
