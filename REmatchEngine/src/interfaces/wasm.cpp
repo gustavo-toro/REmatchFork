@@ -5,6 +5,7 @@
 #include "regex/regex.hpp"
 #include "regex/regex_options.hpp"
 #include "match.hpp"
+#include "evaliter.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/bind.h>
@@ -46,6 +47,13 @@ EMSCRIPTEN_BINDINGS() {
     .function("find", &rematch::RegEx::find)
     .function("pattern", &rematch::RegEx::pattern)
     ;
+
+  emscripten::class_<rematch::EvaluatorIter>("EvaluatorIter")
+    .constructor<>()
+    .function("next", &rematch::EvaluatorIter::next)
+    ;
+
+
 }
 
 #endif
