@@ -1,4 +1,4 @@
-import rematchpy.rematch as re
+import pyrematch.rematch as re
 
 regex = ".*!x{a}.*"
 document = "aaaaaa"
