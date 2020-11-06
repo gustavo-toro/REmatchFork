@@ -23,4 +23,17 @@ int main(int argc, char *argv[]) {
   }
 
   std::cout << "Count: " << count << '\n';
+  count = 0;
+
+  const std::string doc2 = "aa";
+
+  auto eval_iter2 = rgx.findIter(doc2);
+
+  while(eval_iter2.hasNext()) {
+    auto match = eval_iter2.next();
+    std::cout << match << '\n';
+    count++;
+  }
+
+  std::cout << "Count: " << count << '\n';
 }

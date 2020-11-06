@@ -51,8 +51,10 @@ void Evaluator::init() {
 
 void Evaluator::initAutomaton(size_t i) {
   if( i == 0) {
-    for(auto &state: DFA().states)
+    for(auto &state: DFA().states) {
       state->visited = 0;
+      state->currentL->reset();
+    }
     DFA().initState()->currentL->add(Evaluator::memory_manager_.alloc());
   }
 
@@ -90,8 +92,10 @@ Match Evaluator::next() {
 inline bool
 Evaluator::inlinedHasNext(bool early_output, bool line_by_line) {
 
-  // std::cout << "[Eval] hasNext called with args: e_out=" << early_output
-  //           << ", lbl=" << line_by_line << '\n';
+  #ifndef NDEBUG
+  std::cout << "[Eval] hasNext called with args: e_out=" << early_output
+            << ", lbl=" << line_by_line << '\n';
+  #endif
 
   if(enumerator_->hasNext())
       return true;
@@ -104,12 +108,12 @@ Evaluator::inlinedHasNext(bool early_output, bool line_by_line) {
     while(((i_pos_-i_start_) < line_.size() &&  line_by_line_) ||
           (i_pos_ < text_->size()             && !line_by_line_)) { // Main search loop
 
-      // std::cout << "[Eval] Character before iter: \'" << a << "'\n";
-
       if(line_by_line_)   a = line_[i_pos_-i_start_];
       else                text_->get(a);
 
-      // std::cout << "[Eval] Read an \"" << a << "\"\n";
+      #ifndef NDEBUG
+      std::cout << "[Eval] Read an \"" << a << "\"\n";
+      #endif
 
       if(early_output_)   readingT(a, i_pos_);
       else                readingF(a, i_pos_);
@@ -125,24 +129,28 @@ Evaluator::inlinedHasNext(bool early_output, bool line_by_line) {
         if(!output_nodelist_.empty())
           break;
       }
-
-      // std::cout << "[Eval] Character after iter: \'" << a << "'\n";
     }
 
     for(auto &state: current_states_) {
-      // std::cout << "[Eval] State " << *state << " was on current_states.\n";
+      #ifndef NDEBUG
+      std::cout << "[Eval] State " << *state << " was on current_states on outputing process.\n";
+      #endif
       if(state->isFinal) {
-        // std::cout << "[Eval] Found that dstate " << *state << " is final "
-        //           << "and it's trying to append its NodeList: "
-        //           << state->currentL->pprint(rgx_->detManager().varFactory())
-        //           << '\n';
+        #ifndef NDEBUG
+        std::cout << "[Eval] Found that dstate " << *state << " is final "
+                  << "and it's trying to append its NodeList: "
+                  << state->currentL->pprint(rgx_->detManager().varFactory())
+                  << '\n';
+        #endif
         output_nodelist_.append(state->currentL);
       }
     }
     if(!output_nodelist_.empty()) {
-      // std::cout << "[Eval] Passing Output NodeList to Enum: "
-      //           << output_nodelist_.pprint(rgx_->detManager().varFactory())
-      //           << '\n' ;
+      #ifndef NDEBUG
+      std::cout << "[Eval] Passing Output NodeList to Enum: "
+                << output_nodelist_.pprint(rgx_->detManager().varFactory())
+                << '\n' ;
+      #endif
       enumerator_->addNodeList(output_nodelist_);
       memory_manager_.addPossibleGarbage(output_nodelist_.head);
     }
