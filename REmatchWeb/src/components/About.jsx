@@ -11,7 +11,7 @@ import english from '../text/english';
 const WORKPATH = `${process.env.PUBLIC_URL}/liteWork.js`;
 let worker = new Worker(WORKPATH);
 
-const AboutInterface = () => {
+const About = () => {
   return (
     <Container maxWidth="sm" className="mainContainer">
       {/* 5 MIN REGEX */}
@@ -54,7 +54,7 @@ const AboutInterface = () => {
           Example 1.
        </Typography>
         <Typography variant="body2" align="justify">
-          {english.section2.example1}
+          {english.section2.body1}
         </Typography>
         <LiteViewer
           idx="example1"
@@ -69,7 +69,7 @@ const AboutInterface = () => {
           Example 2.
        </Typography>
         <Typography variant="body2" align="justify">
-          {english.section2.example2}
+          {english.section2.body3}
         </Typography>
         <LiteViewer
           idx="example2"
@@ -80,12 +80,12 @@ const AboutInterface = () => {
         <LiteViewer
           idx="example3"
           worker={worker}
-          text="queseyo"
-          regex="."
+          text="asdasdasd"
+          rematch=".*!x{.}!y{.}.*"
         />
       </div>
     </Container>
   )
 }
 
-export default AboutInterface;
+export default About;

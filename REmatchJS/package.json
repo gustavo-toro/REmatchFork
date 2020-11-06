@@ -1,6 +1,6 @@
 {
-  "name": "rematch",
-  "version": "1.0.0",
+  "name": "rematchjs",
+  "version": "0.1.2",
   "description": "",
   "main": "lib/index.js",
   "git": "https://github.com/REmatchChile/REmatch/tree/master/REmatchJS",
@@ -8,7 +8,7 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "mocha": "^7.2.0"
   },

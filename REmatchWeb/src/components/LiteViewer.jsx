@@ -98,6 +98,7 @@ class LiteViewer extends Component {
   }
 
   runRegEx() {
+    // arreglar
     this.setState({ regexMatches: this.state.textEditor.getValue().match(new RegExp(this.state.regex)) });
   }
 
@@ -151,21 +152,19 @@ class LiteViewer extends Component {
             disabled
           >
             {(this.state.rematch) ?
-              <Tab label="REmatch" className="liteTab" style={{cursor: (this.state.regex) ? 'pointer' : 'default'}}/>
+              <Tab label="REmatch" className="liteTab" style={{ cursor: (this.state.regex) ? 'pointer' : 'default' }} />
               : null}
             {(this.state.regex) ?
-              <Tab label="RegEx" className="liteTab" style={{cursor: (this.state.rematch) ? 'pointer' : 'default'}}/>
+              <Tab label="RegEx" className="liteTab" style={{ cursor: (this.state.rematch) ? 'pointer' : 'default' }} />
               : null}
           </Tabs>
           <div className="queryContainer">
             <div className="queryEditor" id={`queryEditor-${this.props.idx}`}></div>
           </div>
-          <Divider variant="middle" />
+          <Divider />
           <div className="textEditor" id={`textEditor-${this.props.idx}`}></div>
-          <Divider variant="middle" />
-
-
-          <div className="results">
+          <Divider />
+          <div className="matches">
             {
               (this.state.idle) ? (
                 <div className="buttonContainer">
@@ -180,18 +179,16 @@ class LiteViewer extends Component {
                 </div>) : (
                   <div className="list">
                     {(this.state.tab === 0 && this.state.rematch != null) ? (this.state.rematchMatches.map((match, idxMatch) => (
-                      <div key={idxMatch} className="resultRow">
+                      <div key={idxMatch} className="matchesRow">
                         {Object.keys(match).map((variable, idxVariable) => (
-                          <div key={idxVariable} className={`cm-m${idxVariable} resultItem`}>{variable}: {this.getText(match[variable])}</div>
+                          <div key={idxVariable} className={`cm-m${idxVariable} matchesItem`}>{variable}: {this.getText(match[variable])}</div>
                         ))
                         }
                       </div>))) :
                       (this.state.regexMatches.map((match, idxMatch) => (
-                        <div key={idxMatch} className="resultItem">{match}</div>
+                        <div key={idxMatch} className="matchesItem">{match}</div>
                       )))}
-                  </div>
-                )
-            }
+                  </div>)}
           </div>
         </Paper>
       </div>

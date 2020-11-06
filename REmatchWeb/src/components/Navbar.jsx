@@ -9,13 +9,12 @@ import Button from '@material-ui/core/Button';
 import Logo from '../assets/logo-dark.png';
 
 const Navbar = () => (
-
   <AppBar position="fixed" className="appBar">
     <Toolbar>
       <Link to="/">
         <img className="logo" src={Logo} alt="REmatch" />
       </Link>
-      <Link to="/about"  className="button">
+      <Link to="/about" className="button">
         <Button color="primary" size="large">
           About
         </Button>
