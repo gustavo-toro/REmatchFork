@@ -1,20 +1,20 @@
 # REmatch - Python version
 
-Interfaz desarrollada para hacer uso en python de la librería de expresiones regulares `REmatch` creada en c++. 
+Interfaz desarrollada para hacer uso en python de la librería de expresiones regulares `REmatch` creada en c++.
 
 Esta interfaz está adaptada para tener una sintaxis similar a la librería `Re` encontrada por defecto en python, sin embargo, algunas funciones no tiene el mismo comportamiento por lo que se recomienda leer la documentación de forma detallada.
 
 Es importante mencionar que las expresiones regulares deben estar entre `.*` para ser compiladas, por ejemplo:
-    
+
     .*correo@!dominio{gmail}.cl.*
 
 ## __Uso__
 
-Para usar esta interfaz primero se debe compilar el código de fuente de la carpeta [REmatchEngine](../REmatchEngine) utilizando SWIG/Python (revisar el README en esa carpeta para las instrucciones de compilación). 
+Para usar esta interfaz primero se debe compilar el código de fuente de la carpeta [REmatchEngine](../REmatchEngine) utilizando SWIG/Python (revisar el README en esa carpeta para las instrucciones de compilación).
 
 Suponiendo que ya se cuenta con `rematch.py` y `_rematchswiglib.so`, se deben colocar esos archivos junto a [`REmatch.py`](REmatch.py) en la misma carpeta. Luego de eso, se puede importar la interfaz creando un archivo `.py` y agregando:
 ```python
-import REmatch as re
+import pyrematch as re
 
 ```
 
@@ -56,7 +56,7 @@ Si cero o mas caracteres desde la primera posicion del string hacen match con la
 
     >> pattern = rematch.compile('.*a...s.*')
     >> pattern.match('abyssal') # Match at index 0
-    
+
 ### Regex. __fullmatch(string)__ *
 
 Si la expresion regular es capaz de hacer match con todo el string, retorna el correspondiente `match object`. Retorna `None` en caso contrario.
@@ -83,7 +83,7 @@ Escanea el string de iquierda a derecha encontrando todos los substring que prod
 ### Regex. __finditer(string)__
 
 Mismo comportamiento de `findall`. Retorna un `iterator` de `match objects` en el orden que fueron encontrados. En caso de no producir ningun match retorna un iterador vacio.
- 
+
     >> pattern = rematch.compile('.*!x{teen}.*')
     >> matches = pattern.finditer('fifteen, sixteen, seventeen,...')
     <generator object Regex.finditer at 0x7f08c46d3850>
@@ -159,3 +159,9 @@ Ejemplos mas complejos una vez que esté lista la libreria...
     Codigo
     Codigo
     Codigo
+
+# Contacto
+| | |
+|:-|-:|
+| Oscar Cárcamo | oscar.carcamoz@uc.cl |
+| Nicolás Van Sint Jan | nicovsj@uc.cl |

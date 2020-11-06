@@ -45,7 +45,7 @@ rematch_module = Extension('_rematch',
                             )
 
 # Get the long description from the README file
-long_description = codecs.open(os.path.join(root_dir,'README.md'), encoding='utf8').read()
+long_description = codecs.open(os.path.join(root_dir,'python/packages/pyrematch/README.md'), encoding='utf8').read()
 
 
 class BinaryDistribution(Distribution):
@@ -61,14 +61,13 @@ class CustomBuildPy(build_py):
 
 setup(
     name='pyrematch',
-    version='0.1.0',
+    version='0.1.1',
     description='An information extraction focused regex library that uses '\
                 'constant-delay algorithms.' ,
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/REmatchChile/REmatch',
-    author='Nicolás A. Van Sint Jan',
-    author_email='nicovsj@uc.cl',
+    author='Oscar Cárcamo <oscar.carcamoz@uc.cl>, Nicolás Van Sint Jan <nicovsj@uc.cl>',
     # ext_modules=[rematch_module],
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -76,7 +75,7 @@ setup(
         'Programming Language :: Python :: 3'
     ],
     keywords='regex, rematch',
-    license='MIT License',
+    license='MIT',
     packages=find_packages(where='python/packages'),
     package_dir={'':'python/packages',
                  'pyrematch': 'python/packages/pyrematch'},
