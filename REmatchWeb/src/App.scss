@@ -14,7 +14,8 @@ code {
 }
 
 $dark: #868686;
-$darker: #212121;
+$darker: #545454;
+$darkest: #212121;
 
 /* MainInterface */
 $colors: #03DAC6,
@@ -68,11 +69,11 @@ hsl(234, 96%, 67%),
 }
 
 .CodeMirror-scrollbar-filler {
-  background-color: #212121 !important;
+  background-color: $darkest !important;
 }
 
 .CodeMirror pre.CodeMirror-placeholder {
-  color: #545454;
+  color: $darker;
 }
 
 .mainContainer {
@@ -144,6 +145,11 @@ hsl(234, 96%, 67%),
       display: flex;
       align-items: center;
 
+      .matchesIdx {
+        color: $darker;
+        width: 3rem;
+      }
+
       .matchesItem {
         padding: .5rem;
         flex: 1;
@@ -166,6 +172,14 @@ hsl(234, 96%, 67%),
       &:hover {
         background-color: rgba(255, 255, 255, .2);
         cursor: pointer;
+        .matchesIdx {
+          color: $darkest;
+        }
+      }
+
+      .matchesIdx {
+        color: $darker;
+        width: 3rem;
       }
 
       .matchesItem {
@@ -194,7 +208,7 @@ hsl(234, 96%, 67%),
 
 /* NavBar */
 .appBar {
-  background-color: $darker !important;
+  background-color: $darkest !important;
 
   .logo {
     display: block;

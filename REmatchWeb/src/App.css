@@ -625,6 +625,11 @@ code {
           align-items: center;
 }
 
+.mainPaper .headContainer .matchesRow .matchesIdx {
+  color: #545454;
+  width: 3rem;
+}
+
 .mainPaper .headContainer .matchesRow .matchesItem {
   padding: .5rem;
   -webkit-box-flex: 1;
@@ -653,6 +658,15 @@ code {
 .mainPaper .matchesContainer .matchesRow:hover {
   background-color: rgba(255, 255, 255, 0.2);
   cursor: pointer;
+}
+
+.mainPaper .matchesContainer .matchesRow:hover .matchesIdx {
+  color: #212121;
+}
+
+.mainPaper .matchesContainer .matchesRow .matchesIdx {
+  color: #545454;
+  width: 3rem;
 }
 
 .mainPaper .matchesContainer .matchesRow .matchesItem {

@@ -68,26 +68,36 @@ class Viewer extends Component {
     });
   }
 
-  markREmatch(match) {
+  REmatchMarks(match) {
     let start, end;
     this.clearMarks();
     this.state.schema.forEach((variable, idx) => {
-      console.log(match[variable]);
       start = this.state.textEditor.posFromIndex(match[variable][0]);
       end = this.state.textEditor.posFromIndex(match[variable][1]);
       this.state.textEditor.markText(start, end, {
         className: `m${idx}`,
       })
     });
-
   }
 
-  runRegExp() {
+  RegExMarks(span) {
+    console.log(span);
+    this.clearMarks();
+    let start = this.state.textEditor.posFromIndex(span[0]);
+    let end = this.state.textEditor.posFromIndex(span[1]);
+    this.state.textEditor.markText(start, end, {
+      className: 'm0',
+    })
+  }
+
+  runRegEx() {
     let rgx = new RegExp(this.state.regex, 'g');
+    let matches = [];
     let match;
-    while ((match = rgx.exec(this.state.textEditor.getValue())) !== null) {
-      console.log(match.index, match.index + match[0].length);
+    while ((match = rgx.exec(this.state.textEditor.getValue())) != null) {
+      matches.push([match.index, match.index + match[0].length]);
     }
+    this.setState({ regexMatches: matches });
   }
 
   runREmatch() {
@@ -135,7 +145,7 @@ class Viewer extends Component {
               color={this.state.rematch ? 'primary' : 'secondary'}
               startIcon={<PlayArrow />}
               size="small"
-              onClick={this.state.rematch ? this.runREmatch.bind(this) : this.runRegExp.bind(this)}>
+              onClick={this.state.rematch ? this.runREmatch.bind(this) : this.runRegEx.bind(this)}>
               {(this.state.rematch) ? 'REmatch' : 'RegEx'}
             </Button>
             : null}
@@ -155,11 +165,12 @@ class Viewer extends Component {
               </Button>
               <Divider orientation="vertical" flexItem />
               <Button
+                disabled={this.state.regexMatches.length !== 0}
                 className="button"
                 color="secondary"
                 startIcon={<PlayArrow />}
                 size="small"
-                onClick={this.runRegExp.bind(this)}>
+                onClick={this.runRegEx.bind(this)}>
                 RegEx
               </Button>
             </div>
@@ -170,7 +181,7 @@ class Viewer extends Component {
           {(this.state.rematch) ?
             <div className="matches">
               {this.state.rematchMatches.map((match, idxMatch) => (
-                <div key={idxMatch} className="matchesRow" onClick={() => { this.markREmatch(match) }}>
+                <div key={idxMatch} className="matchesRow" onClick={() => this.REmatchMarks(match)}>
                   {Object.keys(match).map((variable, idxVariable) => (
                     <div key={idxVariable} className={`cm-m${idxVariable} matchesItem`}>
                       {variable}: {this.getText(match[variable])}
@@ -185,9 +196,13 @@ class Viewer extends Component {
             : null}
           {(this.state.regex) ?
             <div className="matches">
-              Match 1 RegEx blabla<br />
-            Match 2 RegEx blabla<br />
-            Match 3 RegEx blabla<br />
+              {this.state.regexMatches.map((span, idxSpan) => (
+                <div key={idxSpan} className="matchesRow" onClick={() => this.RegExMarks(span)}>
+                  <div className="matchesItem">
+                    {this.getText(span)}
+                  </div>
+                </div>
+              ))}
             </div>
             : null}
         </div>
