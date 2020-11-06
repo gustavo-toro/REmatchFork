@@ -9,15 +9,15 @@ Los patrones de expresión regular que utiliza REmatch siguen la siguiente sinta
 
 Donde la variable `nombre_variable` guarda información relativa al match de su patrón. Más adelante se explica con más detalle como se puede acceder a esta información a través del objeto `Match`. El comportamiento es similar a los `groups` normalmente utilizados en expresiones regulares compiladas en la librería `re` de Python.
 
-## Futura instalación
+## Instalación
 
 Para instalar Rematch usando `npm` se debe correr lo siguiente:
 
-    npm install rematch
+    npm install rematchjs
 
 Luego se podrá cargar en proyectos usando:
 
-    const REmatch = require('rematch');
+    const REmatch = require('rematchjs');
 
 ## Forma de uso
 

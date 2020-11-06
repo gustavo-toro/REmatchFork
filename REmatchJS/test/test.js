@@ -195,3 +195,31 @@ try {
 } catch (error) {
     console.log('Error:', error)
 };
+
+
+// try {
+  //   // let rgx = '.*!x{..}.*'
+  //   // let rgx1 = compile(rgx);
+  //   // console.log('Result: ', rgx1.find('aaa').group(0))
+  //   // console.log('Result: ', rgx1.find('aaa').groupdict())
+  //   // console.log('Result: ', rgx1.find('aaa').groups())
+  
+  //   // let rgx2 = '.*!x{..}.*'
+  //   // let rgx3 = compile(rgx2);
+  //   // console.log('Result: ', rgx3.find('\naaa').group(0))
+  
+  //   // rgx2 = '.*!x{a}.*'
+  //   // rgx3 = compile(rgx2, multi_line=true);
+  //   // console.log('Result: ', rgx3.find('a\naa').group(0))
+  
+  //   // let rgx2 = compile('.*!x{ly}.*');
+  //   // const text1 = "He was carefully disguised but captured quickly by police.";
+  //   // for (let r of rgx2.findIter(text1)) {
+  //   //   console.log(r.span('x'))
+  //   // }
+  //   // l = []
+  //   // console.log(l[0])
+  
+  // } catch (error) {
+  //   console.log(error)
+  // }
