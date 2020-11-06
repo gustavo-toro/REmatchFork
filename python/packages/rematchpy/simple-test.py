@@ -1,5 +1,6 @@
 import rematch as re
-
+import rematchlib as rem
+'''
 regex = ".*!x{a+}.*"
 document = "aaaaaa"
 
@@ -17,3 +18,22 @@ while it.hasNext():
   count += 1
 
 print(count)
+'''
+
+regex = ".*!x{one} !y{two} !z{three}.*"
+doc = "one two three four five ..."
+
+rgx = re.RegEx(regex)
+it = rgx.findIter(doc)
+if it.hasNext():
+  match = it.next()
+  print(match.span("x"))
+
+rgx = rem.compile(regex)
+m = rgx.findall("dasojdos")
+m = rgx.findall(doc)
+m = rgx.findall(doc)
+# m = rgx.finditer(doc)
+print(m)
+for match in m:
+  print(match.groupdict())
