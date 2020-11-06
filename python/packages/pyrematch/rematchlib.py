@@ -1,10 +1,11 @@
 import sys
-from . import rematch
+import rematch
 
 class Match:
 
-    def __init__(self, match_object):
+    def __init__(self, match_object, document):
         self.match_object = match_object
+        self.document = document
         self.variables = match_object.variables()
         # self.__span = span
         # self.__start = start
@@ -28,18 +29,21 @@ class Match:
     def group(self, capture):
         if str(capture).isnumeric():
             capture = self.variables[capture - 1]
-        return self.match_object.group(capture)
+        span = self.match_object.span(capture)
+        return self.document[span[0]:span[1]]
 
     def groups(self):
         matches = []
         for var in self.variables:
-            matches.append(self.match_object.group(var))
+            span = self.match_object.span(var)
+            matches.append(self.document[span[0]:span[1]])
         return tuple(matches)
 
     def groupdict(self):
         matches = dict()
         for var in self.variables:
-            matches[var] = self.match_object.group(var)
+            span = self.match_object.span(var)
+            matches[var] = self.document[span[0]:span[1]]
         return matches
 
 class Regex:
@@ -65,42 +69,53 @@ class Regex:
         return rgx_opts
 
     def find(self, string):
-        try:
-            m = Match(next(self.RegEx.findIter(string)))
-        except StopIteration:
-            m = None
-        return m
+        evaluator = self.RegEx.findIter(string)
+        if evaluator.hasNext():
+            match = evaluator.next()
+            return Match(match, string)
+        else:
+            return None
 
     def findall(self, string): # Retornar objetos match
-        matches = list()
+        matches = []
         it = self.RegEx.findIter(string)
         while it.hasNext():
-            matches.append(Match(it.next()))
+            matches.append(Match(it.next(), string))
         return matches
 
     def finditer(self, string):
         it = self.RegEx.findIter(string)
         while it.hasNext():
-            yield it.next() #yield
+            yield Match(it.next(), string)
 
     def search(self, string):
         return self.find(string)
 
     def match(self, string):
-        self.rgx_opts.set_save_anchors(True)
-        self.RegEx = rematch.RegEx(self.pattern, self.rgx_opts)
-        match = self.RegEx.find(string)
-        if match.group(0) == string[:len(match.gruop(0))]:
-            return Match(match)
-        return None
+        if self.pattern[:2] == ".*":
+            pattern = self.pattern[2:]
+        else:
+            pattern = self.pattern
+        regEx = rematch.RegEx(pattern, self.rgx_opts)
+        it = regEx.findIter(string)
+        if it.hasNext():
+            m = it.next()
+            return Match(m, string)
+        else:
+            return None
 
     def fullmatch(self, string):
-        self.rgx_opts.set_save_anchors(True)
-        self.RegEx = rematch.RegEx(self.pattern, self.rgx_opts)
-        match = self.RegEx.find(string)
-        if match.group(0) == string:
-            return Match(match)
-        return None
+        if self.pattern[:2] == ".*" and self.pattern[-2:] == ".*":
+            pattern = self.pattern[2:-2]
+        else:
+            pattern = self.pattern
+        regEx = rematch.RegEx(pattern, self.rgx_opts)
+        it = regEx.findIter(string)
+        if it.hasNext():
+            m = it.next()
+            return Match(m, string)
+        else:
+            return None
 
 def compile(pattern, **flags):
     return Regex(pattern, **flags)
