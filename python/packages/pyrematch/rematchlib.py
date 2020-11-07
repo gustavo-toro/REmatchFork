@@ -87,7 +87,7 @@ class Regex:
         it = self.RegEx.findIter(string)
         while it.hasNext():
             yield Match(it.next(), string)
-
+        return None
     def search(self, string):
         return self.find(string)
 

@@ -47,8 +47,19 @@ class Test(unittest.TestCase):
     
     def test_find(self):
         regex_obj = re.compile('.*!x{abyss}.*')
+
         match1 = regex_obj.find("abcdefgh")
         self.assertIsNone(match1)
+        
+        match = regex_obj.find("Wow, this is abyssal")
+        self.assertIsNotNone(match)
+        self.assertEqual(match.start('x'), 13)
+        self.assertEqual(match.end('x'), 18)
+        self.assertTupleEqual(match.span('x'), (13, 18))
+        self.assertEqual(match.group('x'), 'abyss')
+        self.assertTupleEqual(match.groups(), ('abyss',))
+        self.assertDictEqual(match.groupdict(), {'x': 'abyss'})
+
         match = regex_obj.find("abyssal")
         self.assertIsNotNone(match)
         self.assertEqual(match.start('x'), 0)
@@ -61,8 +72,8 @@ class Test(unittest.TestCase):
     
     def test_findall(self):
         regex_obj = re.compile('.*!x{teen}.*')
-        #matches = regex_obj.findall('abcdefgh') #Comentado porque solo se queda con este findall y no corre el sgte
-        #self.assertListEqual(matches, [])
+        matches = regex_obj.findall('abcdefgh')
+        self.assertListEqual(matches, [])
         matches = regex_obj.findall('fifteen, sixteen, seventeen,...')
         expected = [(3, 7), (12, 16), (23, 27)]
         for pos in range(len(matches)):
