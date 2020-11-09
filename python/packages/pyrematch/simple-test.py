@@ -37,3 +37,7 @@ m = rgx.findall(doc)
 print(m)
 for match in m:
   print(match.groupdict())
+
+pattern = rem.compile('.*!x{a...s}.*')
+match = pattern.match("abyssal")
+print(match.group("x"))
