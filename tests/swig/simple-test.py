@@ -1,10 +1,10 @@
 import pyrematch.rematch as re
 
-regex = ".*!x{a}.*"
+regex = "!x{a}"
 document = "aaaaaa"
 
 rgx = re.RegEx(regex)
-it = rgx.findIter(document)
+it = rgx.findIter(document, re.kBothAnchors)
 
 # for match in it:
 #   print('\t'.join('!{}: {}'.format(v, match.span(v)) for v in match.variables())

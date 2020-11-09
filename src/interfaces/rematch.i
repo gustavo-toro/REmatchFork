@@ -14,6 +14,7 @@
 #include "regex/regex_options.hpp"
 #include "match.hpp"
 #include "eval.hpp"
+#include "anchors.hpp"
 using namespace rematch;
 using namespace std;
 %}
@@ -32,6 +33,12 @@ wrap_unique_ptr(MatchUniquePtr, Match);
 using Span = std::pair<size_t, size_t>;
 using Match_ptr = std::unique_ptr<Match>;
 
+enum Anchor {
+  kUnanchored = 0,
+  kSingleAnchor = 1,
+  kBothAnchors = 3
+};
+
 class RegExOptions {
  public:
   RegExOptions();
@@ -41,10 +48,6 @@ class RegExOptions {
   void set_line_by_line(bool b);
   bool dot_nl() const;
   void set_dot_nl(bool b);
-  bool start_anchor() const;
-  void set_start_anchor(bool b);
-  bool end_anchor() const;
-  void set_end_anchor(bool b);
   bool early_output() const;
   void set_early_output(bool b);
   bool save_anchors() const;
@@ -72,8 +75,7 @@ class RegEx {
  public:
   RegEx(std::string regex, RegExOptions opt = RegExOptions());
   ~RegEx();
-  Match find(const std::string &text);
-  EvaluatorIter findIter(const std::string &text);
+  EvaluatorIter findIter(const std::string &text, Anchor anchor);
   std::vector<std::string> varScheme();
 }; // end class Regex
 

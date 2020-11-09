@@ -29,8 +29,8 @@ class Evaluator {
   Match next();
   bool hasNext();
 
-  Evaluator(RegEx& rgx, std::istream& input, uint8_t eval_options=0);
-  Evaluator(RegEx& rgx, const std::string& input, uint8_t eval_options=0);
+  Evaluator(RegEx& rgx, std::istream& input, Anchor anchors, uint8_t eval_options=0);
+  Evaluator(RegEx& rgx, const std::string& input, Anchor anchors, uint8_t eval_options=0);
 
  private:
 

@@ -18,7 +18,7 @@ class DetManager {
 	using VectorCharTable = std::unordered_map<BitsetWrapper, std::vector<char>>;
 
  public:
-	DetManager(const std::string &pattern, Anchor anchor=kBothAnchors, bool raw_automata=false);
+	DetManager(const std::string pattern, Anchor anchor=kBothAnchors, bool raw_automata=false);
 
 	DetState* getNextSubset(SetState* ss, BitsetWrapper charBitset);
 	void computeCaptures(DetState* q);
@@ -43,7 +43,7 @@ class DetManager {
 	void init_dfa();
 	void init_automata();
 
-	const std::string &pattern_;
+	const std::string pattern_;
 
 	// ExtendedVA representation of the given pattern.
 	std::unique_ptr<ExtendedVA> nfa_;

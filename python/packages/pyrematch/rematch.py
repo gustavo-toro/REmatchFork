@@ -190,6 +190,9 @@ class MatchUniquePtr(object):
 # Register MatchUniquePtr in _rematch:
 _rematch.MatchUniquePtr_swigregister(MatchUniquePtr)
 
+kUnanchored = _rematch.kUnanchored
+kSingleAnchor = _rematch.kSingleAnchor
+kBothAnchors = _rematch.kBothAnchors
 class RegExOptions(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -202,10 +205,6 @@ class RegExOptions(object):
     set_line_by_line = _swig_new_instance_method(_rematch.RegExOptions_set_line_by_line)
     dot_nl = _swig_new_instance_method(_rematch.RegExOptions_dot_nl)
     set_dot_nl = _swig_new_instance_method(_rematch.RegExOptions_set_dot_nl)
-    start_anchor = _swig_new_instance_method(_rematch.RegExOptions_start_anchor)
-    set_start_anchor = _swig_new_instance_method(_rematch.RegExOptions_set_start_anchor)
-    end_anchor = _swig_new_instance_method(_rematch.RegExOptions_end_anchor)
-    set_end_anchor = _swig_new_instance_method(_rematch.RegExOptions_set_end_anchor)
     early_output = _swig_new_instance_method(_rematch.RegExOptions_early_output)
     set_early_output = _swig_new_instance_method(_rematch.RegExOptions_set_early_output)
     save_anchors = _swig_new_instance_method(_rematch.RegExOptions_save_anchors)
@@ -250,7 +249,6 @@ class RegEx(object):
     def __init__(self, *args):
         _rematch.RegEx_swiginit(self, _rematch.new_RegEx(*args))
     __swig_destroy__ = _rematch.delete_RegEx
-    find = _swig_new_instance_method(_rematch.RegEx_find)
     findIter = _swig_new_instance_method(_rematch.RegEx_findIter)
     varScheme = _swig_new_instance_method(_rematch.RegEx_varScheme)
 

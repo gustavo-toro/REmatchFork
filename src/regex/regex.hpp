@@ -38,11 +38,8 @@ class RegEx {
     kSaveAnchors = 1<<4
   };
 
-  // Calls the evaluator to get first
-  Match find(const std::string &text);
-
-  EvaluatorIter findIter(const std::string &text);
-  EvaluatorIter findIterFile(std::istream& is);
+  EvaluatorIter findIter(const std::string &text, Anchor anchor=kBothAnchors);
+  EvaluatorIter findIterFile(std::istream& is, Anchor anchor=kBothAnchors);
 
   int varCount() const {return dman_.varFactory()->size();}
 
@@ -73,8 +70,6 @@ class RegEx {
 
   // Regex flags.
   flags_t flags_;
-
-  Anchor anchors_;
 
   // Is DFA fully computed.
   bool full_dfa_;

@@ -1,5 +1,5 @@
 import sys
-import rematch
+from . import rematch
 
 class Match:
 

@@ -92,7 +92,8 @@ class FileDocument : public Document {
       : data_(nullptr), size_(0) {}
 
   FileDocument(std::istream &is)
-      : data_(&is), size_(0) {}
+      : data_(&is) {
+    }
 
 	virtual ~FileDocument() = default;
 

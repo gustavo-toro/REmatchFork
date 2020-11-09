@@ -3341,6 +3341,7 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 #include "regex/regex_options.hpp"
 #include "match.hpp"
 #include "eval.hpp"
+#include "anchors.hpp"
 using namespace rematch;
 using namespace std;
 
@@ -5115,6 +5116,13 @@ SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__era
 SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__insert__SWIG_0(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_vector_Sl_std_string_Sg__insert__SWIG_1(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::size_type n,std::vector< std::string >::value_type const &x){ self->insert(pos, n, x); }
 
+SWIGINTERNINLINE PyObject*
+  SWIG_From_int  (int value)
+{
+  return PyInt_FromLong((long) value);
+}
+
+
 SWIGINTERN int
 SWIG_AsVal_bool (PyObject *obj, bool *val)
 {
@@ -5126,6 +5134,22 @@ SWIG_AsVal_bool (PyObject *obj, bool *val)
     return SWIG_ERROR;
   if (val) *val = r ? true : false;
   return SWIG_OK;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_int (PyObject * obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< int >(v);
+    }
+  }  
+  return res;
 }
 
 #ifdef __cplusplus
@@ -8438,110 +8462,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RegExOptions_start_anchor(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  RegExOptions *arg1 = (RegExOptions *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  bool result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegExOptions, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegExOptions_start_anchor" "', argument " "1"" of type '" "RegExOptions const *""'"); 
-  }
-  arg1 = reinterpret_cast< RegExOptions * >(argp1);
-  result = (bool)((RegExOptions const *)arg1)->start_anchor();
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RegExOptions_set_start_anchor(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  RegExOptions *arg1 = (RegExOptions *) 0 ;
-  bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  bool val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RegExOptions_set_start_anchor", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegExOptions, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegExOptions_set_start_anchor" "', argument " "1"" of type '" "RegExOptions *""'"); 
-  }
-  arg1 = reinterpret_cast< RegExOptions * >(argp1);
-  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RegExOptions_set_start_anchor" "', argument " "2"" of type '" "bool""'");
-  } 
-  arg2 = static_cast< bool >(val2);
-  (arg1)->set_start_anchor(arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RegExOptions_end_anchor(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  RegExOptions *arg1 = (RegExOptions *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  bool result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegExOptions, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegExOptions_end_anchor" "', argument " "1"" of type '" "RegExOptions const *""'"); 
-  }
-  arg1 = reinterpret_cast< RegExOptions * >(argp1);
-  result = (bool)((RegExOptions const *)arg1)->end_anchor();
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RegExOptions_set_end_anchor(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  RegExOptions *arg1 = (RegExOptions *) 0 ;
-  bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  bool val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RegExOptions_set_end_anchor", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegExOptions, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegExOptions_set_end_anchor" "', argument " "1"" of type '" "RegExOptions *""'"); 
-  }
-  arg1 = reinterpret_cast< RegExOptions * >(argp1);
-  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RegExOptions_set_end_anchor" "', argument " "2"" of type '" "bool""'");
-  } 
-  arg2 = static_cast< bool >(val2);
-  (arg1)->set_end_anchor(arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_RegExOptions_early_output(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   RegExOptions *arg1 = (RegExOptions *) 0 ;
@@ -9048,54 +8968,20 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RegEx_find(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  RegEx *arg1 = (RegEx *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[2] ;
-  Match result;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RegEx_find", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegEx, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegEx_find" "', argument " "1"" of type '" "RegEx *""'"); 
-  }
-  arg1 = reinterpret_cast< RegEx * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RegEx_find" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RegEx_find" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  result = (arg1)->find((std::string const &)*arg2);
-  resultobj = SWIG_NewPointerObj((new Match(static_cast< const Match& >(result))), SWIGTYPE_p_Match, SWIG_POINTER_OWN |  0 );
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_RegEx_findIter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   RegEx *arg1 = (RegEx *) 0 ;
   std::string *arg2 = 0 ;
+  Anchor arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[2] ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject *swig_obj[3] ;
   EvaluatorIter result;
   
-  if (!SWIG_Python_UnpackTuple(args, "RegEx_findIter", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "RegEx_findIter", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RegEx, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegEx_findIter" "', argument " "1"" of type '" "RegEx *""'"); 
@@ -9112,7 +8998,12 @@ SWIGINTERN PyObject *_wrap_RegEx_findIter(PyObject *SWIGUNUSEDPARM(self), PyObje
     }
     arg2 = ptr;
   }
-  result = (arg1)->findIter((std::string const &)*arg2);
+  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "RegEx_findIter" "', argument " "3"" of type '" "Anchor""'");
+  } 
+  arg3 = static_cast< Anchor >(val3);
+  result = (arg1)->findIter((std::string const &)*arg2,arg3);
   resultobj = SWIG_NewPointerObj((new EvaluatorIter(static_cast< const EvaluatorIter& >(result))), SWIGTYPE_p_EvaluatorIter, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
@@ -9241,10 +9132,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "RegExOptions_set_line_by_line", _wrap_RegExOptions_set_line_by_line, METH_VARARGS, NULL},
 	 { "RegExOptions_dot_nl", _wrap_RegExOptions_dot_nl, METH_O, NULL},
 	 { "RegExOptions_set_dot_nl", _wrap_RegExOptions_set_dot_nl, METH_VARARGS, NULL},
-	 { "RegExOptions_start_anchor", _wrap_RegExOptions_start_anchor, METH_O, NULL},
-	 { "RegExOptions_set_start_anchor", _wrap_RegExOptions_set_start_anchor, METH_VARARGS, NULL},
-	 { "RegExOptions_end_anchor", _wrap_RegExOptions_end_anchor, METH_O, NULL},
-	 { "RegExOptions_set_end_anchor", _wrap_RegExOptions_set_end_anchor, METH_VARARGS, NULL},
 	 { "RegExOptions_early_output", _wrap_RegExOptions_early_output, METH_O, NULL},
 	 { "RegExOptions_set_early_output", _wrap_RegExOptions_set_early_output, METH_VARARGS, NULL},
 	 { "RegExOptions_save_anchors", _wrap_RegExOptions_save_anchors, METH_O, NULL},
@@ -9268,7 +9155,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "EvaluatorIter_swiginit", EvaluatorIter_swiginit, METH_VARARGS, NULL},
 	 { "new_RegEx", _wrap_new_RegEx, METH_VARARGS, NULL},
 	 { "delete_RegEx", _wrap_delete_RegEx, METH_O, NULL},
-	 { "RegEx_find", _wrap_RegEx_find, METH_VARARGS, NULL},
 	 { "RegEx_findIter", _wrap_RegEx_findIter, METH_VARARGS, NULL},
 	 { "RegEx_varScheme", _wrap_RegEx_varScheme, METH_O, NULL},
 	 { "RegEx_swigregister", RegEx_swigregister, METH_O, NULL},
@@ -9361,10 +9247,6 @@ static PyMethodDef SwigMethods_proxydocs[] = {
 	 { "RegExOptions_set_line_by_line", _wrap_RegExOptions_set_line_by_line, METH_VARARGS, NULL},
 	 { "RegExOptions_dot_nl", _wrap_RegExOptions_dot_nl, METH_O, NULL},
 	 { "RegExOptions_set_dot_nl", _wrap_RegExOptions_set_dot_nl, METH_VARARGS, NULL},
-	 { "RegExOptions_start_anchor", _wrap_RegExOptions_start_anchor, METH_O, NULL},
-	 { "RegExOptions_set_start_anchor", _wrap_RegExOptions_set_start_anchor, METH_VARARGS, NULL},
-	 { "RegExOptions_end_anchor", _wrap_RegExOptions_end_anchor, METH_O, NULL},
-	 { "RegExOptions_set_end_anchor", _wrap_RegExOptions_set_end_anchor, METH_VARARGS, NULL},
 	 { "RegExOptions_early_output", _wrap_RegExOptions_early_output, METH_O, NULL},
 	 { "RegExOptions_set_early_output", _wrap_RegExOptions_set_early_output, METH_VARARGS, NULL},
 	 { "RegExOptions_save_anchors", _wrap_RegExOptions_save_anchors, METH_O, NULL},
@@ -9388,7 +9270,6 @@ static PyMethodDef SwigMethods_proxydocs[] = {
 	 { "EvaluatorIter_swiginit", EvaluatorIter_swiginit, METH_VARARGS, NULL},
 	 { "new_RegEx", _wrap_new_RegEx, METH_VARARGS, NULL},
 	 { "delete_RegEx", _wrap_delete_RegEx, METH_O, NULL},
-	 { "RegEx_find", _wrap_RegEx_find, METH_VARARGS, NULL},
 	 { "RegEx_findIter", _wrap_RegEx_findIter, METH_VARARGS, NULL},
 	 { "RegEx_varScheme", _wrap_RegEx_varScheme, METH_O, NULL},
 	 { "RegEx_swigregister", RegEx_swigregister, METH_O, NULL},
@@ -10248,6 +10129,9 @@ SWIG_init(void) {
   // thread safe initialization
   swig::container_owner_attribute();
   
+  SWIG_Python_SetConstant(d, "kUnanchored",SWIG_From_int(static_cast< int >(kUnanchored)));
+  SWIG_Python_SetConstant(d, "kSingleAnchor",SWIG_From_int(static_cast< int >(kSingleAnchor)));
+  SWIG_Python_SetConstant(d, "kBothAnchors",SWIG_From_int(static_cast< int >(kBothAnchors)));
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

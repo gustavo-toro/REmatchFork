@@ -6,10 +6,9 @@ namespace rematch {
 
 RegEx::RegEx(std::string pattern, rematch::RegExOptions rgx_opts)
     : pattern_(pattern),
-      dman_(pattern, rgx_opts.anchors()),
-      raw_dman_(pattern, rgx_opts.anchors(), 1),
-      flags_(parseFlags(rgx_opts)),
-      anchors_(rgx_opts.anchors()) {
+      dman_(pattern, Anchor::kBothAnchors),
+      raw_dman_(pattern, Anchor::kBothAnchors, 1),
+      flags_(parseFlags(rgx_opts)) {
         // std::cout << "Regex pattern: \"" << pattern_ << "\"\n";
         // std::cout << "Filter factory:\n" << dman_.filterFactory()->pprint() << "\n";
       }
@@ -26,22 +25,15 @@ std::string RegEx::uniformGenerate(uint32_t n) {
 }
 
 
-EvaluatorIter RegEx::findIter(const std::string &text) {
-  auto eval = new Evaluator(*this, text, Evaluator::kAllFlags & flags_);
+EvaluatorIter RegEx::findIter(const std::string &text, Anchor anchors) {
+  auto eval = new Evaluator(*this, text, anchors, Evaluator::kAllFlags & flags_);
   return EvaluatorIter(eval);
 }
 
-EvaluatorIter RegEx::findIterFile(std::istream &is) {
-  auto eval = new Evaluator(*this, is, Evaluator::kAllFlags & flags_);
+EvaluatorIter RegEx::findIterFile(std::istream &is, Anchor anchors) {
+  auto eval = new Evaluator(*this, is, anchors, Evaluator::kAllFlags & flags_);
   return EvaluatorIter(eval);
 }
-
-Match RegEx::find(const std::string &text) {
-  auto eval = Evaluator(*this, text, flags_ & Evaluator::kEarlyOutput);
-
-  return eval.next();
-}
-
 
 uint8_t RegEx::parseFlags(rematch::RegExOptions rgx_opts) {
   uint8_t ret =  rgx_opts.multi_line()    * kMultiLine    |

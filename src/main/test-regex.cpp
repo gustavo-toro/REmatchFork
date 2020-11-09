@@ -11,14 +11,6 @@ int main(int argc, char *argv[]) {
 
   // int count = 0;
 
-  auto match = rgx.find(doc);
-
-  std::cout << match << '\n';
-
-  auto match2 = rgx.find(doc);
-
-  std::cout << match2 << '\n';
-
   // while(match = rgx.findIter(doc)) {
   //   std::cout << *match << '\n';
   //   count++;

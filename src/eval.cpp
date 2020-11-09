@@ -5,7 +5,7 @@
 
 namespace rematch {
 
-Evaluator::Evaluator(RegEx &rgx, std::istream& input,
+Evaluator::Evaluator(RegEx &rgx, std::istream& input, Anchor anchors,
                      uint8_t flags)
     : rgx_(&rgx),
       text_(std::make_unique<FileDocument>(input)),
@@ -18,10 +18,12 @@ Evaluator::Evaluator(RegEx &rgx, std::istream& input,
       nlines_(0),
       capture_counter_(0),
       reading_counter_(0) {
+  rgx_->detManager().set_anchor(anchors);
+  rgx_->rawDetManager().set_anchor(anchors);
   init();
 }
 
-Evaluator::Evaluator(RegEx &rgx, const std::string &text,
+Evaluator::Evaluator(RegEx &rgx, const std::string &text, Anchor anchors,
                      uint8_t flags)
     : rgx_(&rgx),
       text_(std::make_unique<StrDocument>(text)),
@@ -34,7 +36,8 @@ Evaluator::Evaluator(RegEx &rgx, const std::string &text,
       nlines_(0),
       capture_counter_(0),
       reading_counter_(0) {
-  // std::cout << "[Eval] Evaluator() init with StrDocument\n";
+  rgx_->detManager().set_anchor(anchors);
+  rgx_->rawDetManager().set_anchor(anchors);
   init();
 }
 
@@ -79,8 +82,8 @@ bool Evaluator::hasNext() {
     &Evaluator::hasNextTF,
     &Evaluator::hasNextTT,
   };
-  int index = 2 * line_by_line_ +
-              1 * early_output_;
+  int index = 2 * early_output_ +
+              1 * line_by_line_;
 
   return (this->*nexts[index])();
 }

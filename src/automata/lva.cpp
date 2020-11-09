@@ -146,13 +146,13 @@ void LogicalVA::adapt_anchors(Anchor &anchor) {
     return;
 
   auto anychar_code = f_factory_->addFilter(CharClass(ANYCHAR, false));
-  // Need to unanchor the begining
-	init_state_->addFilter(anychar_code, init_state_);
+  // Need to unanchor the final states
+  for(auto &state: finalStates) {
+    state->addFilter(anychar_code, state);
+  }
   if(anchor == Anchor::kUnanchored) {
-    // Also unanchor the end states
-    for(auto &state: finalStates) {
-      state->addFilter(anychar_code, state);
-    }
+    // Need to unanchor the begining
+	  init_state_->addFilter(anychar_code, init_state_);
   }
 }
 

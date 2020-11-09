@@ -17,7 +17,7 @@
 
 // using namespace boost::multiprecision;
 
-DetManager::DetManager(const std::string &pattern, Anchor anchor, bool raw_automata)
+DetManager::DetManager(const std::string pattern, Anchor anchor, bool raw_automata)
 	:	pattern_(pattern), anchor_(anchor), raw_automata_(raw_automata)	{
 	init_automata();
 }
