@@ -69,7 +69,7 @@ class Regex:
         return rgx_opts
 
     def find(self, string):
-        evaluator = self.RegEx.findIter(string)
+        evaluator = self.RegEx.findIter(string, rematch.kUnanchored)
         if evaluator.hasNext():
             match = evaluator.next()
             return Match(match, string)
@@ -78,13 +78,13 @@ class Regex:
 
     def findall(self, string): # Retornar objetos match
         matches = []
-        it = self.RegEx.findIter(string)
+        it = self.RegEx.findIter(string, rematch.kUnanchored)
         while it.hasNext():
             matches.append(Match(it.next(), string))
         return matches
 
     def finditer(self, string):
-        it = self.RegEx.findIter(string)
+        it = self.RegEx.findIter(string, rematch.kUnanchored)
         while it.hasNext():
             yield Match(it.next(), string)
         return None
@@ -92,12 +92,7 @@ class Regex:
         return self.find(string)
 
     def match(self, string):
-        if self.pattern[:2] == ".*":
-            pattern = self.pattern[2:]
-        else:
-            pattern = self.pattern
-        regEx = rematch.RegEx(pattern, self.rgx_opts)
-        it = regEx.findIter(string)
+        it = self.RegEx.findIter(string, rematch.kSingleAnchor)
         if it.hasNext():
             m = it.next()
             return Match(m, string)
@@ -105,12 +100,7 @@ class Regex:
             return None
 
     def fullmatch(self, string):
-        if self.pattern[:2] == ".*" and self.pattern[-2:] == ".*":
-            pattern = self.pattern[2:-2]
-        else:
-            pattern = self.pattern
-        regEx = rematch.RegEx(pattern, self.rgx_opts)
-        it = regEx.findIter(string)
+        it = self.RegEx.findIter(string, rematch.kBothAnchors)
         if it.hasNext():
             m = it.next()
             return Match(m, string)
