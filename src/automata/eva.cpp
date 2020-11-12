@@ -369,6 +369,9 @@ bool ExtendedVA::offsetPossible(CapturePtr capture) {
 	for(auto &filter: p->f) {
 		if(isReachable(filter->next, p))
 			return false;
+		// If the filter is an anchor then don't allow an offset
+		if(filterFactory()->is_anchor(filter->code))
+			return false;
 	}
 
 	return true;

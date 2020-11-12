@@ -75,4 +75,15 @@ void regex2filters::operator()(ast::anywhitespace const &a)  {
 	filter_factory_->addFilter(CharClass(ANYSPACE, false));
 }
 
+void regex2filters::operator()(ast::nonwhitespace const &a) {
+	filter_factory_->addFilter(CharClass(ANYSPACE, true));
+}
+
+void regex2filters::operator()(ast::anchor const &a) {
+	if(a.is_start)
+		filter_factory_->addFilter(CharClass(kStartAnchor, false));
+	else
+		filter_factory_->addFilter(CharClass(kEndAnchor, false));
+}
+
 } // end namespace visitors

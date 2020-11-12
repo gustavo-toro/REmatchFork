@@ -20,6 +20,7 @@ class DetManager {
  public:
 	DetManager(const std::string pattern, Anchor anchor=kBothAnchors, bool raw_automata=false);
 
+	DetState* reachAnchoredState(DetState* state, int anchor_code);
 	DetState* getNextSubset(SetState* ss, BitsetWrapper charBitset);
 	void computeCaptures(DetState* q);
 	void computeFullDetAutomaton();

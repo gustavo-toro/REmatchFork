@@ -179,6 +179,23 @@ string FilterFactory :: pprint() {
 	return ss.str();
 }
 
+bool FilterFactory::is_anchor(int code) {
+	auto sanchor = codeMap.find(CharClass(kStartAnchor, false));
+	auto eanchor = codeMap.find(CharClass(kEndAnchor, false));
+
+	if(sanchor != codeMap.end()) {
+		if(code == sanchor->second)
+			return true;
+	}
+
+	if(eanchor != codeMap.end()) {
+		if(code == eanchor->second)
+			return true;
+	}
+
+	return false;
+}
+
 
 int FilterFactory::addFilter(CharClass cs) {
 	auto found = codeMap.find(cs);
@@ -197,7 +214,11 @@ int FilterFactory::addFilter(CharClass cs) {
 }
 
 int FilterFactory :: getCode(CharClass cs) {
-	return codeMap[cs];
+	auto search = codeMap.find(cs);
+	if (search != codeMap.end())
+		return search->second;
+	else
+		return -1;
 }
 
 CharClass FilterFactory :: getFilter(int code) {

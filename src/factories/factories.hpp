@@ -131,6 +131,8 @@ class FilterFactory {
 
 		bool isMember(CharClass cs);
 
+		bool is_anchor(int code);
+
 		void merge(FilterFactory &rest);
 
 		BitsetWrapper applyFilters(char a);

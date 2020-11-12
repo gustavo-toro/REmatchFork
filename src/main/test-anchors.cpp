@@ -11,8 +11,8 @@ int main(int argc, char *argv[]) {
   // rgx_opts.set_start_anchor(false);
   // rgx_opts.set_end_anchor(false);
 
-  rematch::RegEx rgx("!x{a+}");
-  const std::string doc = "aaaaaa";
+  rematch::RegEx rgx("(^|,)!x{[^,]{3,}}($|,)");
+  const std::string doc = "Carlos Perez,cperez@gmail.com,Juan Soto,soto@uc.cl,Sebastian del Campo,sdelcampo@gmail.com";
 
   int count = 0;
 
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Count: " << count << '\n';
   count = 0;
 
-  const std::string doc2 = "aabbbbaaa";
+  const std::string doc2 = "aa";
 
   auto eval_iter2 = rgx.findIter(doc2, kSingleAnchor);
 

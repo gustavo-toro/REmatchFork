@@ -17,44 +17,48 @@ const std::set<CharClass::special_code> CharClass::special_codes = {
 };
 
 // Empty constructor
-// TODO: check if this constructor is used somewhere, delete it otherwise
 CharClass :: CharClass(): special(0), negated(false), label("") {}
 
 // Single char constructor
-// TODO: delete this constructor and use General constructor instead
 CharClass :: CharClass(const char &a): special(0), negated(false) {
 	if (a == '\n')
 		label = "\\n";
 	else if(a == '.')
 		label = "\\.";
+	else if(a == '^')
+		label = "\\^";
+	else if(a == '$')
+		label = "\\$";
 	else
 		label = string(1, a);
 	singles.insert(a);
 }
 
 // Special sets constructor
-// TODO: delete this constructor and use General constructor instead
 CharClass :: CharClass(int special, bool negated): special(special), negated(negated) {
 	switch(special) {
 		case 1:
 			label = ".";
 			break;
 		case 2:
-			if(negated) label = "\\D";
-			else label = "\\d";
+			label = (negated) ? "\\D" : "\\d";
 			break;
 		case 3:
-			if(negated) label = "\\W";
-			else label = "\\w";
+			label = (negated) ? "\\W" : "\\w";
 			break;
 		case 4:
-			label = "\\s";
+			label = (negated) ? "\\S" : "\\s";
+			break;
+		case kStartAnchor:
+			label = "^";
+			break;
+		case kEndAnchor:
+			label = "$";
 			break;
 	}
 }
 
 // Regex grammar charset constructor
-// TODO: delete this constructor and use Charset constructor instead
 CharClass :: CharClass(const ast::charset &cs) {
 	special = 0;
 	negated = cs.negated;
@@ -105,7 +109,7 @@ CharClass :: CharClass(std::string str, bool is_special) {
 }
 
 bool CharClass :: operator==(const CharClass& rhs) const {
-	return label == rhs.label; 
+	return label == rhs.label;
 }
 
 string CharClass::print() {return label;}
@@ -146,7 +150,7 @@ void CharClass :: updateLabel() {
 			b = get<0>(range); e = get<1>(range);
 			if(b <= single && single <= e) {
 				it_single = singles.erase(it_single);
-			}	
+			}
 			else {
 				it_single++;
 			}
@@ -190,6 +194,9 @@ bool CharClass :: check(char a) {
 				return !!isalnum(a) != negated;
 			case 4:
 				return !!isspace(a) != negated;
+			case kStartAnchor:
+			case kEndAnchor:
+				return false;
 		}
 	}
 	for(auto &el: singles) {
@@ -200,4 +207,3 @@ bool CharClass :: check(char a) {
 	}
 	return negated;
 }
-

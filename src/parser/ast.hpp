@@ -39,14 +39,23 @@ struct nondigit {friend std::ostream& operator<<(std::ostream& os, const nondigi
 struct anyword {friend std::ostream& operator<<(std::ostream& os, const anyword& a);};
 struct nonword {friend std::ostream& operator<<(std::ostream& os, const nonword& a);};
 struct anywhitespace {friend std::ostream& operator<<(std::ostream& os, const anywhitespace& a);};
+struct nonwhitespace {friend std::ostream& operator<<(std::ostream& os, const nonwhitespace& a);};
 
 // Recursive structs
 struct parenthesis;
 struct assignation;
 
+struct anchor {
+    anchor() = default;
+
+    anchor(bool b): is_start(b) {}
+
+    bool is_start;
+};
+
 // Atom
-using atom = boost::variant<charset, char, anychar, anydigit, nondigit,
-                        anyword, nonword, anywhitespace>;
+using atom = boost::variant<charset, anchor, char, anychar, anydigit, nondigit,
+                        anyword, nonword, anywhitespace, nonwhitespace>;
 // Group
 using group =  boost::variant<
     boost::recursive_wrapper<parenthesis>,
@@ -62,6 +71,8 @@ struct repetition {
     int start_;
     int end_;
 };
+
+
 
 // Iter
 struct iter {
@@ -93,7 +104,7 @@ struct assignation {
     assignation(std::string var, altern root): var(var), root(std::move(root)) {}
 };
 
-}
+} // end namespace ast
 
 
 BOOST_FUSION_ADAPT_STRUCT(ast::charset,

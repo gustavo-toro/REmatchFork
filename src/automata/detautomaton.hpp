@@ -23,8 +23,9 @@ class DetAutomaton {
   DetAutomaton(VariableFactory* vf);
   DetAutomaton(ExtendedVA &a);
 
-  // Getter for init state
-  DetState* initState() {return init_state_;};
+  DetState* initState() {return init_state_;}
+
+  void set_init_state(DetState* ns) {init_state_ = ns;}
 
   std::string pprint();
 
@@ -34,6 +35,7 @@ class DetAutomaton {
 
  private:
   DetState* init_state_;
+
   std::shared_ptr<VariableFactory> variable_factory_;
 
 };

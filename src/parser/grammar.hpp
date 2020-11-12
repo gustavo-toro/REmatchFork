@@ -70,9 +70,9 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
         rep_ = lit('?')[_val = ast::repetition(0,1)] |
                lit('*')[_val = ast::repetition(0,-1)] |
                lit('+')[_val = ast::repetition(1,-1)] |
-               ('<' >> uint_ >> '>')[_val = construct<ast::repetition>(_1,_1)]  |
-               ('<' >> uint_ >> ",>" ) [_val = construct<ast::repetition>(_1,-1)] |
-               ('<' >> uint_ >> ',' >> uint_ >> '>')[_val = construct<ast::repetition>(_1,_2)];
+               ('{' >> uint_ >> '}')[_val = construct<ast::repetition>(_1,_1)]  |
+               ('{' >> uint_ >> ",}" ) [_val = construct<ast::repetition>(_1,-1)] |
+               ('{' >> uint_ >> ',' >> uint_ >> '}')[_val = construct<ast::repetition>(_1,_2)];
 
         group_ =  (parenthesis_) | (assign_) | (atom_) ;
 
@@ -82,14 +82,19 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
 
         atom_ =  (
                   charset_
+                | anchor_
                 | "\\d" >> attr(ast::anydigit())
                 | "\\D" >> attr(ast::nondigit())
                 | "\\w" >> attr(ast::anyword())
                 | "\\W" >> attr(ast::nonword())
                 | "\\s" >> attr(ast::anywhitespace())
+                | "\\S" >> attr(ast::nonwhitespace())
                 | "." >> attr(ast::anychar())
                 | symb_
                 ) ; // Here we construct the atomic automaton
+
+        anchor_ = lit('^')[_val = ast::anchor(true)] |
+                  lit('$')[_val = ast::anchor(false)];
 
         symb_ = (unesc_char_ |
                 "\\" >> char_("\\+*?(){}[]|!.-") |
@@ -183,6 +188,7 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
     qi::rule<It, ast::charset()> charset_;
     qi::rule<It, char()> symb_;
     qi::rule<It, char()> charclass_symb_;
+    qi::rule<It, ast::anchor()> anchor_;
     qi::rule<It, ast::charset::range()> range_;
 
     qi::symbols<char const, char const> unesc_char_;

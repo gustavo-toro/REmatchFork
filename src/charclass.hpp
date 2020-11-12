@@ -8,12 +8,19 @@
 #include "parser/ast.hpp"
 
 // Enum for special character classes (e.g. NONDIGIT = [^0-9])
-enum special {ANYCHAR=1, ANYDIGIT=2, ANYWORD=3, ANYSPACE=4};
+enum special {
+	ANYCHAR=1,
+	ANYDIGIT=2,
+	ANYWORD=3,
+	ANYSPACE=4,
+	kStartAnchor,
+	kEndAnchor
+};
 
 // TODO: Inherit special charclasses
 
 class CharClass {
-	/* Extension of ast::charset (parsing struct) that stores the information of a 
+	/* Extension of ast::charset (parsing struct) that stores the information of a
 	   regex charclass (e.g [^a-zA-Z0-9]) */
 
 	public:
@@ -23,26 +30,22 @@ class CharClass {
 		static const std::set<special_code> special_codes;
 
 		int special;
-		bool negated; 
+		bool negated;
 		std::string label;
 		std::set<range> ranges;
 		std::set<char> singles;
 
 
 		// Empty constructor
-		// TODO: check if this constructor is used somewhere, delete it otherwise
 		CharClass();
 
 		// Single char constructor
-		// TODO: delete this constructor and use General constructor instead
 		CharClass(const char &a);
 
 		// Special sets constructor
-		// TODO: delete this constructor and use General constructor instead
 		CharClass(int special, bool negated);
 
 		// Regex grammar charset constructor
-		// TODO: delete this constructor and use Charset constructor instead
 		CharClass(const ast::charset &cs);
 
 		// General costructor
@@ -62,7 +65,7 @@ class CharClass {
 };
 
 
-// Hashing for the class 
+// Hashing for the class
 namespace std {
 template <>
 	struct hash<CharClass> {

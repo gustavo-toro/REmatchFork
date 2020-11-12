@@ -61,7 +61,7 @@ class CustomBuildPy(build_py):
 
 setup(
     name='pyrematch',
-    version='0.1.1',
+    version='0.1.2',
     description='An information extraction focused regex library that uses '\
                 'constant-delay algorithms.' ,
     long_description=long_description,

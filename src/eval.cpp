@@ -58,6 +58,15 @@ void Evaluator::initAutomaton(size_t i) {
       state->visited = 0;
       state->currentL->reset();
     }
+    CharClass ch(kStartAnchor, false);
+    int start_anchor_code = rgx_->detManager().filterFactory()->getCode(ch);
+
+    // std::cout << "Filter Factory:\n" << rgx_->detManager().filterFactory()->pprint();
+
+    if(start_anchor_code != -1) {
+      auto ndstate =  rgx_->detManager().reachAnchoredState(DFA().initState(), start_anchor_code);
+      DFA().set_init_state(ndstate);
+    }
     DFA().initState()->currentL->add(Evaluator::memory_manager_.alloc());
   }
 
@@ -131,6 +140,18 @@ Evaluator::inlinedHasNext(bool early_output, bool line_by_line) {
       if(early_output_) {
         if(!output_nodelist_.empty())
           break;
+      }
+    }
+
+    int end_anchor_code = rgx_->detManager().filterFactory()->getCode(CharClass(kEndAnchor, false));
+    if(end_anchor_code != -1 && !line_by_line && i_pos_ == text_->size()) {
+      for(auto &state: current_states_) {
+        if(end_anchor_code != -1 && !line_by_line && i_pos_ == text_->size()) {
+          auto h = state->currentL->head; auto t = state->currentL->tail;
+          state = rgx_->detManager().reachAnchoredState(state, end_anchor_code);
+          state->currentL->head = h; state->currentL->tail = t;
+          if(!state->c.empty()) capture_states_.push_back(state);
+        }
       }
     }
 

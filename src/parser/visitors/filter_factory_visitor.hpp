@@ -30,6 +30,8 @@ struct regex2filters : boost::static_visitor<void> {
 		void operator()(ast::anyword const &a);
 		void operator()(ast::nonword const &a);
 		void operator()(ast::anywhitespace const &a);
+		void operator()(ast::nonwhitespace const &a);
+		void operator()(ast::anchor const &a);
 
 		ff_ptr get_factory();
 };

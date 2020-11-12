@@ -188,6 +188,54 @@ std::string DetManager :: uniformSample(size_t n) {
 	return ss.str();
 }
 
+DetState* DetManager::reachAnchoredState(DetState* state, int anchor_code) {
+	std::set<LVAState*> newSubset;
+	BitsetWrapper subsetBitset(nfa_->size());
+
+	// Depth first search on the NFA's graph using a stack
+	std::vector<LVAState*> stack;
+
+	for(auto &state: nfa_->states)
+		state->tempMark = false;
+
+	for(auto &state: state->ss->subset) {
+		stack.push_back(state);
+		state->tempMark = true;
+	}
+
+	while(!stack.empty()) {
+		auto cstate = stack.back(); stack.pop_back();
+		subsetBitset.set(cstate->id, true);
+		newSubset.insert(cstate);
+		for(auto &filter: cstate->f) {
+			if(filter->next->tempMark) continue;
+			if(filter->code == anchor_code) {
+				stack.push_back(filter->next);
+				filter->next->tempMark = true;
+			}
+		}
+	}
+
+	auto found = dstates_table_.find(subsetBitset);
+
+	if(found == dstates_table_.end()) { // Check if already stored subset
+		SetState* ss = new SetState(*nfa_, newSubset);
+		DetState* nq = new DetState(ss);
+
+		dstates_table_[ss->bitstring] = nq;
+
+		dfa_->states.push_back(nq);
+
+		if(nq->isFinal) {
+			dfa_->finalStates.push_back(nq);
+		}
+
+		computeCaptures(nq);
+	}
+
+	return dstates_table_[subsetBitset];
+}
+
 DetState* DetManager :: getNextSubset(SetState* ss, BitsetWrapper charBitset) {
 	/* Gets next subset from a subset ss if filter bitset b is read */
 

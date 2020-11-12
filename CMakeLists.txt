@@ -41,7 +41,7 @@ if(SWIG)
 	set(CMAKE_SWIG_OUTDIR "${PROJECT_SOURCE_DIR}/python/packages/pyrematch")
 endif()
 
-# add_definitions(-DNOPT_CROSSPROD)
+add_definitions(-DNOPT_CROSSPROD)
 # add_definitions(-DNOPT_OFFSET)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)

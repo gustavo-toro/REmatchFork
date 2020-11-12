@@ -109,5 +109,16 @@ lva_ptr regex2LVA::operator()(ast::anywhitespace const &a) const {
 	return std::make_unique<LogicalVA>(ANYSPACE, false, vFact, fFact);
 }
 
+lva_ptr regex2LVA::operator()(ast::nonwhitespace const &a) const {
+	return std::make_unique<LogicalVA>(ANYSPACE, true, vFact, fFact);
+}
+
+lva_ptr regex2LVA::operator()(ast::anchor const &a) const {
+	if(a.is_start)
+		return std::make_unique<LogicalVA>(kStartAnchor, false, vFact, fFact);
+	else
+		return std::make_unique<LogicalVA>(kEndAnchor, false, vFact, fFact);
+}
+
 
 } // end namespace visitors
