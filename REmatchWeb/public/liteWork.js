@@ -3,7 +3,7 @@ importScripts('./rematch_wasm.js');
 
 const { RegEx, RegExOptions } = Module;
 
-const MAX_MATCHES = 50;
+const MAX_MATCHES = 100;
 
 this.onmessage = (m) => {
   let count = 0;

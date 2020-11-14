@@ -1,13 +1,13 @@
 /*
 
 TODO:
+* STOP
+* BUG: LONG QUERIES DOESNT STOP ON PAGECHANGE (TIMEOUT(?))
 * ABOUT ****
-
 * SEND A FINISHED MESSAGE FROM WORKER FOR ENABLING/DISABLING INPUT
   ALSO DISPLAY PROCESSING OR SOMETHING TIEMPO
 * MESSAGE OF ERROR IF OOM
 * HANDLE EDIT QUERY/TEXT ** Matches (old)
-* SIDE DRAWER X
 */
 
 import React from "react";
@@ -44,7 +44,7 @@ CodeMirror.defineSimpleMode('REmatchQuery', {
       token: 'm3'
     },
     {
-      regex: /(\.\+|\.\*|\.|\+)/,
+      regex: /(\+|\*|\.|\+)/,
       token: 'm1'
     },
     {
@@ -57,7 +57,19 @@ CodeMirror.defineSimpleMode('REmatchQuery', {
 CodeMirror.defineSimpleMode('RegExQuery', {
   start: [
     {
-      regex: /./,
+      regex: /\(|\)/,
+      token: 'm0'
+    },
+    {
+      regex: /(\\d)|(\\w)|(\\s)|(\\t)|(\\r)|(\\n)|(\\\()|(\\\))|(\\\[)|(\\\])|(\\\{)|(\\\})|(\\\.)|(\\-)|(\\_)/i,
+      token: 'm2'
+    },
+    {
+      regex: /\[|\]|-/,
+      token: 'm3'
+    },
+    {
+      regex: /(\+|\*|\.|\+)/,
       token: 'm1'
     },
   ]

@@ -81,7 +81,6 @@ class Viewer extends Component {
   }
 
   RegExMarks(span) {
-    console.log(span);
     this.clearMarks();
     let start = this.state.textEditor.posFromIndex(span[0]);
     let end = this.state.textEditor.posFromIndex(span[1]);

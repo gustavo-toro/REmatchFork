@@ -21,7 +21,7 @@ $darkest: #212121;
 $colors: #03DAC6,
 #FCE938,
 hsl(354, 100%, 72%),
-hsl(234, 96%, 67%),
+hsl(244, 100%, 81%),
 #20BA56,
 #f5a0ff,
 #a6ff22,
@@ -172,6 +172,7 @@ hsl(234, 96%, 67%),
       &:hover {
         background-color: rgba(255, 255, 255, .2);
         cursor: pointer;
+
         .matchesIdx {
           color: $darkest;
         }
@@ -394,12 +395,29 @@ hsl(234, 96%, 67%),
 
 .sectionContainer {
   padding: .5rem 0;
+
+  p {
+    margin-top: .25rem;
+  }
+}
+.important {
+  background-color: red;
+  color: white;
+}
+
+.code {
+  font-family: 'Roboto Mono', monospace;
+  background-color: #212121;
+  padding: 0 .2rem;
 }
 
 .codeBlock {
   font-family: 'Roboto Mono', monospace;
-  text-align: center;
-  padding: .5rem;
+  text-align: justify;
+  padding: 1rem;
   margin: 1rem auto;
   width: 90%;
+  &.centered {
+    text-align: center;
+  }
 }
