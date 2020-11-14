@@ -20,11 +20,10 @@ set(BUILD_TARGETS
 if(SWIG) # Only set shared library target
   set(project_LIB "${PROJECT_NAME}")
   set_property(SOURCE interfaces/rematch.i PROPERTY CPLUSPLUS ON)
-  swig_add_library(${project_LIB} TYPE SHARED LANGUAGE python SOURCES interfaces/rematch.i ${sources})
+  swig_add_library(${project_LIB} TYPE MODULE LANGUAGE python SOURCES interfaces/rematch.i ${sources})
   set_property(TARGET ${project_LIB} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SWIG_OUTDIR})
   set_property(TARGET ${project_LIB} PROPERTY SWIG_COMPILE_OPTIONS -O)
-  message("Output dir: ${CMAKE_SWIG_OUTDIR}")
-  target_link_libraries(${project_LIB} PRIVATE Python3::Python)
+  target_link_libraries(${project_LIB} PRIVATE Python3::Module)
 else()
   set(project_LIB ${PROJECT_NAME}lib)
 
