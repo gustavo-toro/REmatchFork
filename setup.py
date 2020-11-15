@@ -43,7 +43,8 @@ include_dirs = [os.path.join(root_dir, 'src'),
 
 # Check is BOOST_ROOT env variable is set, and include the headers
 boost = os.environ.get("BOOST_ROOT")
-if boost:
+if boost!=None:
+    print("Read BOOST_ROOT env:", boost)
     include_dirs.append(os.path.join(boost, "boost"))
 
 rematch_module = Extension('_rematch',
