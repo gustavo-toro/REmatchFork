@@ -29,10 +29,10 @@ for dirpath, dirnames, filenames in os.walk(os.path.join(root_dir, 'src')):
     srcs.extend([os.path.join(dirpath, f) for f in filenames if f.endswith('.cpp') ])
 
 # Remove unwanted sources
-filter_rgx = re.compile(r".*(main|benchmark)/[\w\-]*\.cpp|.*rematch_wrap.cpp")
+filter_rgx = re.compile(r".*(main|benchmark)[/\\][\w\-]*\.cpp|.*rematch_wrap.cpp")
 srcs = [p for p in srcs if not filter_rgx.fullmatch(p)]
 
-# print(*srcs, sep='\n')
+print(*srcs, sep='\n')
 
 # Adds the swig interface file
 srcs.append(os.path.join(root_dir, "src/interfaces/rematch.i"))
