@@ -45,7 +45,7 @@ include_dirs = [os.path.join(root_dir, 'src'),
 boost = os.environ.get("BOOST_ROOT")
 if boost!=None:
     print("Read BOOST_ROOT env:", boost)
-    include_dirs.append(os.path.join(boost, "boost"))
+    include_dirs.append(boost)
 
 rematch_module = Extension('_rematch',
                             sources=srcs,
