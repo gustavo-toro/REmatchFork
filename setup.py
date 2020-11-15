@@ -23,22 +23,32 @@ if(get_platform().startswith('win')):
     libraries.append('ws2_32')
 
 srcs = []
+
+# Add all .cpp files to the sources
 for dirpath, dirnames, filenames in os.walk(os.path.join(root_dir, 'src')):
     srcs.extend([os.path.join(dirpath, f) for f in filenames if f.endswith('.cpp') ])
 
-
+# Remove unwanted sources
 filter_rgx = re.compile(r".*(main|benchmark)/[\w\-]*\.cpp|.*rematch_wrap.cpp")
-
 srcs = [p for p in srcs if not filter_rgx.fullmatch(p)]
 
-print(*srcs, sep='\n')
+# print(*srcs, sep='\n')
 
+# Adds the swig interface file
 srcs.append(os.path.join(root_dir, "src/interfaces/rematch.i"))
+
+# Set include dirs
+include_dirs = [os.path.join(root_dir, 'src'),
+                os.path.join(root_dir, 'thirdparty')]
+
+# Check is BOOST_ROOT env variable is set, and include the headers
+boost = os.environ.get("BOOST_ROOT")
+if boost:
+    include_dirs.append(os.path.join(boost, "boost"))
 
 rematch_module = Extension('_rematch',
                             sources=srcs,
-                            include_dirs=[os.path.join(root_dir, 'src'),
-                                          os.path.join(root_dir, 'thirdparty')],
+                            include_dirs=include_dirs,
                             libraries=libraries,
                             extra_compile_args=["-std=c++17"],
                             swig_opts=["-c++"]
@@ -55,8 +65,8 @@ class BinaryDistribution(Distribution):
 class CustomBuildPy(build_py):
     def run(self):
         self.run_command("build_ext")
-        # copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
-        #           os.path.join(root_dir, 'python/packages/rematchpy'))
+        copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
+                  os.path.join(root_dir, 'python/packages/pyrematch'))
         return super().run()
 
 setup(
@@ -68,7 +78,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/REmatchChile/REmatch',
     author='Oscar Cárcamo <oscar.carcamoz@uc.cl>, Nicolás Van Sint Jan <nicovsj@uc.cl>',
-    # ext_modules=[rematch_module],
+    ext_modules=[rematch_module],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
@@ -81,6 +91,6 @@ setup(
                  'pyrematch': 'python/packages/pyrematch'},
     package_data={'pyrematch': ['_rematch*']},
     cmdclass={'build_py': CustomBuildPy},
-    python_requires='>=3.5, <4',
-    distclass=BinaryDistribution,
+    python_requires='>=3.6, <4',
+    # distclass=BinaryDistribution,
 )
