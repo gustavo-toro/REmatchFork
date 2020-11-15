@@ -47,11 +47,22 @@ if boost!=None:
     print("Read BOOST_ROOT env:", boost)
     include_dirs.append(boost)
 
+if(get_platform().startswith('win')):
+    compile_std_arg = "/std:c++17"
+    compile_opt_arg = "/O2"
+else:
+    compile_std_arg="-std=c++17"
+    compile_opt_arg="-O3"
+
+extra_compile_args = [compile_std_arg, compile_opt_arg]
+
+print(extra_compile_args)
+
 rematch_module = Extension('_rematch',
                             sources=srcs,
                             include_dirs=include_dirs,
                             libraries=libraries,
-                            extra_compile_args=["-std=c++17"],
+                            extra_compile_args=extra_compile_args,
                             swig_opts=["-c++"]
                             )
 
