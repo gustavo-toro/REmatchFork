@@ -4,6 +4,7 @@
 #include <string>
 #include <istream>
 #include <string_view>
+#include <cstring>
 
 class Document {
  public:
