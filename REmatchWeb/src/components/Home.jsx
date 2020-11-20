@@ -127,6 +127,11 @@ class Home extends Component {
     this.setState({ uploadingFile: false })
   }
 
+  restartWorker = () => {
+    worker.terminate();
+    worker = new Worker(WORKPATH);
+  }
+
   runWorker = () => {
     console.log('STARTED');
     this.clearMarks();
@@ -145,8 +150,7 @@ class Home extends Component {
           break;
         case 'ERROR':
           console.log('ERROR:', m.data.payload);
-          worker.terminate();
-          worker = new Worker(WORKPATH);
+          this.restartWorker();
           console.log('WORKER HAS BEEN RELOADED');
           break;
         default:

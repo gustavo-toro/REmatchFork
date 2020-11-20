@@ -1,15 +1,9 @@
 /*
-
 TODO:
-* STOP
-* BUG: LONG QUERIES DOESNT STOP ON PAGECHANGE (TIMEOUT(?))
-* ABOUT ****
-* SEND A FINISHED MESSAGE FROM WORKER FOR ENABLING/DISABLING INPUT
-  ALSO DISPLAY PROCESSING OR SOMETHING TIEMPO
-* MESSAGE OF ERROR IF OOM
-* HANDLE EDIT QUERY/TEXT ** Matches (old)
+  - finish about
+  - fix bug worker doesn't stop onpagechange
+  - start/stop worker
 */
-
 import React from "react";
 import {
   BrowserRouter as Router,
