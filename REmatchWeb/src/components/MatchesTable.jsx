@@ -92,7 +92,7 @@ const MatchesTable = ({
         className="backdrop">
         <Button
           color="primary"
-          
+
           startIcon={
             <svg className="svgIcon" viewBox="0 0 24 24">
               <path fill="currentColor" d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2M18 20H6V4H13V9H18V20M10 19L12 15H9V10H15V15L13 19H10" />
@@ -120,6 +120,7 @@ const MatchesTable = ({
       </Backdrop>
       <div className="headContainer">
         <div className="matchesRow">
+          {(matches.length > 0) ? <div className="matchesIdx">id</div> : null}
           {(matches.length > 0) ? schema.map((variable, schIdx) => (
             <div key={schIdx} className={`cm-m${schIdx} matchesItem`}>{variable}</div>
           )) : <div className="matchesRow">
@@ -135,11 +136,18 @@ const MatchesTable = ({
             state.page * state.rowsPerPage,
             state.page * state.rowsPerPage + state.rowsPerPage)
           : matches).map((row, idxRow) => (
-            <div key={idxRow} className="matchesRow" onClick={() => handleMarkText(row)}>
+            <div
+              key={idxRow}
+              className="matchesRow"
+              onClick={() => handleMarkText(row)}>
+              <div className="matchesIdx">{state.page*state.rowsPerPage + idxRow}</div>
               {row.map((col, idxCol) => {
                 return (
                   <div key={idxCol} className="matchesItem">
-                    {textEditor.getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1])).replaceAll(' ', '␣')}
+                    {textEditor
+                      .getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1]))
+                      .replaceAll(' ', '␣')
+                      .replaceAll(/\r?\n/g, '¬')}
                   </div>)
               })}
             </div>))}

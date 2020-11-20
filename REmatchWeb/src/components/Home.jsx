@@ -17,39 +17,11 @@ import MatchesTable from './MatchesTable';
 import CodeMirror from 'codemirror';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/theme/material-darker.css';
-import 'codemirror/addon/mode/simple';
 import { Typography } from '@material-ui/core';
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
-
-/* CODEMIRROR MODE DEFINITION */
-CodeMirror.defineSimpleMode('REmatchQuery', {
-  start: [
-    {
-      regex: /(![A-Za-z0-9]+\{|\})/,
-      token: 'm0'
-    },
-    {
-      regex: /(\\d)|(\\w)|(\\s)|(\\t)|(\\r)|(\\n)|(\\\()|(\\\))|(\\\[)|(\\\])|(\\\{)|(\\\})|(\\\.)|(\\-)|(\\_)/i,
-      token: 'm2'
-    },
-    {
-      regex: /(\(|\)|\||\[|\]|-)/,
-      token: 'm3'
-    },
-    {
-      regex: /(\.\+|\.\*|\.|\+)/,
-      token: 'm1'
-    },
-    {
-      regex: /<[0-9]+(,[0-9]+)?>/,
-      token: 'm5'
-    },
-  ]
-});
-
 
 /* MAIN INTERFACE */
 class Home extends Component {
@@ -87,8 +59,8 @@ class Home extends Component {
       return true;
     });
 
-    queryEditor.on('change', () => {this.clearMarks()});
-    
+    queryEditor.on('change', () => { this.clearMarks() });
+
     let textEditor = CodeMirror(document.getElementById('textEditor'), {
       value: 'This is an example text!',
       mode: 'text/plain',
@@ -103,8 +75,8 @@ class Home extends Component {
       viewportMargin: 15,
     });
 
-    textEditor.on('change', () => {this.clearMarks()});
-    
+    textEditor.on('change', () => { this.clearMarks() });
+
     this.setState({
       queryEditor,
       textEditor,
@@ -119,10 +91,12 @@ class Home extends Component {
 
       this.state.textEditor.markText(start, end, {
         className: `m${idx}`,
-      }
-      );
+      });
     });
-    this.state.textEditor.scrollIntoView(start, 200);
+    this.state.textEditor.scrollIntoView({
+      from: start,
+      to: end
+    }, 200);
   }
 
   clearMarks = () => {
@@ -153,6 +127,11 @@ class Home extends Component {
     this.setState({ uploadingFile: false })
   }
 
+  restartWorker = () => {
+    worker.terminate();
+    worker = new Worker(WORKPATH);
+  }
+
   runWorker = () => {
     console.log('STARTED');
     this.clearMarks();
@@ -171,8 +150,7 @@ class Home extends Component {
           break;
         case 'ERROR':
           console.log('ERROR:', m.data.payload);
-          worker.terminate();
-          worker = new Worker(WORKPATH);
+          this.restartWorker();
           console.log('WORKER HAS BEEN RELOADED');
           break;
         default:
@@ -200,7 +178,7 @@ class Home extends Component {
             Query
           </div>
           <div className="queryContainer">
-            <div id="queryEditor" className="queryEditor"></div>
+            <div id="queryEditor"></div>
             <Button
               className="queryButton"
               color="primary"
