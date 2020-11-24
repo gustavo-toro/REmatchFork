@@ -63,15 +63,15 @@ build_script:
       REM "%PYTHON%\python.exe" setup.py build
       swig -swiglib
 
-      REM md build
-      REM cd build
-      REM cmake -A %PYTHON_ARCH% -DSWIG=true -DPYTHON_VERSION="%PYTHON_VERSION%" -DBOOST_ROOT="%BOOST_ROOT%" -DSWIG_DIR="C:\projects\rematch\swigwin-%SWIG_VERSION%\Lib" -DSWIG_EXECUTABLE="C:\projects\rematch\swigwin-%SWIG_VERSION%\swig.exe" ..
-      REM cmake --build . --config Release
-      REM cd ..
+      md build
+      cd build
+      cmake -A %PYTHON_ARCH% -DSWIG=true -DPYTHON_VERSION="%PYTHON_VERSION%" -DBOOST_ROOT="%BOOST_ROOT%" -DSWIG_DIR="C:\projects\rematch\swigwin-%SWIG_VERSION%\Lib" -DSWIG_EXECUTABLE="C:\projects\rematch\swigwin-%SWIG_VERSION%\swig.exe" ..
+      cmake --build . --config Release
+      cd ..
 
-      REM copy python\packages\pyrematch\Release\_rematch.pyd python\packages\pyrematch
+      copy python\packages\pyrematch\Release\_rematch.pyd python\packages\pyrematch
 
-      REM dir python\packages\pyrematch
+      dir python\packages\pyrematch
       "%PYTHON%\\python.exe" setup.py bdist_wheel
 deploy_script:
   - ps: |
