@@ -23,7 +23,9 @@ if(SWIG) # Only set shared library target
   swig_add_library(${project_LIB} TYPE MODULE LANGUAGE python SOURCES interfaces/rematch.i ${sources})
   set_property(TARGET ${project_LIB} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SWIG_OUTDIR})
   set_property(TARGET ${project_LIB} PROPERTY SWIG_COMPILE_OPTIONS -O)
-  target_link_libraries(${project_LIB} PRIVATE Python3::Module)
+
+  # Seems like linking is not necessary
+  # target_link_libraries(${project_LIB} PRIVATE Python3::Module)
 else()
   add_library(rematchlib ${sources})
   set_property (TARGET rematchlib PROPERTY CXX_STANDARD 17)

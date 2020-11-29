@@ -30,15 +30,23 @@ set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 
 if(SWIG)
 	find_package(SWIG 4.0 COMPONENTS python)
-	IF(PYTHON_VERSION)
-		find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Development)
-	else()
-		find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+	if(NOT Python3_INCLUDE_DIRS)
+		IF(PYTHON_VERSION)
+			find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Development)
+		else()
+			find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+		endif()
 	endif()
 	include(${SWIG_USE_FILE})
-	# Add support for .swg file
-	set(SWIG_SOURCE_FILE_EXTENSIONS ".i" ".swg")
 	set(CMAKE_SWIG_OUTDIR "${PROJECT_SOURCE_DIR}/python/packages/pyrematch")
+
+	# Use static libgcc and libstdc++
+	string(CONCAT CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
+															  "-static-libgcc "
+																"-static-libstdc++")
+
+	# Include Python 3 include dirs
+	include_directories(SYSTEM ${Python3_INCLUDE_DIRS})
 endif()
 
 add_definitions(-DNOPT_CROSSPROD)
