@@ -2,6 +2,7 @@
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages, Distribution
 from setuptools.command.build_py import build_py
+from setuptools.command.install import install
 from distutils.file_util import copy_file
 import re
 import codecs
@@ -74,15 +75,25 @@ long_description = codecs.open(os.path.join(root_dir,
 class BinaryDistribution(Distribution):
     def has_ext_modules(self):
         return True
+    def is_pure(self):
+        return False
 
 
 class CustomBuildPy(build_py):
     def run(self):
         self.run_command("build_ext")
-        copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
-                  os.path.join(root_dir, 'python/packages/pyrematch'))
+        # copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
+        #           os.path.join(root_dir, 'python/packages/pyrematch'))
         return super().run()
 
+# Bug on setuptools that sets pure python package despite the BinaryDistribution
+# overload of has_ext_modules() and is_pure()
+# check https://github.com/google/or-tools/issues/616#issuecomment-371480314
+class InstallPlatlib(install):
+    def finalize_options(self):
+        install.finalize_options(self)
+        if self.distribution.has_ext_modules():
+            self.install_lib = self.install_platlib
 
 setup(
     name='pyrematch',
@@ -105,8 +116,8 @@ setup(
     packages=find_packages(where='python/packages'),
     package_dir={'': 'python/packages',
                  'pyrematch': 'python/packages/pyrematch'},
-    package_data={'pyrematch': ['_rematch*']},
-    cmdclass={'build_py': CustomBuildPy},
+    package_data={'pyrematch': ['_rematch.*']},
+    cmdclass={'build_py': CustomBuildPy, 'install': InstallPlatlib},
     python_requires='>=3.6, <4',
     distclass=BinaryDistribution,
 )
