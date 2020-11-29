@@ -41,8 +41,12 @@ if(SWIG)
 	set(CMAKE_SWIG_OUTDIR "${PROJECT_SOURCE_DIR}/python/packages/pyrematch")
 
 	# Use static libgcc and libstdc++
+	if(NOT APPLE)
+		string(CONCAT CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
+															  	"-static-libgcc")
+	endif()
+
 	string(CONCAT CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
-															  "-static-libgcc "
 																"-static-libstdc++")
 
 	# Include Python 3 include dirs
