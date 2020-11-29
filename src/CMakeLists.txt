@@ -25,7 +25,9 @@ if(SWIG) # Only set shared library target
   set_property(TARGET ${project_LIB} PROPERTY SWIG_COMPILE_OPTIONS -O)
 
   # Seems like linking is not necessary
-  # target_link_libraries(${project_LIB} PRIVATE Python3::Module)
+  if(APPLE)
+    target_link_libraries(${project_LIB} PRIVATE Python3::Module)
+  endif()
 else()
   add_library(rematchlib ${sources})
   set_property (TARGET rematchlib PROPERTY CXX_STANDARD 17)
