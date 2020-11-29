@@ -80,8 +80,8 @@ class BinaryDistribution(Distribution):
 class CustomBuildPy(build_py):
     def run(self):
         self.run_command("build_ext")
-        copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
-                  os.path.join(root_dir, 'python/packages/pyrematch'))
+        # copy_file(os.path.join(root_dir, 'src/interfaces/rematch.py'),
+        #           os.path.join(root_dir, 'python/packages/pyrematch'))
         return super().run()
 
 # Bug on setuptools that sets pure python package despite the BinaryDistribution
