@@ -86,7 +86,7 @@ class DetState {
     DetState(SetState* ss);
 
     DetState* nextState(BitsetWrapper charBitset);
-    DetState* nextState(char a);
+    DetState* nextState(char32_t a);
     NodeList* getPreviousList(int i);
     void addCapture(std::bitset<32> S, DetState* next);
     void addFilter(BitsetWrapper charBitset, DetState* nextState);

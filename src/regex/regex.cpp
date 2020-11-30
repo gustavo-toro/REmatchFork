@@ -30,10 +30,10 @@ EvaluatorIter RegEx::findIter(const std::string &text, Anchor anchors) {
   return EvaluatorIter(eval);
 }
 
-EvaluatorIter RegEx::findIterFile(std::istream &is, Anchor anchors) {
-  auto eval = new Evaluator(*this, is, anchors, Evaluator::kAllFlags & flags_);
-  return EvaluatorIter(eval);
-}
+// EvaluatorIter RegEx::findIterFile(std::istream &is, Anchor anchors) {
+//   auto eval = new Evaluator(*this, is, anchors, Evaluator::kAllFlags & flags_);
+//   return EvaluatorIter(eval);
+// }
 
 uint8_t RegEx::parseFlags(rematch::RegExOptions rgx_opts) {
   uint8_t ret =  rgx_opts.multi_line()    * kMultiLine    |

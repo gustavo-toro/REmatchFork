@@ -12,7 +12,6 @@
 #include "automata/eva.hpp"
 #include "automata/detautomaton.hpp"
 #include "memmanager.hpp"
-#include "parser_automata/parser.hpp"
 #include "timer.hpp"
 #include "regex/regex.hpp"
 #include "regex/regex_options.hpp"
@@ -53,8 +52,8 @@ void Interface::normalRun() {
 	RegExOptions rgx_opt;
 	rgx_opt.set_line_by_line(options_.line_by_line());
 	RegEx regex(pattern_, rgx_opt);
+	std::string doc(file2str(document_filename_));
 	if(!options_.line_by_line()) {
-		std::string doc(file2str(document_filename_));
 		if(options_.output_option() == NMAPPINGS) {
 			size_t noutputs = 0;
 			auto finditer = regex.findIter(doc);
@@ -73,7 +72,7 @@ void Interface::normalRun() {
 	} else {
 		if(options_.output_option() == NMAPPINGS) {
 			size_t noutputs = 0;
-			auto finditer = regex.findIterFile(*document_stream_);
+			auto finditer = regex.findIter(doc);
 			while(finditer.hasNext()) {
 				finditer.next();
 				noutputs++;
@@ -81,7 +80,7 @@ void Interface::normalRun() {
 			std::cout << noutputs << '\n';
 		}
 		else {
-			auto finditer = regex.findIterFile(*document_stream_);
+			auto finditer = regex.findIter(doc);
 			while(finditer.hasNext()) {
 				std::cout << finditer.next() << '\n';
 			}
@@ -108,7 +107,9 @@ void Interface::benchmarkRun() {
 
 	numOfSpans = 0;
 
-	auto finditer = regex.findIterFile(*document_stream_);
+	std::string doc(file2str(document_filename_));
+
+	auto finditer = regex.findIter(doc);
 	while(finditer.hasNext()) {
 		finditer.next();
 		numOfSpans++;

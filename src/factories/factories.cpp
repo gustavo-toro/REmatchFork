@@ -261,7 +261,7 @@ std::unordered_map<BitsetWrapper, std::vector<char>>  FilterFactory :: allPossib
 
 }
 
-bool FilterFactory :: inIntersection(char a, BitsetWrapper bs) {
+bool FilterFactory :: inIntersection(char32_t a, BitsetWrapper bs) {
 	for(size_t i=0; i < bs.size(); i++) {
 		if(bs.get(i) && !getFilter(i).check(a))
 			return false;
@@ -270,7 +270,7 @@ bool FilterFactory :: inIntersection(char a, BitsetWrapper bs) {
 }
 
 
-BitsetWrapper FilterFactory :: applyFilters(char a) {
+BitsetWrapper FilterFactory :: applyFilters(char32_t a) {
 	/**
 	* Returns the bitset vector corresponding to the character after applying
 	* all the filters. Searches in bitsetMap hash table. Computes and stores

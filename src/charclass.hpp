@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 #include <tuple>
+#include <locale>
 
 #include "parser/ast.hpp"
 
@@ -23,8 +24,9 @@ class CharClass {
 	/* Extension of ast::charset (parsing struct) that stores the information of a
 	   regex charclass (e.g [^a-zA-Z0-9]) */
 
+
 	public:
-		using range = std::tuple<char,char>;
+		using range = std::tuple<char32_t,char32_t>;
 		using special_code = std::tuple<std::string, bool, int>;
 
 		static const std::set<special_code> special_codes;
@@ -33,14 +35,14 @@ class CharClass {
 		bool negated;
 		std::string label;
 		std::set<range> ranges;
-		std::set<char> singles;
+		std::set<char32_t> singles;
 
 
 		// Empty constructor
 		CharClass();
 
 		// Single char constructor
-		CharClass(const char &a);
+		CharClass(const char32_t &a);
 
 		// Special sets constructor
 		CharClass(int special, bool negated);
@@ -52,7 +54,7 @@ class CharClass {
 		CharClass(std::string label, bool is_special);
 
 		// Charset constructor
-		CharClass(bool negated, std::set<range> ranges, std::set<char> singles);
+		CharClass(bool negated, std::set<range> ranges, std::set<char32_t> singles);
 
 
 	bool operator==(const CharClass& rhs) const;
@@ -61,7 +63,7 @@ class CharClass {
 
 	void updateLabel();
 
-	bool check(char a);
+	bool check(char32_t a);
 };
 
 

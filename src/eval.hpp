@@ -52,6 +52,8 @@ class Evaluator {
   inline void capture(size_t i, bool early_output);
   inline void reading(char a, size_t i, bool early_output);
 
+  void adjust_codepoint_length(char a);
+
   void initAutomaton(size_t i);
 
   bool match();
@@ -80,6 +82,7 @@ class Evaluator {
 
   size_t i_pos_;
   size_t i_start_;
+  long i_char_pos_;
   size_t nlines_;
 
   size_t capture_counter_;

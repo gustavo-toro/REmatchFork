@@ -20,7 +20,7 @@ const std::set<CharClass::special_code> CharClass::special_codes = {
 CharClass :: CharClass(): special(0), negated(false), label("") {}
 
 // Single char constructor
-CharClass :: CharClass(const char &a): special(0), negated(false) {
+CharClass :: CharClass(const char32_t &a): special(0), negated(false) {
 	if (a == '\n')
 		label = "\\n";
 	else if(a == '.')
@@ -74,7 +74,7 @@ CharClass :: CharClass(const ast::charset &cs) {
 }
 
 // Charset constructor
-CharClass :: CharClass(bool negated, std::set<CharClass::range> ranges, std::set<char> singles):
+CharClass :: CharClass(bool negated, std::set<CharClass::range> ranges, std::set<char32_t> singles):
 	special(0), negated(negated), ranges(ranges), singles(singles) { updateLabel(); }
 
 
@@ -115,12 +115,12 @@ bool CharClass :: operator==(const CharClass& rhs) const {
 string CharClass::print() {return label;}
 
 void CharClass :: updateLabel() {
-	set<char>::iterator it_single;
-	set<tuple<char,char>>::iterator it;
-	set<tuple<char,char>>::iterator it2;
+	set<char32_t>::iterator it_single;
+	set<tuple<char32_t,char32_t>>::iterator it;
+	set<tuple<char32_t,char32_t>>::iterator it2;
 
 	it = ranges.begin();
-	char b1, b2, e1, e2;
+	char32_t b1, b2, e1, e2;
 
 	// Merges overlapping ranges
 	while(it != ranges.end()) {
@@ -183,17 +183,17 @@ void CharClass :: updateLabel() {
 	label = ss.str();
 }
 
-bool CharClass :: check(char a) {
+bool CharClass :: check(char32_t a) {
 	if(special) {
 		switch(special) {
 			case 1:
 				return true;
 			case 2:
-				return !!isdigit(a) != negated;
+				return !!iswdigit(a) != negated;
 			case 3:
-				return !!isalnum(a) != negated;
+				return !!iswalnum(a) != negated;
 			case 4:
-				return !!isspace(a) != negated;
+				return !!iswspace(a) != negated;
 			case kStartAnchor:
 			case kEndAnchor:
 				return false;

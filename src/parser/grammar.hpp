@@ -3,6 +3,7 @@
 #define GRAMMAR_HPP
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
+#define BOOST_SPIRIT_UNICODE
 
 // Prevent ambiguity from Boost's placeholders
 #define BOOST_BIND_NO_PLACEHOLDERS
@@ -17,6 +18,7 @@
 namespace qi  = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace phoenix = boost::phoenix;
+namespace unicode = boost::spirit::unicode;
 
 template <typename It> // It : Iterator type
 struct parser : qi::grammar<It, ast::altern()> // altern : type returned at parsing
@@ -30,10 +32,10 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
 
         using qi::lexeme;
         using qi::lit;
-        using ascii::char_;
-        using ascii::alpha;
-        using ascii::alnum;
-        using ascii::no_case;
+        using unicode::char_;
+        using unicode::alpha;
+        using unicode::alnum;
+        using unicode::no_case;
         using qi::attr;
         using qi::uint_;
         using qi::hex;
@@ -186,8 +188,8 @@ struct parser : qi::grammar<It, ast::altern()> // altern : type returned at pars
     qi::rule<It, ast::atom()> atom_;
     qi::rule<It, ast::assignation()> assign_;
     qi::rule<It, ast::charset()> charset_;
-    qi::rule<It, char()> symb_;
-    qi::rule<It, char()> charclass_symb_;
+    qi::rule<It, char32_t()> symb_;
+    qi::rule<It, char32_t()> charclass_symb_;
     qi::rule<It, ast::anchor()> anchor_;
     qi::rule<It, ast::charset::range()> range_;
 

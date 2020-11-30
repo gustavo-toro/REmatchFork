@@ -6,14 +6,16 @@
 #include <string_view>
 #include <cstring>
 
+#include <utf8.h>
+
 class Document {
  public:
   using value_t = char;
   using ptr = char*;
-  using const_ptr = const char*;
-  using ref = char&;
+  using const_ptr = const char32_t*;
+  using ref = char32_t&;
   using const_ref = const char&;
-  using const_iterator = const char*;
+  using const_iterator = const char32_t*;
   using iterator = Document::const_iterator;
   using sz_t = size_t;
 
@@ -23,27 +25,20 @@ class Document {
   virtual bool getline(std::string &str) = 0;
 
   virtual ~Document() = default;
-
-  virtual std::string_view get_view(size_t pos, size_t endpos) = 0;
 }; // end class Document
 
 
 class StrDocument : public Document {
+
  public:
   StrDocument()
       : data_(nullptr), size_(0), current_(0) {}
 
   StrDocument(const std::string &str)
-      : data_(str), size_(str.size()), current_(0) {
-        // std::cout << "[StrDoc] Check stored data:";
-        // for(size_t i = 0; i < size_; i++) {
-        //   std::cout << "'" << data_[i] << "' ";
-        // }
-        // std::cout << std::endl;
-      }
-
-  StrDocument(const char* str)
-      : data_(str), size_(str == nullptr ? 0 : strlen(str)), current_(0) {}
+      : size_(0), current_(0) {
+    utf8::utf8to32(str.begin(), str.end(),std::back_inserter(data_));
+    size_ = data_.size();
+  }
 
   virtual ~StrDocument() = default;
 
@@ -75,48 +70,41 @@ class StrDocument : public Document {
 
   virtual void reset() {current_ = 0;}
 
-  virtual std::string_view get_view(size_t pos, size_t endpos) {
-      return std::string_view();
-  }
-
  private:
-    const std::string data_;
+    std::u32string data_;
     Document::sz_t size_;
     Document::sz_t current_;
 
 }; // end class StrDocument
 
 
-class FileDocument : public Document {
- public:
-  FileDocument()
-      : data_(nullptr), size_(0) {}
+// class FileDocument : public Document {
+//  public:
+//   FileDocument()
+//       : data_(nullptr), size_(0) {}
 
-  FileDocument(std::istream &is)
-      : data_(&is) {
-    }
+//   FileDocument(std::istream &is)
+//       : data_(&is) {
+//     }
 
-	virtual ~FileDocument() = default;
+// 	virtual ~FileDocument() = default;
 
-  virtual Document::sz_t size() const {return size_;}
+//   virtual Document::sz_t size() const {return size_;}
 
-  virtual void get(Document::ref c) {data_->get(c);}
+//   virtual void get(Document::ref c) {data_->get(c);}
 
-  virtual bool getline(std::string &str) {
-      return !std::getline(*data_ ,str).eof();
-  }
+//   virtual bool getline(std::string &str) {
+//       return !std::getline(*data_ ,str).eof();
+//   }
 
-  virtual void reset() {data_->seekg(0);}
-
-  virtual std::string_view get_view(size_t pos, size_t endpos) {
-      return std::string_view();
-  }
+//   virtual void reset() {data_->seekg(0);}
 
 
- private:
-    std::istream *data_;
-    Document::sz_t size_;
 
-}; // end class StrDocument
+//  private:
+//     std::istream *data_;
+//     Document::sz_t size_;
+
+// }; // end class StrDocument
 
 #endif // DOCUMENT_HPP

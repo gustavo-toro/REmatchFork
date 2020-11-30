@@ -1,13 +1,16 @@
 #include <string>
 #include <cassert>
+
+#include <utf8.h>
+
 #include "parser.hpp"
 #include "visitors.hpp"
 #include "grammar.hpp"
 
-bool doParse(const std::string& input, ast::altern &data)
+bool doParse(const std::u32string& input, ast::altern &data)
 /* Parses input and stores the AST in data */
 {
-   using strit =  std::string::const_iterator;
+   using strit =  std::u32string::const_iterator;
 
     static const parser<strit> p; // Parser
 
@@ -35,7 +38,11 @@ bool doParse(const std::string& input, ast::altern &data)
 std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
 	ast::altern tree;
 
- 	doParse(regex, tree);
+    // Transform regex to utf-32
+    std::u32string new_rgx;
+    utf8::utf8to32(regex.begin(), regex.end(),std::back_inserter(new_rgx));
+
+ 	doParse(new_rgx, tree);
 
 	std::unique_ptr<VariableFactory> v = visitors::regex2vars()(tree);
 

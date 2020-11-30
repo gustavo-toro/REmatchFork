@@ -119,7 +119,7 @@ class FilterFactory {
 
 		std::unordered_map<BitsetWrapper, std::vector<char>> allPossibleCharBitsets();
 
-		bool inIntersection(char a, BitsetWrapper charBitset);
+		bool inIntersection(char32_t a, BitsetWrapper charBitset);
 
 		// Adds the CharClass cs to the hash table and returns it. If cs is already
 		// stored then is only returned.
@@ -135,7 +135,7 @@ class FilterFactory {
 
 		void merge(FilterFactory &rest);
 
-		BitsetWrapper applyFilters(char a);
+		BitsetWrapper applyFilters(char32_t a);
 };
 
 #endif

@@ -27,8 +27,8 @@ class DetManager {
   void computeFullDetAutomatonSingles();
 	DetState* getNextDetState(DetState* s, BitsetWrapper charBitset);
 	DetState* getNextDetState(DetState* &s, char a, size_t idx);
-	DetState* getNextDetState(DetState* s, char a);
-	BitsetWrapper applyFilters(char a);
+	DetState* getNextDetState(DetState* s, char32_t a);
+	BitsetWrapper applyFilters(char32_t a);
 
 	std::string uniformSample(size_t n);
 	char chooseFromCharBitset(BitsetWrapper bs);

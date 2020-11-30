@@ -5,23 +5,24 @@
 
 namespace rematch {
 
-Evaluator::Evaluator(RegEx &rgx, std::istream& input, Anchor anchors,
-                     uint8_t flags)
-    : rgx_(&rgx),
-      text_(std::make_unique<FileDocument>(input)),
-      early_output_(flags & kEarlyOutput),
-      line_by_line_(flags & kLineByLine),
-      document_ended_(false),
-      direct_text_(false),
-      i_pos_(0),
-      i_start_(0),
-      nlines_(0),
-      capture_counter_(0),
-      reading_counter_(0) {
-  rgx_->detManager().set_anchor(anchors);
-  rgx_->rawDetManager().set_anchor(anchors);
-  init();
-}
+// Evaluator::Evaluator(RegEx &rgx, std::istream& input, Anchor anchors,
+//                      uint8_t flags)
+//     : rgx_(&rgx),
+//       text_(std::make_unique<FileDocument>(input)),
+//       early_output_(flags & kEarlyOutput),
+//       line_by_line_(flags & kLineByLine),
+//       document_ended_(false),
+//       direct_text_(false),
+//       i_pos_(0),
+//       i_start_(0),
+//       i_char_pos_(0),
+//       nlines_(0),
+//       capture_counter_(0),
+//       reading_counter_(0) {
+//   rgx_->detManager().set_anchor(anchors);
+//   rgx_->rawDetManager().set_anchor(anchors);
+//   init();
+// }
 
 Evaluator::Evaluator(RegEx &rgx, const std::string &text, Anchor anchors,
                      uint8_t flags)
@@ -33,6 +34,7 @@ Evaluator::Evaluator(RegEx &rgx, const std::string &text, Anchor anchors,
       direct_text_(true),
       i_pos_(0),
       i_start_(0),
+      i_char_pos_(0),
       nlines_(0),
       capture_counter_(0),
       reading_counter_(0) {
@@ -114,7 +116,7 @@ Evaluator::inlinedHasNext(bool early_output, bool line_by_line) {
 
   while (!document_ended_) {
 
-    char a = 0;
+    char32_t a = 0;
     output_nodelist_.reset();
 
     while(((i_pos_-i_start_) < line_.size() &&  line_by_line_) ||
@@ -329,6 +331,18 @@ inline void Evaluator::reading(char a, size_t i, bool early_output) {
       }
     }
   }
+}
+
+void Evaluator::adjust_codepoint_length(char root_byte) {
+  int code_units = 0;
+  if ((root_byte & 0x80) == 0x00)
+    code_units = 1;
+  else if ((root_byte & 0xE0) == 0xC0)
+    code_units = 2;
+  else if ((root_byte & 0xF0) == 0xE0)
+    code_units = 3;
+  else if ((root_byte & 0xF8) == 0xF0)
+    code_units = 4;
 }
 
 DetAutomaton& Evaluator::rawDFA() {return rgx_->rawDetManager().DFA();}

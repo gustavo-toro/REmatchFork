@@ -93,7 +93,7 @@ DetState* DetState :: nextState(BitsetWrapper charBitset) {
   return nullptr;
 }
 
-DetState* DetState :: nextState(char a) {
+DetState* DetState :: nextState(char32_t a) {
   if((int)a > 0 && (int)a < 128) {
     return singleFilters[int(a)];
   }

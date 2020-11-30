@@ -39,7 +39,7 @@ class RegEx {
   };
 
   EvaluatorIter findIter(const std::string &text, Anchor anchor=kBothAnchors);
-  EvaluatorIter findIterFile(std::istream& is, Anchor anchor=kBothAnchors);
+  // EvaluatorIter findIterFile(std::istream& is, Anchor anchor=kBothAnchors);
 
   int varCount() const {return dman_.varFactory()->size();}
 

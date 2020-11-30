@@ -362,7 +362,7 @@ DetState* DetManager :: getNextDetState(DetState* &s , char a, size_t idx) {
 	return q;
 }
 
-DetState* DetManager ::getNextDetState(DetState* s, char a) {
+DetState* DetManager ::getNextDetState(DetState* s, char32_t a) {
 	DetState *q;
 	BitsetWrapper charBitset = applyFilters(a);
 
@@ -385,7 +385,7 @@ DetState* DetManager ::getNextDetState(DetState* s, char a) {
 	return q;
 }
 
-BitsetWrapper DetManager :: applyFilters(char a) {
+BitsetWrapper DetManager :: applyFilters(char32_t a) {
 	return filter_factory_->applyFilters(a);
 }
 
