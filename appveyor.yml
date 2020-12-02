@@ -11,14 +11,6 @@ environment:
     SWIG_VERSION: "4.0.2"
     BOOST_ROOT: "C:/Libraries/boost_1_73_0"
   matrix:
-  - PYTHON: "C:/Python35"
-    PYTHON_VERSION: "3.5"
-    PYTHON_ARCH: "Win32"
-
-  - PYTHON: "C:/Python35-x64"
-    PYTHON_VERSION: "3.5"
-    PYTHON_ARCH: "x64"
-
   - PYTHON: "C:/Python36"
     PYTHON_VERSION: "3.6"
     PYTHON_ARCH: "Win32"
@@ -69,7 +61,7 @@ build_script:
       cmake --build . --config Release
       cd ..
 
-      copy python\packages\pyrematch\Release\_rematch.pyd python\packages\pyrematch
+      REM copy python\packages\pyrematch\Release\_rematch.pyd python\packages\pyrematch
 
       dir python\packages\pyrematch
       "%PYTHON%\\python.exe" setup.py bdist_wheel
