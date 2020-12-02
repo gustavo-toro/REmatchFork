@@ -25,7 +25,7 @@ if(SWIG) # Only set shared library target
   set_property(TARGET ${project_LIB} PROPERTY SWIG_COMPILE_OPTIONS -O)
 
   # Seems like linking is not necessary on Linux
-  if(UNIX AND NOT APPLE)
+  if(APPLE OR WIN32)
     target_link_libraries(${project_LIB} PRIVATE Python3::Module)
   endif()
 else()
