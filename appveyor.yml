@@ -61,7 +61,8 @@ build_script:
       cmake --build .
       cd ..
 
-      copy python\packages\pyrematch\Release\_rematch.pyd python\packages\pyrematch
+      REM copy python\packages\pyrematch\Release\_rematch.pyd python\packages\pyrematch
+      copy build\src\Release\_rematch.pyd python\packages\rematchpy
 
       dir python\packages\pyrematch
       "%PYTHON%\\python.exe" setup.py bdist_wheel
