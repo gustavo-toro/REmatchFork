@@ -66,7 +66,8 @@ void Interface::normalRun() {
 		else {
 			auto finditer = regex.findIter(doc);
 			while(finditer.hasNext()) {
-				std::cout << finditer.next() << '\n';
+				auto match = finditer.next();
+				std::cout << match << '\n';
 			}
 		}
 	} else {

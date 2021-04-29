@@ -138,6 +138,24 @@ void NodeList::append(NodeList* list) {
   }
 };
 
+void NodeList::prepend(NodeList* list) {
+  if (this->tail == nullptr) {
+    this->head = list->head;
+    this->tail = list->tail;
+
+    list->head->refCount++;
+    list->tail->refCount++;
+
+  } else {
+    list->tail->next = this->head;
+
+    this->head = list->head;
+
+    // Added reference to new tail
+    this->head->refCount++;
+  }
+};
+
 void NodeList::resetRefs() {
   this->head->refCount--;
   this->tail->refCount--;

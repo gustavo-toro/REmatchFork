@@ -97,7 +97,7 @@ class InstallPlatlib(install):
 
 setup(
     name='pyrematch',
-    version='0.1.4',
+    version='0.1.4.1',
     description='An information extraction focused regex library that uses '
                 'constant-delay algorithms.',
     long_description=long_description,

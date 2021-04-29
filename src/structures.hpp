@@ -56,6 +56,7 @@ class NodeList {
     void setHead(Node*);
     void setTail(Node*);
     void append(NodeList* list);
+    void prepend(NodeList* list);
     void reset();
     void resetRefs();
     void resetAndAdd(Node*);
