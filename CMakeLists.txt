@@ -34,13 +34,12 @@ add_definitions(-DNOPT_CROSSPROD)
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/thirdparty)
 
-if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-	# In windows VS Cmake doesn't look for this versions
-	set(Boost_ADDITIONAL_VERSIONS "1.74.0;1.74;1.73.0;1.73")
-	find_package(Boost 1.58 REQUIRED)
-	include_directories(${Boost_INCLUDE_DIRS})
-	list(APPEND project_LIBS ${Boost_LIBRARIES})
-endif()
+
+# In windows VS Cmake doesn't look for this versions
+set(Boost_ADDITIONAL_VERSIONS "1.74.0;1.74;1.73.0;1.73")
+find_package(Boost 1.58 REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+# list(APPEND project_LIBS ${Boost_LIBRARIES})
 
 add_subdirectory(src)
 
