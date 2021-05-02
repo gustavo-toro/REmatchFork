@@ -20,38 +20,13 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Od -Z7")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
 else()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g3")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g0")
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-
-if(SWIG)
-	find_package(SWIG 4.0 COMPONENTS python)
-	if(NOT Python3_INCLUDE_DIRS)
-		IF(PYTHON_VERSION)
-			find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Development)
-		else()
-			find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-		endif()
-	endif()
-	include(${SWIG_USE_FILE})
-	set(CMAKE_SWIG_OUTDIR "${PROJECT_SOURCE_DIR}/python/packages/pyrematch")
-
-	# Use static libgcc and libstdc++
-	if(NOT APPLE)
-		string(CONCAT CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
-															  	"-static-libgcc")
-	endif()
-
-	string(CONCAT CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
-																"-static-libstdc++")
-
-	# Include Python 3 include dirs
-	include_directories(SYSTEM ${Python3_INCLUDE_DIRS})
-endif()
 
 add_definitions(-DNOPT_CROSSPROD)
 # add_definitions(-DNOPT_OFFSET)
