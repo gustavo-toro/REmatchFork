@@ -1,7 +1,6 @@
 #include "variable_factory_visitor.hpp"
 
 #include <iostream>
-#include <typeinfo>
 
 #include "parse/regex/exceptions.hpp"
 #include "parse/regex/ast.hpp"
@@ -26,7 +25,6 @@ vfptr regex2vars::operator()(ast::altern const &node) const {
 
 vfptr regex2vars::operator()(ast::concat const &c) const {
 	// std::cout << "c.size() = " << c.size() << "\n";
-	
 	auto vfact = (*this)(c.front());
 	
 	vfact->checkLeftHandSide(); // Checking for opened or paired single variables

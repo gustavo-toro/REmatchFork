@@ -7,7 +7,7 @@ set(sources
 
 set(BUILD_TARGETS
   #rematch
-  vicente
+  single_variables
 )
 
 set(BENCHMARK_TARGETS

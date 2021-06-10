@@ -61,6 +61,7 @@ class VariableFactory {
 	std::string pprint();
 
 	// Merges the variables present in another VariableFactory inplace
+	// Merges the single variables present in another VariableFactory inplace
 	void merge(VariableFactory &rhs);
 
 	// Checks if a variable name is present

@@ -45,7 +45,7 @@ void VariableFactory::add(std::string var) {
 }
 
 void VariableFactory::addSingle(std::string var, bool isLeft) {
-	// TODO: check size of used vars? (MAX_VARS)
+	// TODO: check size of used vars (MAX_VARS)
 	if (isLeft) {
 		if (dataLeft_.count(var))
 			throw parsing::BadRegex("Variable opened multiple times.");
@@ -141,16 +141,16 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 	// Check (rhs opening) if (not lhs opened)
 	for (auto &var: rhs.dataLeft_) {
 		if (dataLeft_.count(var))
-			throw parsing::BadRegex("Opened a variable multiple times.");
+			throw parsing::BadRegex("Variable opened multiple times.");
 		dataLeft_.insert(var);
 	}
 
 	// Check (rhs closing) if (lhs opened && not lhs closed)
 	for (auto &var: rhs.dataRight_) {
 		if (!dataLeft_.count(var))
-			throw parsing::BadRegex("Closed a variable without openning");
+			throw parsing::BadRegex("Variable closed without openning.");
 		if (dataRight_.count(var))
-			throw parsing::BadRegex("Closed a variable multiple times.");
+			throw parsing::BadRegex("Variable closed multiple times.");
 		dataRight_.insert(var);
 	}
 
@@ -159,13 +159,13 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 void VariableFactory::checkLeftHandSide() {
 	for (auto &var: dataRight_) {
 		if (!dataLeft_.count(var))
-			throw parsing::BadRegex("Closed a variable without openning.");
+			throw parsing::BadRegex("Variable closed without openning.");
 	}
 }
 
 void VariableFactory::checkAfterMerge() {
 	if (dataLeft_ != dataRight_)
-	 throw parsing::BadRegex("Opened a variable without closing.");
+	 throw parsing::BadRegex("Variable opened without closing.");
 }
 
 bool VariableFactory::contains(std::string var) {
