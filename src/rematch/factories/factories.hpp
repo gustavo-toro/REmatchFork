@@ -44,6 +44,9 @@ class VariableFactory {
 	// Checks left hand side single variables
 	void checkLeftHandSide();
 
+	// Checks paired variables after merge
+	void checkAfterMerge();
+
 	// Given a variable name outputs the corresponding opening bitset
 	std::bitset<32> open_code(std::string var);
 

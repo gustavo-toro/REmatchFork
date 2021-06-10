@@ -29,8 +29,7 @@ vfptr regex2vars::operator()(ast::concat const &c) const {
 	
 	auto vfact = (*this)(c.front());
 	
-	// Checking for opened or paired single variables
-	vfact->checkLeftHandSide();
+	vfact->checkLeftHandSide(); // Checking for opened or paired single variables
 
 	if(c.size() > 1) {
 		for (size_t i = 1; i < c.size(); ++i) {
@@ -38,9 +37,8 @@ vfptr regex2vars::operator()(ast::concat const &c) const {
 			vfact->merge(*current); // Checking for functional regex inside merge
 		}
 	}
-	// verificar todos pareados
-	//vfact -> checkAfterMerge();
-
+	
+	vfact -> checkAfterMerge(); // Checking all single variables paired
 
 	return vfact;
 }

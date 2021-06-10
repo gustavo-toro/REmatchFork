@@ -2,13 +2,7 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-  std::string rgx;
- 	
-  rgx = "!x{aa}x!";
-
-  bool response = rematch::checkRegex(rgx);
-
-  std::cout << rgx << response << '\n';
-
+  int resp = rematch::checkRegex(argv[1]);
+  std::cout << resp << '\t' << argv[1] << '\n';
   return 0;
 }
