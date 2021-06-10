@@ -45,4 +45,12 @@ std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
 	return A;
 }
 
+
+bool checkRegex(std::string regex) {
+  ast::altern tree;
+  doParse(regex, tree);
+  std::shared_ptr<VariableFactory> v = visitors::regex2vars()(tree);
+  return true;
+}
+
 } // end namespace rematch

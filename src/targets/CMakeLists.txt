@@ -6,7 +6,8 @@ set(sources
 )
 
 set(BUILD_TARGETS
-  rematch
+  #rematch
+  vicente
 )
 
 set(BENCHMARK_TARGETS

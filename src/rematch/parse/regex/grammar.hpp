@@ -78,7 +78,10 @@ struct parser : qi::grammar<It, ast::altern()> {
 
     assign_ =   '!' >> var_  >> '{' >> altern_ >> '}';
 
-    atom_ =  charset_ | assert_ | special_ | symb_ ;
+    left_assign_ = ('!' >> var_ >> '{')[_val = construct<ast::single_assignation>(_1, true)];
+    right_assign_ = ('}' >> var_ >> '!')[_val = construct<ast::single_assignation>(_1, false)];
+
+    atom_ =   left_assign_ | right_assign_ | charset_ | assert_ | special_ | symb_;
 
     assert_ = lit('^')[_val = ast::assertion(AssertionCode::kStartAnchor)] |
               lit('$')[_val = ast::assertion(AssertionCode::kEndAnchor)] |
@@ -133,6 +136,8 @@ struct parser : qi::grammar<It, ast::altern()> {
     var_.name("variable");
     atom_.name("atom");
     assign_.name("assign");
+    left_assign_.name("lt_assign");
+    right_assign_.name("rt_assign");
     charset_.name("charset");
     charclass_symb_.name("cs_symbol");
     symb_.name("symbol");
@@ -183,6 +188,8 @@ struct parser : qi::grammar<It, ast::altern()> {
   qi::rule<It, std::string()> var_;
   qi::rule<It, ast::atom()> atom_;
   qi::rule<It, ast::assignation()> assign_;
+  qi::rule<It, ast::single_assignation()> left_assign_;
+  qi::rule<It, ast::single_assignation()> right_assign_;
   qi::rule<It, ast::charset()> charset_;
   qi::rule<It, char()> symb_;
   qi::rule<It, char()> charclass_symb_;

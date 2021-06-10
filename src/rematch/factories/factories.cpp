@@ -44,6 +44,19 @@ void VariableFactory::add(std::string var) {
 	}
 }
 
+void VariableFactory::addSingle(std::string var, bool isLeft) {
+	// TODO: check size of used vars? (MAX_VARS)
+	if (isLeft) {
+		if (dataLeft_.count(var))
+			throw parsing::BadRegex("Variable opened multiple times.");
+		dataLeft_.insert(var);
+	} else {
+		if (dataRight_.count(var))
+			throw parsing::BadRegex("Variable closed multiple times.");
+		dataRight_.insert(var);
+	}
+}
+
 std::bitset<32> VariableFactory::open_code(std::string var) {
 	std::bitset<32> bitstring;
 
@@ -125,6 +138,26 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 		}
 	}
 
+	// Check opening a single time on both sides
+	for (auto &var: rhs.dataLeft_) {
+		if (dataLeft_.count(var))
+			throw parsing::BadRegex("Opened a variable multiple times. (merge)");
+	}
+
+	// Check (rhs closing) iff (lhs opened && lhs not closed)
+	// Check closing a single time on both sides
+	for (auto &var: rhs.dataRight_) {
+		if (!dataLeft_.count(var) && dataRight_.count(var))
+			throw parsing::BadRegex("Closed a variable without openning or closed multiple times. (merge)");
+	}
+
+}
+
+void VariableFactory::checkLeftHandSide() {
+	for (auto &var: dataRight_) {
+		if (!dataLeft_.count(var))
+			throw parsing::BadRegex("Closed a variable without openning. (checkLeftHandSide)");
+	}
 }
 
 bool VariableFactory::contains(std::string var) {

@@ -27,6 +27,7 @@ struct regex2filters : boost::static_visitor<void> {
 		void operator()(char const &a);
 		void operator()(ast::special const &a);
 		void operator()(ast::assertion const &a);
+		void operator()(ast::single_assignation const &sa) {}
 
 		ff_ptr get_factory();
 };

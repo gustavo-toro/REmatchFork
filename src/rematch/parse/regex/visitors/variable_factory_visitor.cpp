@@ -1,6 +1,7 @@
 #include "variable_factory_visitor.hpp"
 
 #include <iostream>
+#include <typeinfo>
 
 #include "parse/regex/exceptions.hpp"
 #include "parse/regex/ast.hpp"
@@ -25,7 +26,11 @@ vfptr regex2vars::operator()(ast::altern const &node) const {
 
 vfptr regex2vars::operator()(ast::concat const &c) const {
 	// std::cout << "c.size() = " << c.size() << "\n";
+	
 	auto vfact = (*this)(c.front());
+	
+	// Checking for opened or paired single variables
+	vfact->checkLeftHandSide();
 
 	if(c.size() > 1) {
 		for (size_t i = 1; i < c.size(); ++i) {
@@ -33,6 +38,10 @@ vfptr regex2vars::operator()(ast::concat const &c) const {
 			vfact->merge(*current); // Checking for functional regex inside merge
 		}
 	}
+	// verificar todos pareados
+	//vfact -> checkAfterMerge();
+
+
 	return vfact;
 }
 
@@ -63,8 +72,32 @@ vfptr regex2vars::operator()(ast::assignation const &a) const {
 	return vfact;
 }
 
-vfptr regex2vars::operator()(ast::atom const &a) const {
+vfptr regex2vars::operator()(ast::single_assignation const &sa) const {
+	auto vfact = std::make_unique<VariableFactory>();
+	
+	vfact->addSingle(sa.var, sa.isLeft);
+	
+	return vfact;
+}
+
+vfptr regex2vars::operator()(ast::charset const &cs) const {
 	return std::make_unique<VariableFactory>();
+}
+
+vfptr regex2vars::operator()(ast::assertion const &a) const {
+	return std::make_unique<VariableFactory>();
+}
+
+vfptr regex2vars::operator()(char const &ch) const {
+	return std::make_unique<VariableFactory>();
+}
+
+vfptr regex2vars::operator()(ast::special const &sp) const {
+	return std::make_unique<VariableFactory>();
+}
+
+vfptr regex2vars::operator()(ast::atom const &a) const {
+	return boost::apply_visitor(*this, a);
 }
 
 } // end namespace visitors

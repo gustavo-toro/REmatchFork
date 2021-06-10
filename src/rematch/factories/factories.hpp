@@ -38,6 +38,12 @@ class VariableFactory {
 	// Add a variable to the struct
 	void add(std::string var);
 
+	// Add a single variable to the struct
+	void addSingle(std::string var, bool isLeft);
+
+	// Checks left hand side single variables
+	void checkLeftHandSide();
+
 	// Given a variable name outputs the corresponding opening bitset
 	std::bitset<32> open_code(std::string var);
 
@@ -67,6 +73,9 @@ class VariableFactory {
  private:
 	// Ordered vector that stores the variables.
 	std::vector<std::string> data_;
+	// Unordered sets that stores the single variables.
+	std::unordered_set<std::string> dataLeft_;
+	std::unordered_set<std::string> dataRight_;
 
 	// Offset capturing optimization. Maps each opening and closing
 	// capture variable to its computed offset. Then it's a vector of size

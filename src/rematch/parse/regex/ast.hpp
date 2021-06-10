@@ -70,8 +70,17 @@ struct special {
   bool not_negated_;
 };
 
+struct single_assignation {
+  std::string var;
+  
+  bool isLeft;
 
-using atom = boost::variant<charset, assertion, char, special>;
+  single_assignation() = default;
+
+  single_assignation(std::string var, bool isLeft): var(var), isLeft(isLeft) {}
+};
+
+using atom = boost::variant<charset, assertion, char, special, single_assignation>;
 
 using group =  boost::variant<
     boost::recursive_wrapper<parenthesis>,

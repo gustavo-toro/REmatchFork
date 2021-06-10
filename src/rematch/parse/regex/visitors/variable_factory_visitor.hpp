@@ -19,7 +19,12 @@ struct regex2vars : boost::static_visitor<vfptr> {
 	vfptr operator()(ast::group const &g) const;
 	vfptr operator()(ast::parenthesis const &p) const;
 	vfptr operator()(ast::assignation const &a) const;
+	vfptr operator()(ast::single_assignation const &sa) const;
 	vfptr operator()(ast::atom const &a) const;
+	vfptr operator()(ast::charset const &cs) const;
+	vfptr operator()(ast::assertion const &a) const;
+	vfptr operator()(char const &ch) const;
+	vfptr operator()(ast::special const &sp) const;
 };
 
 } // end namespace visitors
