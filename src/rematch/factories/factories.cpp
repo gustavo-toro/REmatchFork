@@ -45,9 +45,9 @@ void VariableFactory::add(std::string var) {
 }
 
 void VariableFactory::addSingle(std::string var, bool isLeft) {
-	// TODO: check size of used vars (MAX_VARS)
 	if (isLeft) {
-		if (dataLeft_.count(var))
+		// Checks variable is not opened as single or normal
+		if (dataLeft_.count(var) || this->contains(var))
 			throw parsing::BadRegex("Variable opened multiple times.");
 		dataLeft_.insert(var);
 	} else {
@@ -140,18 +140,22 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 
 	// Check (rhs opening) if (not lhs opened)
 	for (auto &var: rhs.dataLeft_) {
-		if (dataLeft_.count(var))
+		if (dataLeft_.count(var) || this->contains(var))
 			throw parsing::BadRegex("Variable opened multiple times.");
 		dataLeft_.insert(var);
 	}
 
 	// Check (rhs closing) if (lhs opened && not lhs closed)
-	for (auto &var: rhs.dataRight_) {
-		if (!dataLeft_.count(var))
+	for (auto var=rhs.dataRight_.begin(); var != rhs.dataRight_.end();) {
+		if (!dataLeft_.count(*var))
 			throw parsing::BadRegex("Variable closed without openning.");
-		if (dataRight_.count(var))
+		if (dataRight_.count(*var))
 			throw parsing::BadRegex("Variable closed multiple times.");
-		dataRight_.insert(var);
+		// Adds a well paired single variable to normal variables
+		this->add(*var);
+		// Removes the variable from lhs and rhs structs
+		dataLeft_.erase(*var);
+		var = rhs.dataRight_.erase(var);
 	}
 
 }
@@ -164,7 +168,7 @@ void VariableFactory::checkLeftHandSide() {
 }
 
 void VariableFactory::checkAfterMerge() {
-	if (dataLeft_ != dataRight_)
+	if (!dataLeft_.empty() || !dataRight_.empty())
 	 throw parsing::BadRegex("Variable opened without closing.");
 }
 
