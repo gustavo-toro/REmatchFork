@@ -1,3 +1,5 @@
+// THOMPSON AUTOMATA
+#include <bitset>
 #include "automata_visitor.hpp"
 
 #include "parse/regex/ast.hpp"
@@ -87,6 +89,17 @@ lva_ptr regex2LVA::operator()(ast::special const &a) const {
 
 lva_ptr regex2LVA::operator()(ast::assertion const &a) const {
 	// TODO
+}
+
+lva_ptr regex2LVA::operator()(ast::single_assignation const &sa) const {
+	std::bitset<32> code;
+	if (sa.isLeft) {
+		code = v_fact_->open_code(sa.var);
+	} else {
+	  code = v_fact_->close_code(sa.var);
+	}
+
+	return std::make_unique<LogicalVA>(code);
 }
 
 

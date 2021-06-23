@@ -6,8 +6,8 @@ set(sources
 )
 
 set(BUILD_TARGETS
-  #rematch
-  single_variables
+  rematch
+  #single_variables
 )
 
 set(BENCHMARK_TARGETS

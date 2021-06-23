@@ -30,6 +30,7 @@ class LogicalVA {
 
   // Atomic VA
   LogicalVA(uint code);
+  LogicalVA(std::bitset<32> code);
 
   // Sets a reference for the associated factories.
   void set_factories(std::shared_ptr<VariableFactory> v,

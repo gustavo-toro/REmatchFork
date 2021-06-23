@@ -8,6 +8,7 @@
 #include <list>
 #include <cassert>
 #include <map>
+#include <bitset>
 
 #include "automata/nfa/state.hpp"
 #include "factories/factories.hpp"
@@ -30,6 +31,14 @@ LogicalVA::LogicalVA(uint code) : is_raw_(false) {
   State* fstate = new_final_state();
 
   init_state_->addFilter(code, fstate);
+}
+
+LogicalVA::LogicalVA(std::bitset<32> code) : is_raw_(false) {
+  init_state_ = new_state();
+  init_state_->setInitial(true);
+  State* fstate = new_final_state();
+
+  init_state_->addCapture(code, fstate);
 }
 
 LogicalVA::LogicalVA(const LogicalVA &A)
