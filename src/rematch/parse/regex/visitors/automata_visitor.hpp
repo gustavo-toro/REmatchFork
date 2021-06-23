@@ -33,7 +33,7 @@ struct regex2LVA : boost::static_visitor<lva_ptr> {
 		lva_ptr operator()(char const &a) const;
 		lva_ptr operator()(ast::special const &a) const;
 		lva_ptr operator()(ast::assertion const &a) const;
-		lva_ptr operator()(ast::single_assignation const &sa) const {}
+		lva_ptr operator()(ast::single_assignation const &sa) const;
 };
 
 } // end namespace visitors
