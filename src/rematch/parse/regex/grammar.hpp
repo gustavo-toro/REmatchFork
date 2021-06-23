@@ -24,7 +24,7 @@ namespace unicode = boost::spirit::unicode;
 
 template <typename It> // It : Iterator type
 struct parser : qi::grammar<It, ast::altern()> {
-  parser() : parser::base_type(altern_) {
+  parser() : parser::base_type(root_) {
     using qi::lexeme;
     using qi::lit;
     using unicode::char_;
@@ -58,11 +58,16 @@ struct parser : qi::grammar<It, ast::altern()> {
     ////  GRAMMAR RULES  ////
     /////////////////////////
 
+    root_ = altern_ | single_altern_;
+
     altern_ = concat_ % '|';
+    single_altern_ = single_concat_ % '|';
 
     concat_ = +(iter_);
+    single_concat_ = +(single_iter_);
 
     iter_ = group_ >> *rep_;
+    single_iter_ = single_group_ >> *rep_;
 
     rep_ = lit('?')[_val = ast::repetition(0,1)] |
             lit('*')[_val = ast::repetition(0,-1)] |
@@ -72,16 +77,19 @@ struct parser : qi::grammar<It, ast::altern()> {
             ('{' >> uint_ >> ",}" ) [_val = construct<ast::repetition>(_1,-1)] |
             ('{' >> uint_ >> ',' >> uint_ >> '}')[_val = construct<ast::repetition>(_1,_2)];
 
-    group_ =  parenthesis_ | assign_ | atom_ ;
+    group_ = parenthesis_ | assign_ | atom_ ;
+    single_group_ = single_parenthesis_ | single_atom_;
 
     parenthesis_ =  '(' >> altern_ >> ')';
+    single_parenthesis_ =  '(' >> single_altern_ >> ')';
 
-    assign_ =   '!' >> var_  >> '{' >> altern_ >> '}';
+    assign_ =   '!' >> var_  >> '{' >> altern_ >> '}' >> !(var_ >> '!');
 
     left_assign_ = ('!' >> var_ >> '{')[_val = construct<ast::single_assignation>(_1, true)];
     right_assign_ = ('}' >> var_ >> '!')[_val = construct<ast::single_assignation>(_1, false)];
 
-    atom_ =   left_assign_ | right_assign_ | charset_ | assert_ | special_ | symb_;
+    atom_ = charset_ | assert_ | special_ | symb_;
+    single_atom_ = left_assign_ | right_assign_ | charset_ | assert_ | special_ | symb_;
 
     assert_ = lit('^')[_val = ast::assertion(AssertionCode::kStartAnchor)] |
               lit('$')[_val = ast::assertion(AssertionCode::kEndAnchor)] |
@@ -178,15 +186,21 @@ struct parser : qi::grammar<It, ast::altern()> {
 
  private:
   // Rule declaration
-
+  qi::rule<It, ast::altern()> root_;
   qi::rule<It, ast::altern()> altern_;
+  qi::rule<It, ast::altern()> single_altern_;
   qi::rule<It, ast::concat()> concat_;
+  qi::rule<It, ast::concat()> single_concat_;
   qi::rule<It, ast::iter()> iter_;
+  qi::rule<It, ast::iter()> single_iter_;
   qi::rule<It, ast::group()> group_;
+  qi::rule<It, ast::group()> single_group_;
   qi::rule<It, ast::parenthesis()> parenthesis_;
+  qi::rule<It, ast::parenthesis()> single_parenthesis_;
   qi::rule<It, ast::repetition()> rep_;
   qi::rule<It, std::string()> var_;
   qi::rule<It, ast::atom()> atom_;
+  qi::rule<It, ast::atom()> single_atom_;
   qi::rule<It, ast::assignation()> assign_;
   qi::rule<It, ast::single_assignation()> left_assign_;
   qi::rule<It, ast::single_assignation()> right_assign_;
