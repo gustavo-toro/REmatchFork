@@ -20,6 +20,9 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Navbar from './components/Navbar';
 import About from './components/About';
+import Tutorial from './components/Tutorial';
+import Beginner from './components/Beginner';
+import Advanced from './components/Advanced';
 import Home from './components/Home';
 import 'fontsource-roboto';
 
@@ -93,8 +96,17 @@ const App = () => {
       <Router>
         <Navbar/>
         <Switch>
+          <Route exact path="/tutorial">
+            <Tutorial />
+          </Route>
           <Route path="/about">
             <About />
+          </Route>
+          <Route exact path="/beginner">
+            <Beginner />
+          </Route>
+          <Route exact path="/advanced">
+            <Advanced />
           </Route>
           <Route path="/">
             <Home />

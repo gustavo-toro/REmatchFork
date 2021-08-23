@@ -8,7 +8,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+ monospace;
 }
 
 /* MainInterface */
@@ -949,3 +950,14 @@ code {
   text-align: center;
 }
 /*# sourceMappingURL=App.css.map */
+
+.cardTutorial {
+  width: 500px;
+  margin-top: 60px;
+  /* margin-right: 90px; */
+  margin-left: 25px
+}
+
+.link-tutorial {
+  text-decoration: none;
+}

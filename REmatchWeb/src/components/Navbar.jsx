@@ -19,6 +19,11 @@ const Navbar = () => (
           About (WIP)
         </Button>
       </Link>
+      <Link to="/tutorial" className="button">
+        <Button color="primary" size="large">
+          Tutorial
+        </Button>
+      </Link>
     </Toolbar>
   </AppBar>
 )
