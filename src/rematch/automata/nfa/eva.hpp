@@ -99,6 +99,8 @@ class ExtendedVA {
 
 	bool is_dfa_searchable() const {return is_dfa_searchable_;}
 
+	bool is_anambiguous() const;
+
 
  private:
 	void getInvTopSortCapturesUtil(CapturePtr &cap, CaptureVector &L);

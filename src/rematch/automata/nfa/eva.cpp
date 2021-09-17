@@ -865,4 +865,27 @@ void ExtendedVA::compute_if_dfa_searchable() {
 	}
 }
 
+// bool ExtendedVA::is_anambiguous() const {
+
+// 	struct DoubleState {
+// 		std::pair<State*, State*> states_;
+// 	}
+
+// 	ExtendedVA AxA;
+// 	auto curr_state1 = init_state_;
+// 	auto curr_state2 = init_state_;
+
+// 	auto q_init = std::make_pair(init_state_, init_state_);
+
+// 	std::vector<State*> stack;
+
+// 	stack.push_back(q_init);
+
+// 	while(!stack.empty()) {
+// 	curr_state	stack.back()
+// 	}
+
+
+// }
+
 } // end namespace rematch
