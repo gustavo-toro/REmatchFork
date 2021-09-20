@@ -9,6 +9,7 @@ set(BUILD_TARGETS
   rematch
   ranked-enum
   test-ecs
+  test-mempool
 )
 
 set(BENCHMARK_TARGETS
