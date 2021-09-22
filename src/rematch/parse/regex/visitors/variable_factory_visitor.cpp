@@ -38,9 +38,9 @@ vfptr regex2vars::operator()(ast::concat const &c) const {
 
 vfptr regex2vars::operator()(ast::iter const &it) const {
 	auto vfact = (*this)(it.expr);
-	if(!it.repetitions.empty() && !vfact->empty()){
-		throw parsing::BadRegex("Not a functional regex.");
-	}
+	// if(!it.repetitions.empty() && !vfact->empty()){
+	// 	throw parsing::BadRegex("Not a functional regex.");
+	// }
 	return vfact;
 }
 

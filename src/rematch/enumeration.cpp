@@ -40,6 +40,16 @@ Match_ptr Enumerator::next() {
     depth_stack_.pop_back();
 
     if(node->isNodeEmpty()) {
+      // show mappings
+      for (auto & vec : current_mapping_) {
+        std::cout << '\n';
+        for (auto & idx : vec) { 
+          std::cout << idx << ' ';
+        }
+      }
+      std::cout << '\n';
+      // show mappings
+
       nmappings_++;
       std::unique_ptr<Match> ret(new Match(var_factory_, current_mapping_[0]));
       // reset current_mapping
@@ -58,8 +68,8 @@ Match_ptr Enumerator::next() {
       }
 
       if (std::find(current_submapping.begin(), current_submapping.end(), -1) == current_submapping.end()) {
-        // if it's filled
-        current_mapping_.push_back(current_submapping);
+        // if it's filled, insert at front
+        current_mapping_.insert(current_mapping_.begin(), current_submapping);
         // reset current_submapping
         std::fill(current_submapping.begin(), current_submapping.end(), -1);
       }
