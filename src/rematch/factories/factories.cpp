@@ -113,16 +113,15 @@ std::string VariableFactory::pprint() {
 void VariableFactory :: merge(VariableFactory &rhs) {
 	for(auto &var: rhs.data_) {
 		auto it = std::lower_bound(data_.begin(), data_.end(), var);
-		if(it != data_.end() && var == *it) {
-			throw parsing::BadRegex("Regex is not functional.");
-		} else {
-			if(size() >= MAX_VARS) {}
-				// TODO: Throw an exception;
+		if(size() >= MAX_VARS) {}
+		// TODO: Throw an exception;
+		if (std::find(data_.begin(), data_.end(), var) == data_.end()) {
+			// if it's a new var name 
 			data_.insert(it, var);
-
 			offsetMap.push_back(0);
 			offsetMap.push_back(0);
 		}
+
 	}
 
 }

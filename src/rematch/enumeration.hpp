@@ -28,8 +28,6 @@ class Enumerator {
 
   friend class Evaluator;
 
-  using SpanMap = std::map<std::string, std::pair<int64_t, int64_t>>;
-
   public:
     Enumerator(RegEx &rgx);
 
@@ -69,7 +67,7 @@ class Enumerator {
 
   // Store the current mapping because each next() call needs to
   // remember the capture positions already found.
-  std::vector<int64_t> current_mapping_;
+  std::vector<std::vector<int64_t>> current_mapping_;
 }; // end class Enumerator
 
 } // end namespace rematch
