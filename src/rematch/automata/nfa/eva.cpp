@@ -33,7 +33,7 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
 	adaptReachableStates(A);
 
 	// if(!is_raw_)
-	// 	std::cout << "EvA before:\n" << pprint() << "\n\n";
+	std::cout << "EvA before:\n" << pprint() << "\n\n";
 
 	compute_if_dfa_searchable();
 
@@ -43,7 +43,7 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
 
 	pruneUselessStates();
 
-	// std::cout << "EvA after:\n" << pprint() << "\n\n";
+	//std::cout << "EvA after:\n" << pprint() << "\n\n";
 
 	captureClosure();
 
