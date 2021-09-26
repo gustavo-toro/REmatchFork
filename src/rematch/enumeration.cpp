@@ -16,7 +16,14 @@ namespace rematch {
 Enumerator::Enumerator(RegEx &rgx)
     : var_factory_(rgx.detManager().varFactory()),
       nmappings_(0),
-      current_mapping_(0, std::vector<int64_t>(0)) {}
+      current_mapping_(var_factory_->size(), std::vector<int64_t>(0)) {}
+      /*
+      !x{a}!x{a}!y{b}
+      [
+        x: [1,2,3,4],
+        y: [5,6]
+      ]
+      */
 
 
 void Enumerator::addNodeList(internal::NodeList *startList) {
@@ -32,7 +39,11 @@ void Enumerator::addNodeList(internal::FastNodeList *startList) {
 }
 
 Match_ptr Enumerator::next() {
-  std::vector<int64_t> current_submapping(var_factory_->size() * 2, -1);
+  /*
+    !x{a}!x{a}!y{b}
+    [x0,x1,y0,y1,z0,z1]
+  */
+  std::vector<int64_t> current_variables(var_factory_->size() * 2, -1);
   while(!depth_stack_.empty()) {
     auto current = depth_stack_.back();
     internal::Node* node = current.current_node;
@@ -40,20 +51,21 @@ Match_ptr Enumerator::next() {
     depth_stack_.pop_back();
 
     if(node->isNodeEmpty()) {
-      // show mappings
-      for (auto & vec : current_mapping_) {
-        std::cout << '\n';
-        for (auto & idx : vec) { 
-          std::cout << idx << ' ';
+      for (auto & var_slot : current_mapping_) {
+        for (auto & pos : var_slot) {
+          std::cout << pos << ' ';
         }
+        std::cout << '\n';
       }
-      std::cout << '\n';
-      // show mappings
-
+      std::cout << "----\n";
       nmappings_++;
-      std::unique_ptr<Match> ret(new Match(var_factory_, current_mapping_[0]));
-      // reset current_mapping
-      current_mapping_.clear();
+      // MODIFY MATCH.CPP/HPP
+      std::unique_ptr<Match> ret(new Match(var_factory_, 
+        std::vector<int64_t>(var_factory_->size()*2,-2)));
+      // MODIFY MATCH.CPP/HPP
+      for (auto & m : current_mapping_) {
+        m.clear();
+      }
       return ret;
     }
 
@@ -63,16 +75,20 @@ Match_ptr Enumerator::next() {
 
     if(node->start != nullptr) {
       for(size_t j=0; j < var_factory_->size() * 2; j++) {
-        if(node->S[j])
-          current_submapping[j] =  node->i - var_factory_->get_offset(j);
+        if(node->S[j]) {
+          current_variables[j] =  node->i - var_factory_->get_offset(j);
+        }
       }
-
-      if (std::find(current_submapping.begin(), current_submapping.end(), -1) == current_submapping.end()) {
-        // if it's filled, insert at front
-        current_mapping_.insert(current_mapping_.begin(), current_submapping);
-        // reset current_submapping
-        std::fill(current_submapping.begin(), current_submapping.end(), -1);
+      // store valid current_variables on current_mapping_
+      for(size_t j=0; j < var_factory_->size(); j++) {
+        if (current_variables[j*2] != -1) {
+          current_mapping_[j].push_back(current_variables[j*2]);
+          current_mapping_[j].push_back(current_variables[j*2 + 1]);
+        }
       }
+      // clear current_variables
+      std::fill(current_variables.begin(), current_variables.end(), -1);
+   
 
       depth_stack_.emplace_back(node->start, node->end);
     }
