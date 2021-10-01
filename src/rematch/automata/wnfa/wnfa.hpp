@@ -61,8 +61,12 @@ class State {
  public:
   State() = default;
 
-  Filter& add_filter(uint code, State* next) { return filters_.emplace_back(this, code, next); }
-  Capture& add_capture(std::bitset<32> code, State* next) { return captures_.emplace_back(this, code, next); }
+  Filter& add_filter(uint code, double weight, State* next) {
+    return filters_.emplace_back(this, code, weight, next);
+  }
+  Capture& add_capture(std::bitset<32> code, double weight, State* next) {
+    return captures_.emplace_back(this, code, weight, next);
+  }
 
   // Given a filter code, return the subset of reached states
   std::vector<State*> next_filter(unsigned int code) const;
