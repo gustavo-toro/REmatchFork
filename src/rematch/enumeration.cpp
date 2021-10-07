@@ -17,14 +17,6 @@ Enumerator::Enumerator(RegEx &rgx)
     : var_factory_(rgx.detManager().varFactory()),
       nmappings_(0),
       current_mapping_(var_factory_->size(), std::vector<int64_t>(0)) {}
-      /*
-      !x{a}!x{a}!y{b}
-      [
-        x: [1,2,3,4],
-        y: [5,6]
-      ]
-      */
-
 
 void Enumerator::addNodeList(internal::NodeList *startList) {
   if(!startList->empty()){
@@ -39,11 +31,8 @@ void Enumerator::addNodeList(internal::FastNodeList *startList) {
 }
 
 Match_ptr Enumerator::next() {
-  /*
-    !x{a}!x{a}!y{b}
-    [x0,x1,y0,y1,z0,z1]
-  */
   std::vector<int64_t> current_variables(var_factory_->size() * 2, -1);
+
   while(!depth_stack_.empty()) {
     auto current = depth_stack_.back();
     internal::Node* node = current.current_node;
@@ -51,6 +40,7 @@ Match_ptr Enumerator::next() {
     depth_stack_.pop_back();
 
     if(node->isNodeEmpty()) {
+      // SHOW OUTPUT
       for (auto & var_slot : current_mapping_) {
         for (auto & pos : var_slot) {
           std::cout << pos << ' ';
@@ -59,13 +49,12 @@ Match_ptr Enumerator::next() {
       }
       std::cout << "----\n";
       nmappings_++;
+      // SHOW OUTPUT
       // MODIFY MATCH.CPP/HPP
       std::unique_ptr<Match> ret(new Match(var_factory_, 
         std::vector<int64_t>(var_factory_->size()*2,-2)));
       // MODIFY MATCH.CPP/HPP
-      for (auto & m : current_mapping_) {
-        m.clear();
-      }
+      for (auto & m : current_mapping_) m.clear();
       return ret;
     }
 
