@@ -2,6 +2,7 @@
 #define STRUCTS__HOW__HOW_PAPER_HPP
 
 #include <memory>
+#include <list>
 
 #include "structs/how/how.hpp"
 #include "structs/how/iheap.hpp"
@@ -10,37 +11,79 @@ namespace rematch {
 namespace ranked {
 
 
-template<typename T, typename K>
-class HOWPaper : public HeapOfWords<T,K> {
+
+template<typename T, typename G>
+class HoWPaper : public HeapOfWords<T,G> {
  public:
-  using hpair_t = std::pair<T, HOWPaper*>;
 
-  HOWPaper() = default;
+  using HoW = HoWPaper<T,G>;
 
-  virtual HOWPaper<T,K>& add(T& obj, K val) {
-    Q_ = Q_->add(std::make_pair(obj, HOWPaper<T,K>()), val);
-    return *this;
+  struct HoWNode {
+    T a;
+    const HoW *h;
+  };
+
+  HoWPaper() = default;
+
+  virtual HoW* add(T obj, G val) const {
+    return new HoW(Q_->add({obj, new HoW()}, val));
   }
 
-  virtual HOWPaper<T,K>& extend_by(T& obj) {
+  virtual HoW* extend_by(T obj) const {
     if(Q_->empty())
-      return *this;
-    IncHeap<hpair_t, K>* empty_heap = new IncHeap<hpair_t, K>();
-    Q_ = empty_heap->add(std::make_pair(obj, this), Q_->min_prio());
+      return new HoW();
+    IncrementalHeap<HoWNode, G>* empty_heap = new IncrementalHeap<HoWNode, G>();
+    return new HoW(empty_heap->add({obj, this}, Q_->min_prio()));
   }
 
-  virtual void find_min() = 0;
+  virtual std::list<T> find_min() const {
+    std::list<T> ret;
+    auto &tmp = Q_->find_min();
+    T& a = tmp.a;
+    auto* h_prim = tmp.h;
+    if(h_prim->Q_->empty()) {
+      ret.push_back(a);
+    } else {
+      // Append list to the end
+      ret.splice(ret.end(), h_prim->find_min());
+    }
+    return ret;
+  };
 
-  virtual void delete_min() = 0;
+  virtual HoW* delete_min() const {
+    if (Q_->empty()) {
+      return new HoW();
+    }
+    auto &tmp = Q_->find_min();
+    T& a = tmp.a;
+    auto *h_r = tmp.h;
+    auto R = h_r->Q_;
+    auto Q_p = Q_->delete_min();
+    HoW *h_r_prim = h_r->delete_min();
+    auto R_p = h_r->Q_;
+    if (R_p->empty()) {
+      return new HoW(Q_p);
+    }
+    G delta = R_p->min_prio() - R->min_prio();
+    G g = Q_->min_prio() + delta;
+    return new HoW(Q_p->add({a, h_r_prim}, g));
+  };
 
-  virtual void meld_with(HeapOfWords<T, K>& h) = 0;
+  virtual HoW* meld_with(HeapOfWords<T,G>* h) const {
+    HoW* h_derived = static_cast<HoW*>(h);
+    return new HoW(Q_->meld_with(h_derived->Q_));
+  };
 
-  virtual void increase_by(K val) = 0;
+  virtual HoW* increase_by(G val) const {
+    return new HoW(Q_->increase_by(val));
+  };
 
 
  private:
-  std::unique_ptr<IncHeap<hpair_t, K>> Q_;
-}; // end class HOWPaper
+  HoWPaper(IncrementalHeap<HoWNode, G>* Q): Q_(Q) {}
+
+  IncrementalHeap<HoWNode, G>* Q_;
+}; // end class HoWPaper
 
 } // end namespace ranked
 } // end namespace rematch

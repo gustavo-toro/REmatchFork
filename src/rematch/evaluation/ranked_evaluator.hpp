@@ -13,14 +13,17 @@
 
 #include "automata/wnfa/wnfa.hpp"
 
-namespace rematch {
+#include "structs/capture_place.hpp"
 
+namespace rematch {
 namespace ranked {
+
+// using WeightedVA = WeightedVA<CapturePlace, double>;
 
 class RankedEvaluator : public Evaluator {
 
  public:
-  RankedEvaluator(WeightedVA& wva, std::shared_ptr<Document> d);
+  RankedEvaluator(WeightedVA<>& wva, const std::string &d);
 
   virtual Match_ptr next();
 
@@ -29,9 +32,22 @@ class RankedEvaluator : public Evaluator {
   // Initialize the automaton and enumeration
   void init();
 
-  WeightedVA& automaton_;
+  void preprocessing();
 
-  std::shared_ptr<Document> text_;
+  Match_ptr enumerate();
+
+  WeightedVA<>& automaton_;
+
+  const std::string &text_;
+
+  std::vector<WeightedVA<>::State*> current_states_;
+  std::vector<WeightedVA<>::State*> new_states_;
+
+  long i_pos_ = 0;
+
+  HeapOfWords<CapturePlace, double>* h_out_;
+
+  bool finished_preprocessing_ = false;
 
   // Enumerator enumerator_;
 }; // end class Evaluator

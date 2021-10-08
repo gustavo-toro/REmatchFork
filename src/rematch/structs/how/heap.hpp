@@ -10,13 +10,11 @@ class Heap {
  public:
   virtual T& find_min() const = 0;
 
-  virtual void delete_min() = 0;
+  virtual Heap<T,G>* delete_min() = 0;
 
-  virtual void add(const T& obj, const G& value) = 0;
+  virtual Heap<T,G>* add(T obj, G value) = 0;
 
-  virtual void increase_by(const G& value) = 0;
-
-  virtual void meld_with(Heap<T,G> &h) = 0;
+  virtual Heap<T,G>* meld_with(Heap<T,G> *h) = 0;
 
   virtual bool empty() const = 0;
 

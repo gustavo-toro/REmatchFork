@@ -9,40 +9,22 @@ namespace rematch {
 namespace ranked {
 
 template<typename T, typename G>
-class IncHeap {
+class IncrementalHeap {
  public:
-  T& find_min() const {
-    return heap_->find_min();
-  };
+  using iHeap = IncrementalHeap<T,G>;
+  virtual T& find_min() const;
 
-  void delete_min() {
-    return heap_->delete_min();
-  };
+  virtual iHeap* delete_min() const = 0;
 
-  void add(const T& obj, const G& value) {
-    return heap_->add(obj, value);
-  }
+  virtual iHeap* add(T obj, G value) const = 0;
 
-  void increase_by(const G& value) {
-    return heap_->increase_by(value);
-  }
+  virtual iHeap* increase_by(G value) const = 0;
 
-  void meld_with(IncHeap<T,G> &h) {
-    heap_->meld_with(h.heap_);
-  }
+  virtual iHeap* meld_with(iHeap *h) const = 0;
 
-  bool empty() const {
-    return heap_->empty();
-  }
+  virtual bool empty() const;
 
-  const G& min_prio() const {
-    return heap_->min_prio();
-  }
-
-  void increase_by();
- private:
-  std::unique_ptr<Heap<T,G>> heap_;
-
+  virtual const G& min_prio() const;
 }; // class IncHeap
 
 } // end namespace ranked

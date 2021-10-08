@@ -6,7 +6,7 @@ using namespace rematch::ranked;
 
 int main() {
 
-  HOWPaper<char, double> h;
+  HoWPaper<char, double> h;
 
   // std::cout << n6->print();
 
