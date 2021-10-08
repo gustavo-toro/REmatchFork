@@ -56,10 +56,44 @@ ExtendedVA::ExtendedVA(const LogicalVA &A)
 	  crossProdOpt();
   #endif
 
-	if(is_raw_)
-		raw_init(A);
-	else
-		normal_init(A);
+	// Get rid off e-transitions
+
+	// FIXME: Separar código de creación para autómata raw
+
+	if(!is_raw_) {
+		State* s = A.new_state();
+		CharClassBuilder ccb;
+		ccb.add_single('\0');
+		s->addFilter(filter_factory_->get_code(ccb), A.init_state_);
+		A.init_state_ = s;
+	}
+
+	epsilonClosure(A);
+
+	adaptReachableStates(A);
+
+	compute_if_dfa_searchable();
+
+	#ifndef NOPT_OFFSET
+	offsetOpt();
+	#endif
+
+	pruneUselessStates();
+
+	captureClosure();
+
+	cleanUselessCaptureStates();
+
+	cleanUselessCaptureTransitions();
+
+  #ifndef NOPT_CROSSPROD
+	if(!is_raw_)
+	  crossProdOpt();
+  #endif
+
+	relabelStates();
+
+	searchSuperFinals();
 }
 
 ExtendedVA::ExtendedVA():
@@ -889,6 +923,9 @@ void ExtendedVA::compute_if_dfa_searchable() {
 				if (superFinalStates.empty()) return;
 
 				is_dfa_searchable_ = true;
+
+
+				// FIXME: Chequear si hay superfinals, si no -> dfa_searchable = false
 
 			} catch (std::out_of_range &e) {
 				return;
