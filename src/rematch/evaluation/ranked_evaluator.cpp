@@ -41,6 +41,7 @@ Match_ptr RankedEvaluator::next() {
 
 void RankedEvaluator::preprocessing() {
   for(; i_pos_ < text_.size(); ++i_pos_) {
+    new_states_.clear();
     for(wVA::State *p: current_states_) {
       for(wVA::State::Transition *t : p->transitions_) {
         wVA::State* q = t->next(); // next state
@@ -73,7 +74,8 @@ Match_ptr RankedEvaluator::enumerate() {
     auto word = h_out_->find_min();
     h_out_ = h_out_->delete_min();
 
-    return std::make_unique<Match>(word);
+
+    return std::make_unique<Match>();
   }
   return nullptr;
 }

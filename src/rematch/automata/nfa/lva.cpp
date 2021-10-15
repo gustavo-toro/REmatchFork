@@ -11,7 +11,7 @@
 
 #include "automata/nfa/state.hpp"
 #include "factories/factories.hpp"
-#include "parse/parser.hpp"
+#include "parse/regex/parser.hpp"
 
 namespace rematch {
 

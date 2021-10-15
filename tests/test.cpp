@@ -4,7 +4,7 @@
 #include <boost/test/data/monomorphic.hpp>
 
 #include "automata/nfa/lva.hpp"
-#include "parse/parser.hpp"
+#include "parse/regex/parser.hpp"
 #include "automata/nfa/eva.hpp"
 #include "regex/regex.hpp"
 #include "match.hpp"

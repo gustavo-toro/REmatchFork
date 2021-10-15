@@ -1,6 +1,6 @@
 #include "automata_visitor.hpp"
 
-#include "parse/ast.hpp"
+#include "parse/regex/ast.hpp"
 #include "automata/nfa/lva.hpp"
 #include "automata/nfa/state.hpp"
 #include "factories/factories.hpp"
@@ -84,11 +84,6 @@ lva_ptr regex2LVA::operator()(ast::special const &s) const {
 	int code = f_fact_->get_code(s); // Implicit conversion
 	return std::make_unique<LogicalVA>(code);
 }
-
-lva_ptr regex2LVA::operator()(ast::assertion const &a) const {
-	// TODO
-}
-
 
 } // end namespace visitors
 } // end namespace rematch

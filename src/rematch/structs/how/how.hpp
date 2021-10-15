@@ -21,6 +21,8 @@ class HeapOfWords {
 
   virtual HeapOfWords<T,G>* increase_by(G val) const = 0;
 
+  virtual bool empty() const = 0;
+
 }; // end class HeapOfWords
 
 } // end namespace ranked

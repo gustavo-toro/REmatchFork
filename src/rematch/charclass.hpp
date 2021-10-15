@@ -7,7 +7,7 @@
 
 #include <boost/functional/hash.hpp> // For boost::hash_combine
 
-#include "parse/ast.hpp"
+#include "parse/regex/ast.hpp"
 
 namespace rematch {
 

@@ -97,6 +97,8 @@ class StrDocument : public Document {
 
 	const char& operator[] (int index) {return data_[index];}
 
+	const std::string to_string() const { return std::string(data_, size_);}
+
  private:
     const char* data_;
     size_t size_;

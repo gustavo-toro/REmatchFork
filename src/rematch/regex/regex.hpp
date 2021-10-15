@@ -38,7 +38,8 @@ class RegEx {
     kDotNL       = 1<<1,
     kLineByLine  = 1<<2,
     kEarlyOutput = 1<<3,
-    kSaveAnchors = 1<<4
+    kSaveAnchors = 1<<4,
+    kRanked      = 1<<5, // Ranked enumeration
   };
 
   enum Anchor {

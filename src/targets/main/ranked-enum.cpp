@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	std::string doc, rgx;
 	rematch::Options opts;
 
-	CLI::App app{"REmatch"};
+	CLI::App app{"ranked-enum"};
 
 	auto docinput = app.add_option_group("document_input");
 	auto rgxinput = app.add_option_group("regex_input");
@@ -37,20 +37,9 @@ int main(int argc, char *argv[]) {
 	app.add_option("--mode",mode,"Mode option.")
 		->check(CLI::IsMember({"benchmark","noutputs","spans","submatches"}));
 
-	// // Anchor specification
-	// app.add_option("-a,--anchors",anchors,"Use anchors for regex")
-	// 	->check(CLI::IsMember({"both", "left", "right", "none"}));
-
-	bool cont{false}, line{false};
-
-	// Evaluation flags
-	app.add_flag("-c,--continuous",cont,"Continuous evaluation.");
-	app.add_flag("-l,--line-by-line", line,"Line by line evaluation");
-
 	CLI11_PARSE(app, argc, argv);
 
-	opts.set_early_output(cont);
-	opts.set_line_by_line(line);
+	opts.set_ranked(true);
 
 	if(mode == "benchmark")
 		opts.set_output_option(rematch::BENCHMARK);

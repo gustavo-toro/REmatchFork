@@ -44,7 +44,6 @@ struct parser : qi::grammar<It, ast::altern()> {
     using qi::_3;
     using qi::_4;
 
-
     using qi::on_error;
     using qi::fail;
     using qi::debug;
@@ -80,16 +79,16 @@ struct parser : qi::grammar<It, ast::altern()> {
 
     atom_ =  charset_ | assert_ | special_ | symb_ ;
 
-    assert_ = lit('^')[_val = ast::assertion(AssertionCode::kStartAnchor)] |
-              lit('$')[_val = ast::assertion(AssertionCode::kEndAnchor)] |
-              lit("\\b")[_val = ast::assertion(AssertionCode::kWordBoundary)] |
+    assert_ = lit('^')[_val = ast::assertion(AssertionCode::kStartAnchor)]          |
+              lit('$')[_val = ast::assertion(AssertionCode::kEndAnchor)]            |
+              lit("\\b")[_val = ast::assertion(AssertionCode::kWordBoundary)]       |
               lit("\\B")[_val = ast::assertion(AssertionCode::kNoWordBoundary)];
 
-    special_ = lit(".")[_val = ast::special(SpecialCode::kAnyChar, true)]       |
-               lit("\\d")[_val = ast::special(SpecialCode::kAnyDigit, true)]    |
-               lit("\\D")[_val = ast::special(SpecialCode::kAnyDigit, false)]   |
-               lit("\\w")[_val = ast::special(SpecialCode::kAnyWord, true)]     |
-               lit("\\W")[_val = ast::special(SpecialCode::kAnyWord, false)]    |
+    special_ = lit(".")[_val = ast::special(SpecialCode::kAnyChar, true)]           |
+               lit("\\d")[_val = ast::special(SpecialCode::kAnyDigit, true)]        |
+               lit("\\D")[_val = ast::special(SpecialCode::kAnyDigit, false)]       |
+               lit("\\w")[_val = ast::special(SpecialCode::kAnyWord, true)]         |
+               lit("\\W")[_val = ast::special(SpecialCode::kAnyWord, false)]        |
                lit("\\s")[_val = ast::special(SpecialCode::kAnyWhiteSpace, true)]   |
                lit("\\S")[_val = ast::special(SpecialCode::kAnyWhiteSpace, false)];
 

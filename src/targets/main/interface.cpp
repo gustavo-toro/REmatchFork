@@ -6,7 +6,7 @@
 #include <sys/resource.h>
 
 #include "interface.hpp"
-#include "parse/parser.hpp"
+#include "parse/regex/parser.hpp"
 #include "automata/nfa/eva.hpp"
 #include "automata/dfa/dfa.hpp"
 #include "memmanager.hpp"
@@ -29,11 +29,11 @@ Interface::Interface(std::string &docstr, const std::string &pattern,
 }
 
 void Interface::run() {
-    if(options_.output_option() == rematch::BENCHMARK || options_.output_option() == rematch::DEBUG) {
-        benchmark_run();
-    } else {
-        normal_run();
-    }
+  if(options_.output_option() == rematch::BENCHMARK || options_.output_option() == rematch::DEBUG) {
+       benchmark_run();
+  } else {
+      normal_run();
+  }
 }
 
 void Interface::normal_run() {
@@ -42,6 +42,7 @@ void Interface::normal_run() {
 	// Select options
 	rgx_opts.set_line_by_line(options_.line_by_line());
 	rgx_opts.set_early_output(options_.early_output());
+	rgx_opts.set_ranked(options_.ranked());
 
 	rematch::RegEx regex(pattern_, rgx_opts);
 

@@ -6,7 +6,7 @@
 #include <random>
 #include <vector>
 
-#include "parse/parser.hpp"
+#include "parse/regex/parser.hpp"
 #include "automata/nfa/eva.hpp"
 #include "automata/nfa/state.hpp"
 #include "automata/dfa/dfa.hpp"

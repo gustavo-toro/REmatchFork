@@ -7,6 +7,7 @@ set(sources
 
 set(BUILD_TARGETS
   rematch
+  ranked-enum
   test-ecs
 )
 

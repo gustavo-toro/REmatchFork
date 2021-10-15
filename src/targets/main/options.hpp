@@ -31,6 +31,7 @@ class Options {
     Options() :
         output_option_(SPANS),
         input_option_(RGXFILE),
+        ranked_(false),
         line_by_line_(false),
         capturing_(true),
         early_output_(false),
@@ -44,6 +45,9 @@ class Options {
 
     InputOption input_option() const {return input_option_;}
     void set_input_option(InputOption i) {input_option_ = i;}
+
+    bool ranked() const { return ranked_; }
+    void set_ranked(bool b) { ranked_ = b; }
 
     bool line_by_line() const {return line_by_line_;}
     void set_line_by_line(bool b) {line_by_line_ = b;}
@@ -61,6 +65,7 @@ class Options {
   private:
     OutputOption output_option_;
     InputOption input_option_;
+    bool ranked_;
     bool line_by_line_;
     bool capturing_;
     bool early_output_;

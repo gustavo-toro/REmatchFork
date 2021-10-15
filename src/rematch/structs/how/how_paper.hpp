@@ -6,11 +6,10 @@
 
 #include "structs/how/how.hpp"
 #include "structs/how/iheap.hpp"
+#include "structs/how/binomial_heap.hpp"
 
 namespace rematch {
 namespace ranked {
-
-
 
 template<typename T, typename G>
 class HoWPaper : public HeapOfWords<T,G> {
@@ -32,7 +31,7 @@ class HoWPaper : public HeapOfWords<T,G> {
   virtual HoW* extend_by(T obj) const {
     if(Q_->empty())
       return new HoW();
-    IncrementalHeap<HoWNode, G>* empty_heap = new IncrementalHeap<HoWNode, G>();
+    IncrementalHeap<HoWNode, G>* empty_heap = new BinomialHeap<HoWNode, G>();
     return new HoW(empty_heap->add({obj, this}, Q_->min_prio()));
   }
 
@@ -64,6 +63,7 @@ class HoWPaper : public HeapOfWords<T,G> {
     if (R_p->empty()) {
       return new HoW(Q_p);
     }
+    // TODO: Documentar esto
     G delta = R_p->min_prio() - R->min_prio();
     G g = Q_->min_prio() + delta;
     return new HoW(Q_p->add({a, h_r_prim}, g));
@@ -77,6 +77,8 @@ class HoWPaper : public HeapOfWords<T,G> {
   virtual HoW* increase_by(G val) const {
     return new HoW(Q_->increase_by(val));
   };
+
+  virtual bool empty() const { return Q_->empty(); }
 
 
  private:

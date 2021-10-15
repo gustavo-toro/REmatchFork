@@ -3,15 +3,15 @@
 
 #include <list>
 
-#include "structs/how/heap.hpp"
+#include "structs/how/iheap.hpp"
 
 namespace rematch {
 namespace ranked {
 
 template<typename T, typename G>
-class BinomialHeap : public Heap<T,G> {
+class BinomialHeap : public IncrementalHeap<T,G> {
  public:
-  using bHeap = BinomialHeap<T,G>;
+  using BinHeap = BinomialHeap<T,G>;
 
   BinomialHeap() = default;
 
@@ -19,33 +19,59 @@ class BinomialHeap : public Heap<T,G> {
     return find_min_node()->data_;
   }
 
-  virtual bHeap* delete_min() const {
+  virtual BinHeap* delete_min() const {
     Node* min_node = find_min_node();
 
-    Node* new_head = min_node->child_->reverse_list()
+    BinHeap* H1 = copy_roots_except(min_node);
+    BinHeap* H2 = copy_reverse_siblings(min_node);
 
-    // Alloc a new empty heap
-    BHeap* H_prim = new BHeap();
-
-    H_prim->set_head(new_head);
-
-    return meld_with(H_prim);
+    return H1->meld_with(H2);
   }
 
-  virtual void add(const T& obj, const G& value) {
-    Node* new_node = new Node(obj, value);
-    BinomialHeap tmp;
-    tmp.tree_list_.push_back(new_node);
-    meld_with(tmp);
+  virtual BinHeap* add(T obj, G value) const {
+    BinHeap* tmp = new BinHeap(new Node(obj, value), delta_0_);
+    return meld_with(tmp);
   }
 
-  virtual void meld_with(BinomialHeap<T,G> &h) {
-    merge(h);
-    adjust();
+  virtual BinHeap* increase_by(G value) const {
+    return new BinHeap(head_, delta_0_ + value);
   }
 
-  virtual void empty() const {
-    return tree_list_.empty();
+  virtual BinHeap* meld_with(IncrementalHeap<T,G> *h) const {
+    BinHeap* hdev = static_cast<BinHeap*>(h);
+    BinHeap* H1_down = copy_roots();
+    BinHeap* H2_down = hdev->copy_roots();
+
+    H1_down->head_ = H1_down->merge(H2_down);
+
+    Node* prev_x = nullptr;
+    Node* x = H1_down->head_;
+    Node* next_x = x->next();
+
+    while(next_x != nullptr) {
+      if( ( x->degree_ != next_x->degree_ ) ||
+          ( next_x->next() != nullptr && next_x->next()->degree_ == x->degree_ ) ) {
+        prev_x = x;
+        x = next_x;
+      } else if( x->key_ <= next_x->key_ ) {
+        x->set_sibling(next_x->next());
+        Node::link_deltas(next_x, x);
+      } else {
+        if( prev_x == nullptr ) // At start
+          H1_down->head_ = next_x;
+        else
+          prev_x->set_sibling(next_x);
+        Node::link_deltas(x, next_x);
+        x = next_x;
+      }
+      next_x = x->next();
+    }
+    return H1_down;
+  }
+
+
+  virtual bool empty() const {
+    return head_ == nullptr;
   }
 
   virtual const G& min_prio() const {
@@ -53,31 +79,52 @@ class BinomialHeap : public Heap<T,G> {
   };
 
  private:
+
   class Node {
+   friend BinomialHeap<T,G>;
    public:
+
     Node(T &data, G& key)
         : data_(data),
           key_(key),
           child_(nullptr),
           sibling_(nullptr),
           parent_(nullptr),
-          order_(0) {}
+          degree_(0) {}
 
-    static Node* link(Node* p, Node* q) {
-      if(p->key_ > q->key_)
-        std::swap(p, q); // Make sure p is smaller
 
-      q->parent_ = p;
-      q->sibling_ = p->child_
-      p->child_ = q;
-      ++p->order_;
-      return p;
+    static Node* link(Node* n1, Node* n2) {
+      if(n1->key_ > n2->key_)
+        std::swap(n1, n2); // Make sure n1 is smaller
+
+      n2->parent_ = n1;
+      n2->sibling_ = n1->child_;
+      n1->child_ = n2;
+      ++n1->degree_;
+      return n1;
     }
 
-    // Reverses the siblings list
-    Node* reverse_list() {
-      
+    // Binomial link of two binomial trees. With the correction of the deltas.
+    static void link_deltas(Node* n1, Node* n2) {
+      if(n1->key_ > n2->key_)
+        std::swap(n1, n2); // Make sure n1 is smaller
+
+      // NOTE: No need to make a copy of the nodes
+      // Node* n1_prim = new Node(n1);
+      // Node* n2_prim = new Node(n2);
+
+      n1->child_ = n2;
+      n2->parent_ = n1;
+      n2->sibling_ = n1->child_;
+      n2->key_ = n2->key_ - n1->key_;
     }
+
+    Node* next() const { return sibling_; }
+    void set_sibling(Node* s) { sibling_ = s; }
+
+    Node* first() const { return child_; }
+
+    Node* parent() const { return parent_; }
 
    private:
     T &data_;
@@ -87,76 +134,139 @@ class BinomialHeap : public Heap<T,G> {
     Node* sibling_; // Right sibiling
     Node* parent_;
 
-    int order_;
-  }; // end class Node
+    int degree_;
+  }; // end class BinomialHeap::Node
 
-  Node* merge(bHeap *h) {
-    Node *it = head_, *ot = h.head_;
-    Node *nhead = (it->order <= ot->order)? it : ot;
-    while(it != nullptr && ot != nullptr) {
-      if(it->order_ <= ot->order_) {
-        new_list_.push_back(it);
-        ++it;
-      } else {
-        new_list_.push_back(ot);
-        ++ot;
-      }
+  BinomialHeap(Node* h, G delta): head_(h), delta_0_(delta) {}
+
+  // Performs a copy of all the roots of the heap. Returns a new Heap that has
+  // the new roots.
+  BinHeap* copy_roots() const {
+    if(head_ == nullptr)
+      return new BinHeap(*this);
+    Node* new_node = new Node(*head_);
+    Node *head, *tail;
+    head = tail = new_node;
+    for(Node* it = head_->sibling_; it != nullptr; it = it->sibling_) {
+      new_node = new Node(*it);
+      tail->set_sibling(new_node);
+      tail = new_node;
+    };
+
+    return new BinHeap(head, delta_0_);
+  };
+
+  // Copies the whole root list, but without a skip node (usually the min node)
+  // Returns a new BinomialHeap with the newly allocated nodes as its roots.
+  BinHeap* copy_roots_except(Node* skip_node) const {
+
+    // No skip_node -> heap is empty
+    if(skip_node == nullptr)
+      return new BinHeap(*this);
+
+    // Pointers to new allocated list
+    Node* new_tail = nullptr;
+    Node* new_head = nullptr;
+    Node* new_node;
+
+    // Copy up until the skip_node
+    for(Node* it = head_; it != skip_node; it = it->next()) {
+      new_node = new Node(*it);
+      if(new_tail != nullptr)
+        new_tail->set_sibling(new_node);
+      else
+        new_head = new_node;
+      new_tail = new_node;
     }
 
-    while(it != tree_list.end()) {
-      new_list_.push_back(*it); ++it;
+    // Copy from the skip_node to the rest of the list
+    for(Node* it = skip_node->next(); it != nullptr; it = it->next()) {
+      new_node = new Node(*it);
+      if(new_tail != nullptr)
+        new_tail->set_sibling(new_node);
+      else
+        new_head = new_node;
+      new_tail = new_node;
     }
 
-    while(it != h.tree_list.end()) {
-      new_list_.push_back(*ot); ++ot;
-    }
-
-    tree_list_ = std::move(new_list_);
+    return new BinHeap(new_head, delta_0_);
   }
 
-  void adjust() {
-    if (tree_list_.size() <= 1) return;
-    std::list<Node*> new_tree_list;
-    std::list<Node*> it1, it2, it3;
-    it1 = it2 = it3 = tree_list_.begin();
+  // Copies a reversed list of the children nodes of a parent node.
+  // Returns a new BinomialHeap with the newly allocated nodes as its roots.
+  BinHeap* copy_reverse_siblings(Node* parent_node) const {
+    if(parent_node == nullptr || parent_node->child_ == nullptr)
+      return new BinHeap(*this);
 
-    if(tree_list_.size() == 2) {
-      it2 = it1;
-      ++it2;
-      it3 = tree_list_.end();
-    } else {
-      ++it2;
-      it3 = it2;
-      ++it3;
+    Node *new_prev, *new_node;
+    new_prev = new Node(*parent_node->child_);
+
+    for(Node* it = parent_node->child_->sibling_; it != nullptr ; it = it->sibling_) {
+      new_node = new Node(*it);
+      new_node->set_sibling(new_prev);
+      new_prev = new_node;
     }
 
-    while(it1 != tree_list_.end()) {
-      if(it2 == tree_list_.end())
-        ++it1;
-      else if((*it1)->order_ < (*it2)->order_) {
-        ++it1; ++it2;
-        if(it3 == tree_list_.end())
-          ++it3;
-      } else if(  it3 != tree_list_.end() &&
-                (*it1)->order_ == (*it2)->order_ &&
-                (*it2)->order_ == (*it3)->order_) {
-        ++it1; ++it2; ++it3;
-      } else if( (*it1)->order_  == (*it2)->order_ ) {
-        *it1 = merge_trees(*it1, *it2);
-        it2 = tree_list_.erase(it2);
-        if(it3 != tree_list_.end())
-          ++it3;
+    return new BinHeap(new_prev, delta_0_);
+  }
+
+  // Merge the two root lists of this and another BinomiaHeap h. Does it inplace
+  // of the original (so not in a fully persistant way). Returns the new head of
+  // the roots.
+  Node* merge(BinHeap *h) {
+    Node *it = head_, *ot = h->head_;
+
+    // Limit cases
+    if(ot == nullptr) return it;
+    if(it == nullptr) return ot;
+
+    Node *nhead, *ntail;
+
+    if (it->degree_ <= ot->degree_) {
+      nhead = it;
+      it = it->next();
+    } else {
+      nhead = ot;
+      ot = ot->next();
+    }
+
+    ntail = nhead;
+
+    while(it != nullptr && ot != nullptr) {
+      if(it->degree_ <= ot->degree_) {
+        ntail->set_sibling(it);
+        ntail = it;
+        it = it->next();
+      } else {
+        ntail->set_sibling(ot);
+        ntail = ot;
+        ot = ot->next();
       }
     }
+
+    while(it != nullptr) {
+      ntail->set_sibling(it);
+      ntail = it;
+      it = it->next();
+    }
+
+    while(ot != nullptr) {
+      ntail->set_sibling(ot);
+      ntail = ot;
+      ot = ot->next();
+    }
+
+    return nhead;
   }
 
   Node* find_min_node() const {
     if(empty()) return nullptr;
     Node* tmp = head_;
-    Node* current = head_->next_;
+    Node* current = head_->next();
     while(current != nullptr) {
-      if(node->key_ < tmp_.key_)
+      if(current->key_ < tmp->key_)
         tmp = current;
+      current = current->next();
     }
     return tmp;
   }
@@ -164,6 +274,7 @@ class BinomialHeap : public Heap<T,G> {
   void set_head(Node* h) { head_ = h; }
 
   Node* head_ = nullptr; // First setted to nullptr
+  G delta_0_;
 
 }; // end class BinomialHeap
 
