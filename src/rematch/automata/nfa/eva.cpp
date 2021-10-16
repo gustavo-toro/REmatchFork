@@ -33,29 +33,27 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
 	adaptReachableStates(A);
 
 	// if(!is_raw_)
-	std::cout << "EvA before:\n" << pprint() << "\n\n";
+	// std::cout << "EvA adaptReachableStates:\n" << pprint() << "\n\n";
 
 	compute_if_dfa_searchable();
 
 	#ifndef NOPT_OFFSET
-	offsetOpt();
+	offsetOpt();	
 	#endif
 
 	pruneUselessStates();
+	// std::cout << "EvA pruneUselessStates:\n" << pprint() << "\n\n";
 
-	//std::cout << "EvA after:\n" << pprint() << "\n\n";
-
-	captureClosure();
+	captureClosure(); // posible bug
+	// std::cout << "EvA captureClosure:\n" << pprint() << "\n\n";
 
 	// TODO: Revisar si es factible hacer offset acá, con tal de correr CaptureClosure nuevamente
 
-	// std::cout << pprint() << "\n\n";
-
 	cleanUselessCaptureStates();
-
+	// std::cout << "EvA cleanUselessCaptureStates:\n" << pprint() << "\n\n";
+	
 	cleanUselessCaptureTransitions();
-
-	// std::cout << "EvA afterer:\n" << pprint() << "\n\n";
+	// std::cout << "EvA cleanUselessCaptureTransitions:\n" << pprint() << "\n\n";
 
   #ifndef NOPT_CROSSPROD
 	if(!is_raw_)
@@ -63,10 +61,11 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
   #endif
 
 	relabelStates();
+	// std::cout << "EvA relabelStates:\n" << pprint() << "\n\n";
 
 	searchSuperFinals();
+	// std::cout << "EvA searchSuperFinals:\n" << pprint() << "\n\n";
 
-	// std::cout << "EvA aftererer:\n" << pprint() << "\n\n";
 }
 
 ExtendedVA :: ExtendedVA():

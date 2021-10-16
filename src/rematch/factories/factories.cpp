@@ -115,15 +115,12 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 		auto it = std::lower_bound(data_.begin(), data_.end(), var);
 		if(size() >= MAX_VARS) {}
 		// TODO: Throw an exception;
-		if (std::find(data_.begin(), data_.end(), var) == data_.end()) {
-			// if it's a new var name 
+		if (it == data_.end()) {
 			data_.insert(it, var);
 			offsetMap.push_back(0);
 			offsetMap.push_back(0);
 		}
-
 	}
-
 }
 
 bool VariableFactory::contains(std::string var) {
