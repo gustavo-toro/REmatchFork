@@ -924,9 +924,6 @@ void ExtendedVA::compute_if_dfa_searchable() {
 
 				is_dfa_searchable_ = true;
 
-
-				// FIXME: Chequear si hay superfinals, si no -> dfa_searchable = false
-
 			} catch (std::out_of_range &e) {
 				return;
 			}
