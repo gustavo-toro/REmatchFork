@@ -1,10 +1,11 @@
 #include "regex.hpp"
 #include "parse/regex/parser.hpp"
 #include "evaluation/evaluator.hpp"
+#include "automata/nfa/lva.hpp"
 
 namespace rematch {
 
-RegEx::RegEx(std::string pattern, rematch::RegExOptions rgx_opts)
+RegEx::RegEx(const std::string &pattern, rematch::RegExOptions rgx_opts)
     : pattern_(pattern),
       dman_(pattern, 0, rgx_opts.do_cross_product()),
       raw_dman_(pattern, 1),
@@ -108,13 +109,13 @@ size_t RegEx::det_counter() const {
   return 0;
 }
 size_t RegEx::dfa_counter() {
-  return dman_.dfa().size();
+  return dman_->dfa().size();
 }
 size_t RegEx::nfa_counter() {
-  return dman_.nfa().size();
+  return dman_->nfa().size();
 }
 size_t RegEx::mdfa_counter() {
-  return dman_.mdfa().size();
+  return dman_->mdfa().size();
 }
 size_t RegEx::miss_counter() {
   return 0;

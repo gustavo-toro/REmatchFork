@@ -1,5 +1,5 @@
-#ifndef RGX_HPP
-#define RGX_HPP
+#ifndef SRC_REMATCH_REGEX_REGEX_HPP
+#define SRC_REMATCH_REGEX_REGEX_HPP
 
 #include <string>
 #include <memory>
@@ -58,7 +58,7 @@ class RegEx {
 
   MatchIterator findIter(std::shared_ptr<Document> d);
 
-  int varCount() const {return dman_.varFactory()->size();}
+  int varCount() const {return dman_->varFactory()->size();}
 
   // Getters
 
@@ -66,8 +66,8 @@ class RegEx {
 
   // Detmanager stuff.
 
-  DetManager& detManager() {return dman_;};
-  DetManager& rawDetManager() {return raw_dman_;};
+  DetManager& detManager() {return *dman_;};
+  DetManager& rawDetManager() {return *raw_dman_;};
 
 
   size_t capture_counter() const;
@@ -92,10 +92,10 @@ class RegEx {
   const std::string pattern_;
 
   // DetManager for capture automaton.
-  DetManager dman_;
+  std::unique_ptr<DetManager> dman_;
 
   // DetManager for raw automaton.
-  DetManager raw_dman_;
+  std::unique_ptr<DetManager> raw_dman_;
 
   // Regex flags.
   flags_t flags_;
@@ -109,4 +109,4 @@ class RegEx {
 
 } // end namespace rematch
 
-#endif // RGX_HPP
+#endif // SRC_REMATCH_REGEX_REGEX_HPP

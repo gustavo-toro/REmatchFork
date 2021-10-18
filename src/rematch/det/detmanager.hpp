@@ -27,12 +27,12 @@ struct VectorHasher {
     }
 };
 
+// FIXME: Separar dos DetManagers, uno para Evaluator y otro para Search
+
 class DetManager {
 
 	using DFAStatesTable = std::unordered_map<BitsetWrapper, DetState*>;
 	using VectorCharTable = std::unordered_map<BitsetWrapper, std::vector<char>>;
-
-	// TODO: A map for now but it should be a hash table
 	using MacroStatesTable = std::unordered_map<std::vector<size_t>, MacroState*,
 																							VectorHasher>;
 

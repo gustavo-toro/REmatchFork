@@ -11,7 +11,9 @@
 
 namespace rematch {
 
-ExtendedVA :: ExtendedVA(LogicalVA &A)
+// FIXME: Hacer dos clases, EvaluationVA y SearchVA, que hereden de un VA.
+
+ExtendedVA::ExtendedVA(const LogicalVA &A)
 		:	variable_factory_(A.varFactory()),
 			filter_factory_(A.filterFactory()),
 			currentID(0),
@@ -54,12 +56,13 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
 	  crossProdOpt();
   #endif
 
-	relabelStates();
-
-	searchSuperFinals();
+	if(is_raw_)
+		raw_init(A);
+	else
+		normal_init(A);
 }
 
-ExtendedVA :: ExtendedVA():
+ExtendedVA::ExtendedVA():
 	variable_factory_(new VariableFactory()), filter_factory_(new FilterFactory()) {
 
 		init_state_ = new State();
@@ -99,6 +102,47 @@ ExtendedVA::ExtendedVA(const ExtendedVA &A)
 		for(auto filter: state->filters)
 			filter->reset_states(copy_table[filter->next]);
 	}
+}
+
+void ExtendedVA::normal_init() {
+	State* s = A.new_state();
+	CharClassBuilder ccb;  ccb.add_single('\0');
+	s->addFilter(filter_factory_->get_code(ccb), A.init_state_);
+	A.init_state_ = s;
+
+	epsilonClosure(A);
+	adaptReachableStates(A);
+
+	#ifndef NOPT_OFFSET
+		offsetOpt();
+	#endif
+
+	pruneUselessStates();
+
+	captureClosure();
+
+	cleanUselessCaptureStates();
+
+	cleanUselessCaptureTransitions();
+
+  #ifndef NOPT_CROSSPROD
+	  crossProdOpt();
+  #endif
+
+	relabelStates();
+
+	searchSuperFinals();
+}
+
+void ExtendedVA::raw_init() {
+	epsilonClosure(A);
+	adaptReachableStates(A);
+
+	pruneUselessStates();
+
+	relabelStates();
+
+	compute_if_dfa_searchable();
 }
 
 void ExtendedVA :: addCapture(State* state, std::bitset<32> bs, State* next) {
@@ -312,7 +356,7 @@ void ExtendedVA::offsetOpt() {
 	std::vector<CaptureList> classifier = classifySingleCaptures();
 
 	// Iterate through captures in inverse topological order
-	for(auto &capture: getInvTopSortCaptures()) {
+	for(auto &capture: inverse_topological_sort_captures()) {
 		// Search the corresponding list in the classifier
 		for(size_t i=0; i < 2*variable_factory_->size(); i++) {
 			if(capture->code[i]) {
@@ -492,7 +536,7 @@ std::vector<CaptureList> ExtendedVA::classifySingleCaptures() {
 
 
 // It's assumed that there is no epsilon transitions anymore.
-CaptureVector ExtendedVA::getInvTopSortCaptures() {
+CaptureVector ExtendedVA::inverse_topological_sort_captures() {
 
 	CaptureVector totCaptures;
 	// Unset flag for each capture and push capture to container.
@@ -710,24 +754,21 @@ void ExtendedVA :: searchSuperFinals() {
 			utilSearchSuperFinals(fState);
 		}
 	}
+
+	computed_super_finals_ = true;
 }
 
 bool ExtendedVA :: utilSearchSuperFinals(State *s) {
 	s->colorMark = 'g'; // Mark as grey
 
 	for(auto &filter: s->filters) {
-		if(filter_factory_->get_filter(filter->code).is_dot() && filter->next->isFinal) {
-			if(filter->next->colorMark == 'g' || filter->next->isSuperFinal) {
+		State* ns = filter->next;
+		if(filter_factory_->get_filter(filter->code).is_dot() && ns->isFinal) {
+			if( ns->colorMark == 'g' || ns->isSuperFinal ||
+				 (ns->colorMark == 'w' && utilSearchSuperFinals(ns)) ) {
 				s->isSuperFinal = true;
 				superFinalStates.push_back(s);
 				return true;
-			}
-			else if(filter->next->colorMark == 'w') {
-				if(utilSearchSuperFinals(filter->next)) {
-					s->isSuperFinal = true;
-					superFinalStates.push_back(s);
-					return true;
-				}
 			}
 		}
 	}
@@ -842,10 +883,12 @@ void ExtendedVA::compute_if_dfa_searchable() {
 
 				if(nns == nullptr) return;
 
+				if( !computed_super_finals_ )
+					searchSuperFinals();
+
+				if (superFinalStates.empty()) return;
+
 				is_dfa_searchable_ = true;
-
-
-				// FIXME: Chequear si hay superfinals, si no -> dfa_searchable = false
 
 			} catch (std::out_of_range &e) {
 				return;
