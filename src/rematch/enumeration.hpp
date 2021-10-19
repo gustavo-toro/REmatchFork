@@ -55,9 +55,10 @@ class Enumerator {
   struct EnumState {
     internal::Node* current_node;    // Current Node of the state of the enumeration.
     internal::Node* end_node;        // Needed to know when to stop while going down
+    std::vector<size_t> last_indexes;
 
-    EnumState(internal::Node* c, internal::Node* e)
-      : current_node(c), end_node(e) {}
+    EnumState(internal::Node* c, internal::Node* e, std::vector<size_t> li)
+      : current_node(c), end_node(e), last_indexes(li) {}
   }; // end struct EnumeratorNode
 
   std::shared_ptr<VariableFactory> var_factory_;

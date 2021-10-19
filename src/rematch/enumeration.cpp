@@ -20,13 +20,13 @@ Enumerator::Enumerator(RegEx &rgx)
 
 void Enumerator::addNodeList(internal::NodeList *startList) {
   if (!startList->empty()) {
-    depth_stack_.emplace_back(startList->head_, startList->tail_);
+    depth_stack_.emplace_back(startList->head_, startList->tail_, std::vector<size_t>(var_factory_->size(), 0));
   }
 }
 
 void Enumerator::addNodeList(internal::FastNodeList *startList) {
   if (!startList->empty()) {
-    depth_stack_.emplace_back(startList->start(), startList->end());
+    depth_stack_.emplace_back(startList->start(), startList->end(), std::vector<size_t>(var_factory_->size(), 0));
   }
 }
 
@@ -37,7 +37,12 @@ Match_ptr Enumerator::next() {
     auto current = depth_stack_.back();
     internal::Node *node = current.current_node;
 
+    auto &indexes = current.last_indexes;
     depth_stack_.pop_back();
+
+    for (size_t j = 0; j < var_factory_->size(); j++) {
+      current_mapping_[j].resize(indexes[j]);
+    }
 
     if (node->isNodeEmpty()) {
       // SHOW OUTPUT
@@ -54,21 +59,23 @@ Match_ptr Enumerator::next() {
       std::unique_ptr<Match> ret(new Match(var_factory_,
                                            std::vector<int64_t>(var_factory_->size() * 2, -2)));
       // MODIFY MATCH.CPP/HPP
-      for (auto &m : current_mapping_) m.clear();
       return ret;
     }
 
     if (node != current.end_node) {
-      depth_stack_.emplace_back(node->next, current.end_node);
+      // NOTE: check if the index is being copied (auto &indexes)
+      depth_stack_.emplace_back(node->next, current.end_node, indexes);
     }
 
     if (node->start != nullptr) {
-      for (size_t j = 0; j < var_factory_->size() * 2; j++) {
-        if (node->S[j])
+      for (size_t j = var_factory_->size() * 2; j-- > 0 ;) {
+        if (node->S[j]) {
           current_mapping_[j / 2].push_back(node->i - var_factory_->get_offset(j));
+          indexes[j / 2]++;
+        }
       }
 
-      depth_stack_.emplace_back(node->start, node->end);
+      depth_stack_.emplace_back(node->start, node->end, indexes);
     }
   }
 
