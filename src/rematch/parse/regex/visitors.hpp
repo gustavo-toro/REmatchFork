@@ -4,5 +4,6 @@
 #include "parse/regex/visitors/variable_factory_visitor.hpp"
 #include "parse/regex/visitors/filter_factory_visitor.hpp"
 #include "parse/regex/visitors/automata_visitor.hpp"
+#include "parse/regex/visitors/epsilon_visitor.hpp"
 
 #endif
