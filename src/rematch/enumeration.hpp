@@ -5,6 +5,7 @@
 #include <sstream>
 #include <bitset>
 #include <vector>
+#include <deque>
 #include <string>
 #include <stack>
 #include <utility>
@@ -66,9 +67,8 @@ class Enumerator {
 
   std::vector<EnumState> depth_stack_;  // Stack for DFS in the mappingDAG
 
-  // Store the current mapping because each next() call needs to
-  // remember the capture positions already found.
-  std::vector<std::vector<int64_t>> current_mapping_;
+  // stores a deque of spans for each variable
+  std::vector<std::deque<int64_t>> current_mapping_;
 }; // end class Enumerator
 
 } // end namespace rematch

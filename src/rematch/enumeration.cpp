@@ -16,7 +16,7 @@ namespace rematch {
 Enumerator::Enumerator(RegEx &rgx)
     : var_factory_(rgx.detManager().varFactory()),
       nmappings_(0),
-      current_mapping_(var_factory_->size(), std::vector<int64_t>(0)) {}
+      current_mapping_(var_factory_->size(), std::deque<int64_t>(0)) {}
 
 void Enumerator::addNodeList(internal::NodeList *startList) {
   if (!startList->empty()) {
@@ -31,7 +31,6 @@ void Enumerator::addNodeList(internal::FastNodeList *startList) {
 }
 
 Match_ptr Enumerator::next() {
-  // std::vector<int64_t> current_variables(var_factory_->size() * 2, -1);
 
   while (!depth_stack_.empty()) {
     auto current = depth_stack_.back();
@@ -41,7 +40,7 @@ Match_ptr Enumerator::next() {
     depth_stack_.pop_back();
 
     for (size_t j = 0; j < var_factory_->size(); j++) {
-      current_mapping_[j].resize(indexes[j]);
+      current_mapping_[j].erase(current_mapping_[j].begin(), current_mapping_[j].end() - indexes[j]);
     }
 
     if (node->isNodeEmpty()) {
@@ -63,14 +62,13 @@ Match_ptr Enumerator::next() {
     }
 
     if (node != current.end_node) {
-      // NOTE: check if the index is being copied (auto &indexes)
       depth_stack_.emplace_back(node->next, current.end_node, indexes);
     }
 
     if (node->start != nullptr) {
       for (size_t j = var_factory_->size() * 2; j-- > 0 ;) {
         if (node->S[j]) {
-          current_mapping_[j / 2].push_back(node->i - var_factory_->get_offset(j));
+          current_mapping_[j / 2].push_front(node->i - var_factory_->get_offset(j));
           indexes[j / 2]++;
         }
       }
