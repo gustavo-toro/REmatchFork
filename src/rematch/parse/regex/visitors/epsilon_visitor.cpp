@@ -7,7 +7,7 @@ namespace rematch {
 namespace visitors {
 
 bool regex_epsilon::operator()(ast::altern const &node) const {
-	// if any member has epsilon is enought
+	// if any member has epsilon is enough
 	for (auto c : node) 
 		if ((*this)(c)) return true;
 	return false;
@@ -21,10 +21,10 @@ bool regex_epsilon::operator()(ast::concat const &c) const {
 }
 
 bool regex_epsilon::operator()(ast::iter const &it) const {
-	// if any repetition has size zero is enought
+	// if any repetition has size zero is enough
 	for (auto rep : it.repetitions)
 		if (rep.start_ == 0) return true;		
-	// if expr has epsilon is enought
+	// if expr has epsilon is enough
 	if ((*this)(it.expr)) return true;
 	return false;
 }
