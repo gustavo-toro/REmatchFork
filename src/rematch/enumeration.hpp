@@ -48,7 +48,6 @@ class Enumerator {
     void reset() {depth_stack_.clear();}
 
     // Returns the total number of mappings
-    uint64_t numMappings() const {return nmappings_;}
 
  private:
 
@@ -63,7 +62,6 @@ class Enumerator {
   }; // end struct EnumeratorNode
 
   std::shared_ptr<VariableFactory> var_factory_;
-  uint64_t nmappings_;
 
   std::vector<EnumState> depth_stack_;  // Stack for DFS in the mappingDAG
 

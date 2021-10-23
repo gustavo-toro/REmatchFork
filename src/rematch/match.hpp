@@ -1,12 +1,8 @@
 #ifndef MATCH_HPP
 #define MATCH_HPP
 
+
 #include <string>
-#include <map>
-#include <utility>
-#include <stdexcept>
-#include <vector>
-#include <iostream>
 #include <memory>
 
 #include "factories/factories.hpp"
@@ -14,25 +10,14 @@
 namespace rematch {
 
 class Match;
-class Enumerator;
 class StrDocument;
-// FIXME: Change this
-class Interface;
 
 #ifdef SWIG
-using Match_ptr = Match*;
+  using Match_ptr = Match*;
 #else
-using Match_ptr = std::unique_ptr<Match>;
+  using Match_ptr = std::unique_ptr<Match>;
 #endif
 
-
-using Span = std::pair<int64_t,int64_t>;
-using SpanMap = std::map<std::string, Span>;
-using SpanVect = std::vector<Span>;
-
-// Represents a match for easy access to the captured spans and substrings.
-// It doesn't store the correspondings substrings, so it's assumed that the
-// sublaying document is available.
 class Match {
   friend class Enumerator;
   friend class Interface;
@@ -40,45 +25,26 @@ class Match {
  public:
 
   Match() = default;
-
-  operator bool() const {return !data_.empty();}
-
-  int64_t start(std::string varname) const;
-  int64_t end(std::string varname) const;
-
-  Span span(std::string var) const;
-
-  // Returns a variable's captured substring
-  std::string group(std::string var, std::shared_ptr<StrDocument>& doc) const;
-
-  // Returns referece to the sublaying document.
-  const std::string& doc() const;
-
+  // Match is true if at least ONE variable captured spans
+  operator bool() const;
   // Returns a vector with the variable names in order
-  std::vector<std::string> variables() const;
-
-  SpanMap& data();
-
+  // std::vector<std::string> variables() const;
+  // Pretty print Match
   std::string pprint(std::shared_ptr<StrDocument>& doc) const;
-
+  // Output format of matches
   friend std::ostream& operator<<(std::ostream &os, Match &m);
 
  private:
   // Only Enumerator is able to construct a Match
-  Match(std::shared_ptr<VariableFactory> vf, std::vector<int64_t> m)
-      : data_(m), var_factory_(vf) {}
-
-  // Enumerator needs to access data_ to fill out the mappings
-  void set_mapping(int var_code, int64_t pos) {data_[var_code] = pos;}
-
-  // No advantage in using STL containers like std::map and std::unordered_map.
-  std::vector<int64_t> data_;
+  Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m)
+      : var_factory_(vf), data_(m) {}
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
+  // Match main data
+  std::vector<std::deque<int64_t>> data_;
+};
 
-}; // end class Match
-
-} // end namespace rematch
+}
 
 
-#endif // MATCH_HPP
+#endif

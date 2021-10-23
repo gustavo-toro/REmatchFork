@@ -15,7 +15,6 @@ namespace rematch {
 
 Enumerator::Enumerator(RegEx &rgx)
     : var_factory_(rgx.detManager().varFactory()),
-      nmappings_(0),
       current_mapping_(var_factory_->size(), std::deque<int64_t>(0)) {}
 
 void Enumerator::addNodeList(internal::NodeList *startList) {
@@ -39,25 +38,11 @@ Match_ptr Enumerator::next() {
     auto &indexes = current.last_indexes;
     depth_stack_.pop_back();
 
-    for (size_t j = 0; j < var_factory_->size(); j++) {
+    for (size_t j = 0; j < var_factory_->size(); j++) 
       current_mapping_[j].erase(current_mapping_[j].begin(), current_mapping_[j].end() - indexes[j]);
-    }
 
     if (node->isNodeEmpty()) {
-      // SHOW OUTPUT
-      for (auto &var_slot : current_mapping_) {
-        for (auto &pos : var_slot) {
-          std::cout << pos << ' ';
-        }
-        std::cout << '\n';
-      }
-      std::cout << "----\n";
-      // SHOW OUTPUT
-      nmappings_++;
-      // MODIFY MATCH.CPP/HPP
-      std::unique_ptr<Match> ret(new Match(var_factory_,
-                                           std::vector<int64_t>(var_factory_->size() * 2, -2)));
-      // MODIFY MATCH.CPP/HPP
+      std::unique_ptr<Match> ret(new Match(var_factory_, current_mapping_));
       return ret;
     }
 
