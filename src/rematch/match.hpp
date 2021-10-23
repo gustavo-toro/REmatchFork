@@ -3,8 +3,10 @@
 
 
 #include <string>
+#include <vector>
 #include <memory>
 
+#include "evaluation/document/strdocument.hpp"
 #include "factories/factories.hpp"
 
 namespace rematch {
@@ -20,6 +22,7 @@ class StrDocument;
 
 using Span = std::pair<int64_t,int64_t>;
 using SpanVec = std::vector<Span>;
+using StrVec = std::vector<std::string>;
 
 // Represents a match for easy access to the captured spans and substrings.
 // It doesn't store the correspondings substrings, so it's assumed that the
@@ -38,10 +41,13 @@ class Match {
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
 
-  // Returns a vector of pairs mapped to var
+  // Returns a variable's captured spans
   SpanVec spans(std::string var) const;
 
-  // Pretty print Match
+  // Returns a variable's captured substrings
+  StrVec group(std::string var, std::shared_ptr<StrDocument>& doc) const;
+
+  // Pretty print captured substrings
   std::string pprint(std::shared_ptr<StrDocument>& doc) const;
 
   // Output format of matches
