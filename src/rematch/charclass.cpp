@@ -15,7 +15,7 @@ CharClassBuilder::CharClassBuilder(char c): nchars_(0) { add_single(c); }
 CharClassBuilder::CharClassBuilder(char l, char h): nchars_(0) { add_range(l,h); }
 
 CharClassBuilder::CharClassBuilder(ast::special const &s): nchars_(0) {
-	switch(s.code_) {
+	switch(s.code) {
 		case SpecialCode::kAnyChar:
 			add_range(0, CHAR_MAX);
 			break;
@@ -35,7 +35,7 @@ CharClassBuilder::CharClassBuilder(ast::special const &s): nchars_(0) {
 			break;
 	}
 
-	if(!s.not_negated_) negate();
+	if(!s.not_negated) negate();
 }
 
 CharClassBuilder::CharClassBuilder(ast::charset const &cs): nchars_(0) {

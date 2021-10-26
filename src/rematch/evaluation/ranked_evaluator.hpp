@@ -34,6 +34,8 @@ class RankedEvaluator : public Evaluator {
 
   void preprocessing();
 
+  void read(char a, long pos);
+
   Match_ptr enumerate();
 
   WeightedVA<>& automaton_;
@@ -45,7 +47,8 @@ class RankedEvaluator : public Evaluator {
 
   long i_pos_ = 0;
 
-  HeapOfWords<CapturePlace, double>* h_out_;
+  // HeapOfWords<CapturePlace, double>* h_out_ = new HoWPaper<CapturePlace,double>();
+  HoWPaper<CapturePlace, double>* h_out_ = new HoWPaper<CapturePlace,double>();
 
   bool finished_preprocessing_ = false;
 

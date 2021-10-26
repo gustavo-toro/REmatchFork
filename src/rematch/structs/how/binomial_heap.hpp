@@ -1,5 +1,5 @@
-#ifndef STRUCTS__HOW__BINOMIAL_HEAP_HPP
-#define STRUCTS__HOW__BINOMIAL_HEAP_HPP
+#ifndef SRC_REMATCH_STRUCTS_HOW_BINOMIAL_HEAP_HPP
+#define SRC_REMATCH_STRUCTS_HOW_BINOMIAL_HEAP_HPP
 
 #include <list>
 
@@ -44,6 +44,8 @@ class BinomialHeap : public IncrementalHeap<T,G> {
 
     H1_down->head_ = H1_down->merge(H2_down);
 
+    if(H1_down->empty()) return H1_down;
+
     Node* prev_x = nullptr;
     Node* x = H1_down->head_;
     Node* next_x = x->next();
@@ -55,13 +57,13 @@ class BinomialHeap : public IncrementalHeap<T,G> {
         x = next_x;
       } else if( x->key_ <= next_x->key_ ) {
         x->set_sibling(next_x->next());
-        Node::link_deltas(next_x, x);
+        Node::link_deltas(x, next_x);
       } else {
         if( prev_x == nullptr ) // At start
           H1_down->head_ = next_x;
         else
           prev_x->set_sibling(next_x);
-        Node::link_deltas(x, next_x);
+        Node::link_deltas(next_x, x);
         x = next_x;
       }
       next_x = x->next();
@@ -117,6 +119,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
       n2->parent_ = n1;
       n2->sibling_ = n1->child_;
       n2->key_ = n2->key_ - n1->key_;
+      ++n1->degree_;
     }
 
     Node* next() const { return sibling_; }
@@ -126,9 +129,12 @@ class BinomialHeap : public IncrementalHeap<T,G> {
 
     Node* parent() const { return parent_; }
 
+    void set_key(G nk) { key_ = nk; }
+    G key() const { return key_; }
+
    private:
-    T &data_;
-    G &key_;
+    T data_;
+    G key_;
 
     Node* child_; // Left-most child
     Node* sibling_; // Right sibiling
@@ -143,12 +149,13 @@ class BinomialHeap : public IncrementalHeap<T,G> {
   // the new roots.
   BinHeap* copy_roots() const {
     if(head_ == nullptr)
-      return new BinHeap(*this);
+      return new BinHeap(head_, 0);
     Node* new_node = new Node(*head_);
     Node *head, *tail;
     head = tail = new_node;
     for(Node* it = head_->sibling_; it != nullptr; it = it->sibling_) {
       new_node = new Node(*it);
+      new_node->set_key(delta_0_ + new_node->key());
       tail->set_sibling(new_node);
       tail = new_node;
     };
@@ -195,19 +202,17 @@ class BinomialHeap : public IncrementalHeap<T,G> {
   // Copies a reversed list of the children nodes of a parent node.
   // Returns a new BinomialHeap with the newly allocated nodes as its roots.
   BinHeap* copy_reverse_siblings(Node* parent_node) const {
-    if(parent_node == nullptr || parent_node->child_ == nullptr)
-      return new BinHeap(*this);
+    Node *new_prev = nullptr, *new_node;
+    if(parent_node->child_ != nullptr) {
+      new_prev = new Node(*parent_node->child_);
 
-    Node *new_prev, *new_node;
-    new_prev = new Node(*parent_node->child_);
-
-    for(Node* it = parent_node->child_->sibling_; it != nullptr ; it = it->sibling_) {
-      new_node = new Node(*it);
-      new_node->set_sibling(new_prev);
-      new_prev = new_node;
+      for(Node* it = parent_node->child_->sibling_; it != nullptr ; it = it->sibling_) {
+        new_node = new Node(*it);
+        new_node->set_sibling(new_prev);
+        new_prev = new_node;
+      }
     }
-
-    return new BinHeap(new_prev, delta_0_);
+    return new BinHeap(new_prev, delta_0_ + parent_node->key_);
   }
 
   // Merge the two root lists of this and another BinomiaHeap h. Does it inplace
@@ -283,4 +288,4 @@ class BinomialHeap : public IncrementalHeap<T,G> {
 
 } // end namespace rematch
 
-#endif // STRUCTS__HOW__BINOMIAL_HEAP_HPP
+#endif // SRC_REMATCH_STRUCTS_HOW_BINOMIAL_HEAP_HPP

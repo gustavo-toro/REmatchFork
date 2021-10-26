@@ -15,6 +15,7 @@
 #include "regex/regex_options.hpp"
 #include "matchiterator.hpp"
 #include "evaluation/normal_evaluator.hpp"
+#include "parse/automata/parser.hpp"
 
 Interface::Interface(std::string &docstr, const std::string &pattern,
 					 					 rematch::Options opt)
@@ -43,10 +44,15 @@ void Interface::normal_run() {
 	rgx_opts.set_line_by_line(options_.line_by_line());
 	rgx_opts.set_early_output(options_.early_output());
 	rgx_opts.set_ranked(options_.ranked());
-
-	rematch::RegEx regex(pattern_, rgx_opts);
-
-	rematch::MatchIterator m_iter = regex.findIter(document_);
+	rematch::MatchIterator m_iter;
+	if(options_.ranked()) {
+		rematch::LogicalVA* A = rematch::parse_automata_file(pattern_);
+		rematch::RegEx regex(A, rgx_opts);
+		m_iter = regex.findIter(document_);
+	} else {
+		rematch::RegEx regex(pattern_, rgx_opts);
+		m_iter = regex.findIter(document_);
+	}
 
 	auto out_option = options_.output_option();
 

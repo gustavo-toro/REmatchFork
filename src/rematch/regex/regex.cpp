@@ -10,6 +10,11 @@ RegEx::RegEx(std::string pattern, rematch::RegExOptions rgx_opts)
       raw_dman_(pattern, 1),
       flags_(parseFlags(rgx_opts)) {}
 
+RegEx::RegEx(LogicalVA *A, RegExOptions opts)
+      : pattern_(""),
+        flags_(parseFlags(opts)),
+        wva_(new ranked::WeightedVA<>(*A)) {}
+
 // Explicitly declared here for correct use of unique_ptr later
 RegEx::~RegEx() {}
 
@@ -19,8 +24,10 @@ MatchIterator RegEx::findIter(std::shared_ptr<Document> d) {
 
   if( flags_ & kRanked ) {  // Ranked enumeration is pretty basic for the moment
     std::shared_ptr<StrDocument> strd = std::static_pointer_cast<StrDocument>(d);
-    const std::string s = strd->to_string();
-    eval = new ranked::RankedEvaluator(*this, s);
+    // FIXME: Should use StrDocument
+    const std::string* s = new std::string(strd->to_string());
+    wva_->set_random_weights(1, 5);
+    eval = new ranked::RankedEvaluator(*wva_, *s);
   } else {
     eval = new NormalEvaluatorNew(*this, d);
     return MatchIterator(eval);

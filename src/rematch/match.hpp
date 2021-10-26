@@ -1,5 +1,5 @@
-#ifndef MATCH_HPP
-#define MATCH_HPP
+#ifndef SRC_REMATCH_MATCH_HPP
+#define SRC_REMATCH_MATCH_HPP
 
 #include <string>
 #include <map>
@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "factories/factories.hpp"
+#include "structs/capture_place.hpp"
 
 namespace rematch {
 
@@ -46,6 +47,15 @@ class Match {
   Match(std::shared_ptr<VariableFactory> vf, std::vector<int64_t> m)
       : data_(m), var_factory_(vf) {}
 
+  Match(std::shared_ptr<VariableFactory> vf, std::list<CapturePlace> l)
+      : data_(vf->size()*2, -1), var_factory_(vf) {
+    for(auto& cp: l) {
+      for(size_t j=0; j < vf->size()*2; ++j)
+        if(cp.S[j])
+          data_[j] = cp.i;
+    }
+  }
+
   operator bool() const {return !data_.empty();}
 
   int64_t start(std::string varname) const;
@@ -70,7 +80,6 @@ class Match {
 
  private:
 
-
   // Enumerator needs to access data_ to fill out the mappings
   void set_mapping(int var_code, int64_t pos) {data_[var_code] = pos;}
 
@@ -84,4 +93,4 @@ class Match {
 } // end namespace rematch
 
 
-#endif // MATCH_HPP
+#endif // SRC_REMATCH_MATCH_HPP

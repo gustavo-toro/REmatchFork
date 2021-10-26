@@ -7,7 +7,7 @@
 
 #include <boost/functional/hash.hpp> // For boost::hash_combine
 
-#include "parse/regex/ast.hpp"
+#include "parse/charclass/ast.hpp"
 
 namespace rematch {
 
@@ -46,6 +46,7 @@ class CharClassBuilder {
 	CharClassBuilder(ast::charset const &cs);
 
 	using iterator = CharRangeSet::iterator;
+
 	iterator begin() {return ranges_.begin();}
 	iterator end() {return ranges_.end();}
 

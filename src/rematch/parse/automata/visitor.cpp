@@ -7,58 +7,20 @@
 #include "charclass.hpp"
 
 #include "parse/regex/ast.hpp"
+#include "parse/charclass/charclass_visitor.hpp"
 
 #include <iostream>
 #include <bitset>
 
 namespace rematch {
 
-// Charclass visitor
-rematch::CharClassBuilder charclass_visitor::operator()(ast::special const &s) const {
-    rematch::CharClassBuilder ccb(s);
-    return ccb;
-}
-
-
-rematch::CharClassBuilder charclass_visitor :: operator()(automata::charset const &cs) const {
-  rematch::CharClassBuilder ccb;
-
-  bool negated = bool(cs.negated);
-
-  for (automata::charset::element const &element : cs.elements) {
-    // If element is a char
-    if (element.which() == 0) {
-        ccb.add_single(boost::get<char>(element));
-    }
-    // If element is a range (boost::tuple<char, char>)
-    else {
-      automata::range b_tuple = boost::get<automata::range>(element);
-      std::tuple<char, char> s_tuple = std::make_tuple(b_tuple.get<0>(), b_tuple.get<1>());
-      ranges.insert(s_tuple);
-    }
-  }
-
-  rematch::CharClass *chrcls = new rematch::CharClass(negated, ranges, singles);
-  return *chrcls;
-}
-
-rematch::CharClass charclass_visitor :: operator()(char const &sc) const
-{
-    std::string s = std::string(1, sc);
-    rematch::CharClass *chrcls = new rematch::CharClass(s, false);
-    return *chrcls;
-}
-
 // File to automata visitor
-file_to_automata :: file_to_automata()
-{
+file_to_automata :: file_to_automata() {
     automata = new rematch::LogicalVA();
 }
 
-rematch::State *file_to_automata :: get_state(std::string state_name)
-{
-    if (!states_map.count(state_name))
-    {
+rematch::State *file_to_automata::get_state(std::string state_name) {
+    if (!states_map.count(state_name)) {
         rematch::State* state = new rematch::State();
         states_map[state_name] = state;
         automata->states.push_back(state);
@@ -66,31 +28,26 @@ rematch::State *file_to_automata :: get_state(std::string state_name)
     return states_map.at(state_name);
 }
 
-std::bitset<32> file_to_automata :: get_variable_code(automata::variable const &variable)
-{
-    if (!automata->varFactory()->contains(variable.name))
-    {
+std::bitset<32> file_to_automata::get_variable_code(automata::variable const &variable) {
+    if (!automata->varFactory()->contains(variable.name)) {
         automata->varFactory()->add(variable.name);
     }
-    if (variable.is_opening)
-    {
+    if (variable.is_opening) {
         return automata->varFactory()->open_code(variable.name);
     }
     return automata->varFactory()->close_code(variable.name);
 }
 
-int file_to_automata :: get_filter_code(automata::charclass const &automata_charclass) {
-    rematch::CharClass charclass = boost::apply_visitor(charclass_visitor(), automata_charclass);
-    if (!automata->filterFactory()->isMember(charclass))
-    {
-        automata->filterFactory()->addFilter(charclass);
-    }
-    return automata->filterFactory()->getCode(charclass);
+int file_to_automata::get_filter_code(ast::atom const &a) {
+  rematch::CharClassBuilder charclass = boost::apply_visitor(visitors::charclass_visitor(), a);
+  if (!automata->filterFactory()->contains(charclass)) {
+      automata->filterFactory()->add_filter(charclass);
+  }
+  return automata->filterFactory()->get_code(charclass);
 }
 
 // Case 1: char transition
-void file_to_automata :: operator()(automata::char_transition const &ct)
-{
+void file_to_automata :: operator()(automata::char_transition const &ct) {
     rematch::State *from_state = get_state(ct.from_state);
     rematch::State *to_state = get_state(ct.to_state);
     int filter_code = get_filter_code(ct.text);
@@ -123,7 +80,7 @@ void file_to_automata :: operator()(automata::epsilon_transition const &et)
 void file_to_automata :: operator()(automata::initial_state const &is)
 {
     rematch::State *state = get_state(is.state);
-    automata->initState()->addEpsilon(state);
+    automata->set_initial(state);
 }
 
 // Case 5: final state

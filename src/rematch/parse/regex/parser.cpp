@@ -12,7 +12,7 @@ bool doParse(const std::string& input, ast::altern &data)
 /* Parses input and stores the AST in data */
 {
 
-    static const parser<std::string::const_iterator> p; // Parser
+    static const RegexParser<std::string::const_iterator> p; // Parser
 
     auto f(begin(input)), l(end(input));
     bool ok = qi::parse(f,l,p, data);

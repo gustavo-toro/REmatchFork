@@ -23,11 +23,12 @@ void RankedEvaluator::init() {
   }
 
   wVA::State* q0 = automaton_.init_state_;
-  q0->old_heap_ = new HoW();
-  q0->old_heap_->add({0,-1}, automaton_.init_weight_);
+  q0->heap_ = q0->heap_->add(kBottomCapture, automaton_.init_weight_);
 
   current_states_.clear();
   current_states_.push_back(q0);
+
+  read(0, -1);
 }
 
 Match_ptr RankedEvaluator::next() {
@@ -40,42 +41,55 @@ Match_ptr RankedEvaluator::next() {
 }
 
 void RankedEvaluator::preprocessing() {
+  char a;
   for(; i_pos_ < text_.size(); ++i_pos_) {
-    new_states_.clear();
-    for(wVA::State *p: current_states_) {
-      for(wVA::State::Transition *t : p->transitions_) {
-        wVA::State* q = t->next(); // next state
-        auto &h = p->old_heap_;
-        if(t->captures()) {
-          h = h->extend_by({t->code(), i_pos_});
-        }
-        h = h->increase_by(t->weight());
-        q->heap_ = q->heap_->meld_with(h);
-
-        if(q->visited_at_ < i_pos_) {
-          q->visited_at_ = i_pos_;
-          new_states_.push_back(q);
-        }
-      }
-    }
-    current_states_.swap(new_states_);
+    a = text_[i_pos_];
+    read(a, i_pos_);
   }
 
   for(auto &q: current_states_) {
     if(q->accepting_) {
       auto *h = q->heap_->increase_by(q->accepting_weight_);
-      h_out_->meld_with(h);
+      h_out_ = h_out_->meld_with(h);
     }
   }
 }
 
+void RankedEvaluator::read(char a, long pos) {
+  new_states_.clear();
+  for(wVA::State *p: current_states_) {
+    for(auto &t: p->next_transitions(a)) {
+      wVA::State* q = t->next(); // next state
+
+      auto h = p->heap_;
+
+      if (p->visited_at_ >= pos+1) // If visited already
+        h = p->old_heap_; // Then we need the old heap;
+
+      if(t->S() != 0)
+        h = h->extend_by({t->S(), pos});
+
+      h = h->increase_by(t->weight());
+
+      if(q->visited_at_ < pos+1) {
+        q->visited_at_ = pos+1;
+        q->old_heap_ = q->heap_;
+        q->heap_ = new HoW();
+        new_states_.push_back(q);
+      }
+
+      q->heap_ = q->heap_->meld_with(h);
+    }
+  }
+  current_states_.swap(new_states_);
+}
+
 Match_ptr RankedEvaluator::enumerate() {
   if(!h_out_->empty()) {
-    auto word = h_out_->find_min();
+    std::list<CapturePlace> word = h_out_->find_min();
     h_out_ = h_out_->delete_min();
 
-
-    return std::make_unique<Match>();
+    return std::make_unique<Match>(automaton_.vfact_, word);
   }
   return nullptr;
 }

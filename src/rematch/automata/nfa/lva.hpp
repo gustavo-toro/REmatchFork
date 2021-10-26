@@ -61,10 +61,12 @@ class LogicalVA {
 
   std::string pprint();
 
-  std::shared_ptr<VariableFactory> varFactory() {return v_factory_;}
-  std::shared_ptr<FilterFactory> filterFactory() {return f_factory_;}
+  std::shared_ptr<VariableFactory> varFactory() const {return v_factory_;}
+  std::shared_ptr<FilterFactory> filterFactory() const {return f_factory_;}
 
   State* initState() const {return init_state_;}
+
+  void set_initial(State* p);
 
  private:
 

@@ -37,7 +37,7 @@ class DetManager {
 																							VectorHasher>;
 
  public:
-
+	DetManager() = default;
 	DetManager(std::string pattern, bool raw_automata=false);
 
 	rematch::Transition* next_transition(DetState* q, char a);

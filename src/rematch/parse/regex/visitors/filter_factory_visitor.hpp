@@ -5,6 +5,7 @@
 #include <boost/variant/get.hpp>
 
 #include "factories/factories.hpp"
+#include "parse/charclass/charclass_visitor.hpp"
 
 namespace rematch {
 namespace visitors {
@@ -14,6 +15,7 @@ using ff_ptr = std::unique_ptr<FilterFactory>;
 struct regex2filters : boost::static_visitor<void> {
 	private:
 		ff_ptr filter_factory_;
+		charclass_visitor charclass_visitor_;
 	public:
 		regex2filters();
 		void operator()(ast::altern const &a);
@@ -26,7 +28,6 @@ struct regex2filters : boost::static_visitor<void> {
 		void operator()(ast::charset const &cs);
 		void operator()(char const &a);
 		void operator()(ast::special const &a);
-		void operator()(ast::assertion const &a);
 
 		ff_ptr get_factory();
 };

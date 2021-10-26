@@ -1,5 +1,5 @@
-#ifndef STRUCTS__HOW__HOW_PAPER_HPP
-#define STRUCTS__HOW__HOW_PAPER_HPP
+#ifndef SRC_REMATCH_STRUCTS_HOW_HOW_PAPER_HPP
+#define SRC_REMATCH_STRUCTS_HOW_HOW_PAPER_HPP
 
 #include <memory>
 #include <list>
@@ -22,7 +22,7 @@ class HoWPaper : public HeapOfWords<T,G> {
     const HoW *h;
   };
 
-  HoWPaper() = default;
+  HoWPaper() : Q_(new BinomialHeap<HoWNode,G>()) {}
 
   virtual HoW* add(T obj, G val) const {
     return new HoW(Q_->add({obj, new HoW()}, val));
@@ -31,7 +31,7 @@ class HoWPaper : public HeapOfWords<T,G> {
   virtual HoW* extend_by(T obj) const {
     if(Q_->empty())
       return new HoW();
-    IncrementalHeap<HoWNode, G>* empty_heap = new BinomialHeap<HoWNode, G>();
+    BinomialHeap<HoWNode, G>* empty_heap = new BinomialHeap<HoWNode, G>();
     return new HoW(empty_heap->add({obj, this}, Q_->min_prio()));
   }
 
@@ -40,11 +40,11 @@ class HoWPaper : public HeapOfWords<T,G> {
     auto &tmp = Q_->find_min();
     T& a = tmp.a;
     auto* h_prim = tmp.h;
-    if(h_prim->Q_->empty()) {
-      ret.push_back(a);
-    } else {
+    ret.push_back(a);
+    if(!h_prim->Q_->empty()) {
       // Append list to the end
-      ret.splice(ret.end(), h_prim->find_min());
+      std::list<T> rec_ret = h_prim->find_min();
+      ret.splice(ret.end(), rec_ret);
     }
     return ret;
   };
@@ -59,7 +59,7 @@ class HoWPaper : public HeapOfWords<T,G> {
     auto R = h_r->Q_;
     auto Q_p = Q_->delete_min();
     HoW *h_r_prim = h_r->delete_min();
-    auto R_p = h_r->Q_;
+    auto R_p = h_r_prim->Q_;
     if (R_p->empty()) {
       return new HoW(Q_p);
     }
@@ -82,12 +82,14 @@ class HoWPaper : public HeapOfWords<T,G> {
 
 
  private:
-  HoWPaper(IncrementalHeap<HoWNode, G>* Q): Q_(Q) {}
+  // HoWPaper(IncrementalHeap<HoWNode, G>* Q): Q_(Q) {}
+  HoWPaper(BinomialHeap<HoWNode, G>* Q): Q_(Q) {}
 
-  IncrementalHeap<HoWNode, G>* Q_;
+  // IncrementalHeap<HoWNode, G>* Q_;
+  BinomialHeap<HoWNode, G>* Q_;
 }; // end class HoWPaper
 
 } // end namespace ranked
 } // end namespace rematch
 
-#endif // STRUCTS__HOW__HOW_PAPER_HPP
+#endif // SRC_REMATCH_STRUCTS_HOW_HOW_PAPER_HPP

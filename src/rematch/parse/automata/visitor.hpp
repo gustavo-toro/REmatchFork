@@ -10,22 +10,14 @@
 #include <bitset>
 #include <unordered_map>
 
-namespace rematch {
+#include "parse/charclass/ast.hpp"
 
-struct charclass_visitor : boost::static_visitor<rematch::CharClass&>
-{
-    // Case 1: special set
-    rematch::CharClassBuilder operator()(ast::special const &s) const;
-    // Case 2: charset
-    rematch::CharClassBuilder operator()(automata::charset const &cs) const;
-    // Case 3: single char
-    rematch::CharClassBuilder operator()(char const &sc) const;
-};
+namespace rematch {
 
 struct file_to_automata : boost::static_visitor<void>
 {
     // LVA to be returned
-    rematch::LogicalVA *automata;
+    LogicalVA *automata;
 
     // Hash table between state names and state references
     std::unordered_map<std::string, rematch::State*> states_map;
@@ -36,7 +28,7 @@ struct file_to_automata : boost::static_visitor<void>
     // Internal methods
     rematch::State *get_state(std::string state_name);
     std::bitset<32> get_variable_code(automata::variable const &variable);
-    int get_filter_code(automata::charclass const &charclass);
+    int get_filter_code(ast::atom const &a);
 
     // Case 1: char transition
     void operator()(automata::char_transition const &ct);

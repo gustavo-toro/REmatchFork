@@ -13,25 +13,12 @@
 #include <string>
 
 #include "parse/regex/ast.hpp"
+#include "parse/charclass/ast.hpp"
 
 
 namespace rematch {
 
 namespace automata {
-    typedef boost::tuple<char, char> range;
-
-    struct charset
-    {
-        using element = boost::variant<char, range>;
-        boost::optional<char> negated;
-        std::set<element> elements;
-    };
-
-    typedef boost::variant<
-        charset,
-        rematch::ast::special,
-        char
-    > charclass;
 
     struct variable {
         std::string name;
@@ -40,7 +27,7 @@ namespace automata {
 
     struct char_transition {
         std::string from_state;
-        charclass text;
+        ast::atom text;
         std::string to_state;
     };
 
@@ -83,12 +70,6 @@ namespace automata {
 // be in global scope.
 
 BOOST_FUSION_ADAPT_STRUCT(
-    rematch::automata::charset,
-    (boost::optional<char>, negated)
-    (std::set<rematch::automata::charset::element>, elements)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
     rematch::automata::variable,
     (std::string, name)
     (bool, is_opening)
@@ -97,7 +78,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     rematch::automata::char_transition,
     (std::string, from_state)
-    (rematch::automata::charclass, text)
+    (rematch::ast::atom, text)
     (std::string, to_state)
 )
 

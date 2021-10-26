@@ -52,6 +52,8 @@ int main(int argc, char *argv[]) {
 
 	if(rgxpath.size())
 		rgx = file2str(rgxpath);
+	else if(autompath.size())
+		rgx = autompath;
 
 	#ifndef BENCHMARK_MODE
 	if(docpath.size()) {

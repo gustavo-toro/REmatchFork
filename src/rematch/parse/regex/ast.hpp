@@ -17,61 +17,14 @@ Description:
 #include <boost/variant.hpp>     // for tree nodes
 #include <boost/optional.hpp>    // for multiplicity upperbound
 
+#include "parse/charclass/ast.hpp"
+
 namespace rematch {
-
-enum class SpecialCode {
-  kNoSpecial = 0,
-  kAnyChar,
-  kAnyDigit,
-  kAnyWord,
-  kAnyWhiteSpace,
-};
-
-enum class AssertionCode {
-  kNoAssertion = 0,
-  kStartAnchor,
-  kEndAnchor,
-  kWordBoundary,
-  kNoWordBoundary
-};
-
 namespace ast {
-struct charset {
-    /* Struct for class of char information containment */
-
-    bool negated;  // Is a negated charset ?
-
-    using range = std::tuple<char, char>;
-    using element = boost::variant<char, range>;
-
-    std::set<element> elements;
-};
 
 // Recursive structs
 struct parenthesis;
 struct assignation;
-
-// An assertion that does not consume input (e.g. ^, $, \b, \B)
-struct assertion {
-  assertion() = default;
-
-  assertion(AssertionCode b): code_(b) {}
-  AssertionCode code_;
-};
-
-// Special charclasses (e.g. ".", "\d", "\W")
-struct special {
-  special() = default;
-
-  special(SpecialCode c, bool not_negated)
-    : code_(c), not_negated_(not_negated) {}
-
-  SpecialCode code_;
-  bool not_negated_;
-};
-
-
-using atom = boost::variant<charset, assertion, char, special>;
 
 using group =  boost::variant<
     boost::recursive_wrapper<parenthesis>,
@@ -119,10 +72,6 @@ struct assignation {
 
 } // end namespace ast
 } // end namespace rematch
-
-BOOST_FUSION_ADAPT_STRUCT(rematch::ast::charset,
-        (bool, negated)
-        (std::set<rematch::ast::charset::element>, elements))
 
 BOOST_FUSION_ADAPT_STRUCT(rematch::ast::iter,
         (rematch::ast::group, expr)

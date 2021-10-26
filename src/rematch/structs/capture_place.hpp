@@ -1,12 +1,19 @@
 #ifndef STRUCTS__CAPTURE_PLACE_HPP
 #define STRUCTS__CAPTURE_PLACE_HPP
 
+#include <bitset>
+
 namespace rematch {
 
+using capture_t = std::bitset<32>;
+
 struct CapturePlace {
-  ulong S = 0;
-  long i = -1;
+  capture_t S;
+  long i;
 };
+
+// Set the Bottom capture
+const CapturePlace kBottomCapture{0,-1} ;
 
 } // end namespace rematch
 

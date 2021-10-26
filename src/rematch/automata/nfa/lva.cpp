@@ -16,13 +16,10 @@
 namespace rematch {
 
 LogicalVA::LogicalVA()
-    : init_state_(new State()),
+    : init_state_(nullptr),
       is_raw_(false),
       v_factory_(std::make_shared<VariableFactory>()),
-      f_factory_(std::make_shared<FilterFactory>()) {
-  init_state_->setInitial(true);
-  states.push_back(init_state_);
-}
+      f_factory_(std::make_shared<FilterFactory>()) {}
 
 LogicalVA::LogicalVA(uint code) : is_raw_(false) {
   init_state_ = new_state();
@@ -87,6 +84,11 @@ LogicalVA::LogicalVA(const LogicalVA &A)
       eps->next->tempMark = true;
     }
   }
+}
+
+void LogicalVA::set_initial(State* p) {
+  init_state_ = p;
+  p->setInitial(true);
 }
 
 void LogicalVA::set_factories(std::shared_ptr<VariableFactory> v,
@@ -401,11 +403,11 @@ std::string LogicalVA :: pprint() {
   // Code initial State
   ss << "i " << init_state_->id;
 
-  for(int id: capture_states)
-		ss << "\nc " << id;
+  // for(int id: capture_states)
+	// 	ss << "\nc " << id;
 
-  for(int id: pcapture_states)
-		ss << "\npc " << id;
+  // for(int id: pcapture_states)
+	// 	ss << "\npc " << id;
 
   return ss.str();
 }

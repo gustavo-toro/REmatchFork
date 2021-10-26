@@ -6,15 +6,17 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <memory>
 
 #include "automata/nfa/lva.hpp"
-#include "ast.hpp"
 #include "parser.hpp"
-#include "grammar.hpp"
-#include "visitor.hpp"
+#include "parse/automata/grammar.hpp"
+#include "parse/automata/visitor.hpp"
 
 
-rematch::LogicalVA& parse_automata_file(std::string filename) {
+namespace rematch {
+
+LogicalVA* parse_automata_file(std::string filename) {
     using boost::spirit::ascii::space;
     typedef std::string::const_iterator iterator_type;
 
@@ -23,8 +25,7 @@ rematch::LogicalVA& parse_automata_file(std::string filename) {
     std::string str;
     file_to_automata visitor = file_to_automata();
     automata_parser<iterator_type> grammar;
-    while (std::getline(file, str) )
-    {
+    while (std::getline(file, str)) {
         automata::any emp;
         std::string::const_iterator iter = str.begin();
         std::string::const_iterator end = str.end();
@@ -43,6 +44,7 @@ rematch::LogicalVA& parse_automata_file(std::string filename) {
         }
     }
 
-    rematch::LogicalVA *lva = visitor.automata;
-    return *lva;
+    return visitor.automata;
 }
+
+} // end namespace rematch

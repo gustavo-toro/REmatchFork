@@ -1,12 +1,14 @@
 #include "filter_factory_visitor.hpp"
 
 #include "factories/factories.hpp"
+#include "parse/charclass/charclass_visitor.hpp"
 
 namespace rematch {
 namespace visitors {
 
 regex2filters::regex2filters() {
 	filter_factory_ = std::make_unique<FilterFactory>();
+	charclass_visitor_ = charclass_visitor();
 }
 
 ff_ptr regex2filters::get_factory() {
@@ -41,23 +43,7 @@ void regex2filters::operator()(ast::assignation const &a) {
 }
 
 void regex2filters::operator()(ast::atom const &a) {
-	boost::apply_visitor(*this, a);
-}
-
-void regex2filters::operator()(ast::charset const &cs) {
-	filter_factory_->add_filter(cs); // Implicit conversion
-}
-
-void regex2filters::operator()(char const &a) {
-	filter_factory_->add_filter(a); // Implicit conversion
-}
-
-void regex2filters::operator()(ast::special const &s) {
-	filter_factory_->add_filter(s); // Implicit conversion
-}
-
-void regex2filters::operator()(ast::assertion const &a) {
-	// TODO
+	filter_factory_->add_filter(boost::apply_visitor(charclass_visitor_, a));
 }
 
 } // end namespace visitors

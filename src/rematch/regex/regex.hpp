@@ -2,6 +2,7 @@
 #define RGX_HPP
 
 #include <string>
+#include <memory>
 
 #include "match.hpp"
 #include "memmanager.hpp"
@@ -14,6 +15,7 @@
 #include "automata/nfa/lva.hpp"
 #include "matchiterator.hpp"
 #include "evaluation/document/document.hpp"
+#include "automata/wnfa/wnfa.hpp"
 
 namespace rematch {
 
@@ -26,6 +28,7 @@ class RegEx {
   using flags_t = uint8_t;
 
   RegEx(std::string regex, RegExOptions opt = RegExOptions());
+  RegEx(LogicalVA* A, RegExOptions opt = RegExOptions());
 
   ~RegEx();
 
@@ -98,11 +101,10 @@ class RegEx {
   // Is DFA fully computed.
   bool full_dfa_;
 
+  ranked::WeightedVA<>* wva_;
+
 }; // end class Regex
 
 } // end namespace rematch
-
-
-
 
 #endif // RGX_HPP
