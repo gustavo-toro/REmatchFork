@@ -8,7 +8,8 @@ enum OutputOption {
       SUBMATCHES,
       SPANS,
       NMAPPINGS,
-      DEBUG
+      DEBUG,
+      DETERMINIZE
   };
 
   enum InputOption {
@@ -20,23 +21,7 @@ enum OutputOption {
 // Evaluation options
 class Options {
   public:
-    // The options are (defaults in parenthesis):
-    //
-    //  output_option   (SPANS)     how to format the output
-    //  input_option    (RGXFILE)   how to interpret input string
-    //  line_by_line    (false)     looks for matches in the span of a single line.
-    //  capturing       (true)      activate capturing.
-    //  early_output    (false)     output a result as soon as it's available..
-    //
-    Options() :
-        output_option_(SPANS),
-        input_option_(RGXFILE),
-        ranked_(false),
-        line_by_line_(false),
-        capturing_(true),
-        early_output_(false),
-        is_docfile_(false) {
-    }
+    Options() = default;
 
     // Getters and setters
 
@@ -63,13 +48,21 @@ class Options {
 
 
   private:
-    OutputOption output_option_;
-    InputOption input_option_;
-    bool ranked_;
-    bool line_by_line_;
-    bool capturing_;
-    bool early_output_;
-    bool is_docfile_;
+    // The options are (defaults in parenthesis):
+    //
+    //  output_option   (SPANS)     how to format the output
+    //  input_option    (RGXFILE)   how to interpret input string
+    //  line_by_line    (false)     looks for matches in the span of a single line.
+    //  capturing       (true)      activate capturing.
+    //  early_output    (false)     output a result as soon as it's available..
+    //
+    OutputOption output_option_     = SPANS;
+    InputOption input_option_       = RGXFILE;
+    bool ranked_                    = false;
+    bool line_by_line_              = false;
+    bool capturing_                 = true;
+    bool early_output_              = false;
+    bool is_docfile_                = false;
 
 }; // class Options
 

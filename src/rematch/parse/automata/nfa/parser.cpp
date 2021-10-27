@@ -10,8 +10,8 @@
 
 #include "automata/nfa/lva.hpp"
 #include "parser.hpp"
-#include "parse/automata/grammar.hpp"
-#include "parse/automata/visitor.hpp"
+#include "parse/automata/nfa/grammar.hpp"
+#include "parse/automata/nfa/visitor.hpp"
 
 
 namespace rematch {

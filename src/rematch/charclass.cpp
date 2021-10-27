@@ -17,7 +17,7 @@ CharClassBuilder::CharClassBuilder(char l, char h): nchars_(0) { add_range(l,h);
 CharClassBuilder::CharClassBuilder(ast::special const &s): nchars_(0) {
 	switch(s.code) {
 		case SpecialCode::kAnyChar:
-			add_range(0, CHAR_MAX);
+			add_range(0, RUNE_MAX);
 			break;
 		case SpecialCode::kAnyDigit:
 			add_range('0', '9');
@@ -75,7 +75,7 @@ bool CharClassBuilder::add_range(char lo, char hi) {
 	}
 	// Look for an inmediate range to the right of [lo, hi]. If exists
 	// then erase and extend [lo, hi] accordingly
-	if(hi < CHAR_MAX) {
+	if(hi < RUNE_MAX) {
 		auto it = ranges_.find(CharRange(hi+1, hi+1));
 		if(it != end()) {
 			hi = it->hi;
@@ -122,7 +122,7 @@ void CharClassBuilder::negate() {
 
 	iterator it = begin();
 	if(it == end()) {
-		v.push_back(CharRange(0, CHAR_MAX));
+		v.push_back(CharRange(0, RUNE_MAX));
 	} else {
 		int next_lo = 0;
 		if(it->lo == 0) {
@@ -133,8 +133,8 @@ void CharClassBuilder::negate() {
 			v.push_back(CharRange(next_lo, it->lo-1));
 			next_lo = it->hi + 1;
 		}
-		if(next_lo <= CHAR_MAX) {
-			v.push_back(CharRange(next_lo, CHAR_MAX));
+		if(next_lo <= RUNE_MAX) {
+			v.push_back(CharRange(next_lo, RUNE_MAX));
 		}
 	}
 
@@ -143,7 +143,7 @@ void CharClassBuilder::negate() {
 		ranges_.insert(chrange);
 	}
 
-	nchars_ = CHAR_MAX+1 - nchars_;
+	nchars_ = RUNE_MAX+1 - nchars_;
 }
 
 CharClassBuilder* CharClassBuilder::intersect(CharClassBuilder *cc) {
@@ -173,9 +173,18 @@ CharClassBuilder* CharClassBuilder::set_minus(CharClassBuilder *cc) {
 }
 
 std::ostream& operator<<(std::ostream &os, CharClassBuilder const &b) {
-	for(auto &range: b.ranges_) {
-		os << '[' << (int)range.lo << ',' << (int)range.hi << ']';
+	if(b.is_dot()) return os << '.';
+	if(b.ranges_.size() == 1 && (b.ranges_.begin())->lo == (b.ranges_.begin())->hi ) {
+		return os << CharClassBuilder::repr(b.ranges_.begin()->lo);
 	}
+	os << '[';
+	for(auto &range: b.ranges_) {
+		if(range.lo == range.hi)
+			os << CharClassBuilder::repr(range.lo);
+		else
+			os << CharClassBuilder::repr(range.lo) << '-' << CharClassBuilder::repr(range.hi);
+	}
+	os << ']';
 	return os;
 }
 
@@ -193,6 +202,16 @@ std::unique_ptr<CharClass> CharClassBuilder::get_charclass() {
 	}
 	cc->nranges_ = n;
 	return cc;
+}
+
+std::string CharClassBuilder::repr(int ch) {
+	std::stringstream ss;
+	if(ch < 32) {
+		ss << '\\' << std::hex << ch;
+	} else {
+		ss << (char)ch;
+	}
+	return ss.str();
 }
 
 CharClass::~CharClass() {

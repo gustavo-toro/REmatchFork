@@ -1,5 +1,5 @@
-#ifndef AUTOMATA__DFA__DFA_HPP
-#define AUTOMATA__DFA__DFA_HPP
+#ifndef SRC_REMATCH_AUTOMATA_DFA_DFA_HPP
+#define SRC_REMATCH_AUTOMATA_DFA_DFA_HPP
 
 #include <string>
 #include <vector>
@@ -48,4 +48,4 @@ class DFA {
 
 } // end namespace rematch
 
-#endif
+#endif // SRC_REMATCH_AUTOMATA_DFA_DFA_HPP

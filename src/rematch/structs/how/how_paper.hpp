@@ -49,6 +49,8 @@ class HoWPaper : public HeapOfWords<T,G> {
     return ret;
   };
 
+  virtual G min_prio() const { return Q_->min_prio(); }
+
   virtual HoW* delete_min() const {
     if (Q_->empty()) {
       return new HoW();

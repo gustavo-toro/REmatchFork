@@ -45,7 +45,7 @@ class DetState {
 
     SetState* ss;
 
-    bool isFinal, isSuperFinal, mark, isOnlyInit, hasCapture;
+    bool isFinal, isSuperFinal, mark=false, isOnlyInit, hasCapture;
 
     DetState();
     DetState(SetState* ss);

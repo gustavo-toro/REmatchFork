@@ -5,21 +5,27 @@
 #include <vector>
 #include <random>
 #include <unordered_map>
+#include <deque>
 
 #include "automata/nfa/state.hpp"
+#include "automata/nfa/lva.hpp"
 #include "structs/how/how.hpp"
 #include "structs/how/how_paper.hpp"
 #include "structs/capture_place.hpp"
+#include "charclass.hpp"
+#include "factories/factories.hpp"
 
 namespace rematch {
 namespace ranked {
 
 class RankedEvaluator;
+class wVAvisitor;
 
 template<typename T = CapturePlace, typename G = double>
 class WeightedVA {
  public:
   friend RankedEvaluator;
+  friend wVAvisitor;
 
   class State {
    public:
@@ -33,14 +39,14 @@ class WeightedVA {
       Transition(State* p, State* n, G w, uint c, capture_t X=0)
           : next_(n), prev_(p), S_(X), code_(c), weight_(w) {}
 
-      virtual State* next() const { return next_; }
-      virtual State* prev() const { return prev_; }
+      State* next() const { return next_; }
+      State* prev() const { return prev_; }
 
-      virtual uint code() const { return code_; }
-      virtual capture_t S() const { return S_; }
+      uint code() const { return code_; }
+      capture_t S() const { return S_; }
 
-      virtual G weight() const { return weight_; }
-      virtual void set_weight(G w) { weight_ = w; }
+      G weight() const { return weight_; }
+      void set_weight(G w) { weight_ = w; }
 
      private:
 
@@ -55,13 +61,24 @@ class WeightedVA {
 
     State() = default;
 
-    State(std::shared_ptr<FilterFactory> ff) : ffact_(ff) {}
+    State(std::shared_ptr<FilterFactory> ff, uint id) : id_(id), ffact_(ff) {}
 
     void set_accepting(bool b) { accepting_ = b; }
     bool accepting() const { return accepting_;  }
 
     void set_initial(bool b) { initial_ = b; }
     bool initial() const { return initial_; }
+
+    void set_visited_at(long n) { visited_at_ = n; }
+    long visited_at() const { return visited_at_; }
+
+    G initial_weight() const { return initial_weight_; }
+    void set_initial_weight(G w) { initial_weight_ = w; }
+
+    G accepting_weight() const { return accepting_weight_; }
+    void set_accepting_weight(G w) { accepting_weight_ = w; }
+
+    std::vector<Transition*> transitions() const { return transitions_; }
 
     std::vector<Transition*> next_transitions(char a) const {
       typename std::vector<IntervalMap>::const_iterator it, first, last;
@@ -123,7 +140,6 @@ class WeightedVA {
           if(it != tmap_.end() && lo-1 >= it->hi ) {
             int it_lo = it->lo, it_hi = it->hi;
             it->lo = lo;
-            if(hi < it->hi) {  }
             it = tmap_.emplace(it, it_lo, lo-1, it->transitions);
             ++it; // Move iterator to the element pushed to the right
             if(hi < it->hi) {
@@ -135,7 +151,7 @@ class WeightedVA {
         }
         // Look for an inmediate range to the right of [lo, hi]. If exists
         // then erase and extend [lo, hi] accordingly
-        if(hi < CHAR_MAX) {
+        if(hi < RUNE_MAX) {
           auto it = std::lower_bound(tmap_.begin(), tmap_.end(), IntervalMap(hi+1, hi+1));
           if(it != tmap_.end() && hi+1 >= it->hi ) {
             int it_hi = it->hi;
@@ -188,13 +204,17 @@ class WeightedVA {
     std::shared_ptr<FilterFactory> ffact_;
   }; // end class State
 
-  WeightedVA(LogicalVA const & A)
+  WeightedVA()
+      : ffact_(std::make_shared<FilterFactory>()),
+        vfact_(std::make_shared<VariableFactory>()) {
+  }
+
+  WeightedVA(const LogicalVA &A)
       : ffact_(A.filterFactory()), vfact_(A.varFactory()) {
     std::unordered_map<rematch::State*, State*> states_table;
 
     for(auto &q_old: A.states) {
-      State* q_new = new State(ffact_);
-      q_new->id_ = q_old->id;
+      State* q_new = new State(ffact_, q_old->id);
       states_table[q_old] = q_new;
       states_.push_back(q_new);
       if(q_old->isFinal)
@@ -218,19 +238,29 @@ class WeightedVA {
     }
 
     // Deal with the initial state
-    init_state_ = new State(ffact_);
-    init_state_->id_ = states_.size();
+    init_state_ = new State(ffact_, states_.size());
     if(A.initState()->filters.size() > 0)
       init_state_->add_transition(0, 0, 0, states_table[A.initState()]);
     for(auto &capt: A.initState()->captures)
       init_state_->add_transition(0, capt->code, 0, states_table[capt->next]);
 
-    // FIXME: Need to remove useless states
+    fix_reachable_states();
   };
 
   // Getters
   std::vector<State*>& states() { return states_; }
   std::vector<State*>& accepting_states() { return accepting_states_; }
+  std::shared_ptr<VariableFactory> vfactory() const { return vfact_; }
+  std::shared_ptr<FilterFactory> ffactory() const { return ffact_; }
+
+  State* create_state(uint id) {
+    auto* p = new State(ffact_, id);
+    states_.push_back(p);
+    return p;
+  }
+
+  void add_accepting_state(State* p) { accepting_states_.push_back(p); }
+  void set_initial_state(State* p) { init_state_ = p; }
 
   // Sets random a weight to every transition in the automaton's graph.
   // It uses a uniform distribution between a lower and upper bound.
@@ -255,7 +285,81 @@ class WeightedVA {
     }
   }
 
+  friend std::ostream& operator<<(std::ostream &os, const WeightedVA<T,G> &A) {
+    for(auto& p: A.states_) {
+      p->set_visited_at(-1);
+    }
+
+    std::deque<State*> queue;
+
+    queue.push_back(A.init_state_);
+    A.init_state_->set_visited_at(0);
+
+    while(!queue.empty()) {
+      State* p = queue.front();
+      queue.pop_front();
+
+      for(auto &t : p->transitions()) {
+        os << "t " << t->prev()->id_                   << " {"
+                   << A.ffact_->get_filter(t->code())  << "|("
+                   << A.vfact_->print_varset(t->S())   << ")|"
+                   << t->weight()                       << "} "
+                   << t->next()->id_                   << '\n';
+
+        if(t->next()->visited_at() < 0) {
+          t->next()->set_visited_at(0);
+          queue.push_back(t->next());
+        }
+      } // end for
+    } // end while
+
+    for(auto& pf: A.accepting_states_) {
+      os << "f " << pf->id_ << " {" << pf->accepting_weight() << "}\n";
+    }
+
+    os << "i " << A.init_state_->id_ << " {" << A.init_state_->initial_weight() << "}\n";
+
+    return os;
+  }
+
  private:
+
+  // Resets the states_ and accepting_states_ vectors to only the states that
+  // are reachable from the initial state.
+  void fix_reachable_states() {
+    for(auto& p: states_) {
+      p->visited_at_ = -1;
+    }
+
+    std::deque<State*> queue;
+
+    queue.push_back(init_state_);
+    init_state_->visited_at_ = 0;
+
+
+    std::vector<State*> n_states, n_accepting_states;
+
+    while(!queue.empty()) {
+      State* p = queue.front();
+      queue.pop_front();
+
+      p->visited_at_ = 1;
+      n_states.push_back(p);
+      if(p->accepting_)
+        n_accepting_states.push_back(p);
+
+      for(auto &t:  p->transitions_) {
+        if(t->next()->visited_at_ < 0) {
+          t->next()->visited_at_ = 0;
+          queue.push_back(t->next());
+        }
+      }
+    }
+
+    states_.swap(n_states);
+    accepting_states_.swap(n_accepting_states);
+
+  };
   std::vector<State*> states_;
   std::vector<State*> accepting_states_;
 

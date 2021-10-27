@@ -116,6 +116,7 @@ class ExtendedVA {
 
 	bool is_raw_;
 	bool is_dfa_searchable_ = false;
+	bool do_cross_product_;
 
 };
 

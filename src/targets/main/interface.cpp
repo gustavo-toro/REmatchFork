@@ -15,7 +15,7 @@
 #include "regex/regex_options.hpp"
 #include "matchiterator.hpp"
 #include "evaluation/normal_evaluator.hpp"
-#include "parse/automata/parser.hpp"
+#include "parse/automata/wva/parser.hpp"
 
 Interface::Interface(std::string &docstr, const std::string &pattern,
 					 					 rematch::Options opt)
@@ -45,8 +45,15 @@ void Interface::normal_run() {
 	rgx_opts.set_early_output(options_.early_output());
 	rgx_opts.set_ranked(options_.ranked());
 	rematch::MatchIterator m_iter;
+	if(options_.output_option() == rematch::DETERMINIZE) {
+		rgx_opts.set_do_cross_product(false);
+		rematch::RegEx regex(pattern_, rgx_opts);
+		regex.detManager().fully_determinize();
+		std::cout << regex.detManager().dfa().pprint() << '\n';
+		return;
+	}
 	if(options_.ranked()) {
-		rematch::LogicalVA* A = rematch::parse_automata_file(pattern_);
+		rematch::ranked::WeightedVA<>* A = rematch::parse_wva_file(pattern_);
 		rematch::RegEx regex(A, rgx_opts);
 		m_iter = regex.findIter(document_);
 	} else {
@@ -71,7 +78,7 @@ void Interface::normal_run() {
 		for(auto match = m_iter.next(); match != nullptr; match = m_iter.next()) {
 			std::cout << *match  << "\t(" << match->pprint(str_doc) << ")"  << std::endl;
 		}
-	}
+	} 
 }
 
 void Interface::benchmark_run() {

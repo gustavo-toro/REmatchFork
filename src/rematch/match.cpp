@@ -53,6 +53,8 @@ std::ostream& operator<<(std::ostream &os, Match &m) {
        << " = |" << m.data_[m.data_.size()-2] << ','
        << m.data_[m.data_.size()-1] << ">";
 
+  if(m.prio_ != -1.0) os << " (" << m.prio_ << ')';
+
   return os;
 }
 

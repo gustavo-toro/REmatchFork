@@ -5,15 +5,7 @@ namespace rematch {
 
 class RegExOptions {
  public:
-  RegExOptions()
-      : multi_line_(false),
-        line_by_line_(false),
-        dot_nl_(false),
-        start_anchor_(false),
-        end_anchor_(false),
-        early_output_(false),
-        save_anchors_(false),
-        ranked_(false) {}
+  RegExOptions() = default;
 
   bool multi_line() const {return multi_line_;}
   void set_multi_line(bool b) {multi_line_ = b;}
@@ -39,16 +31,20 @@ class RegExOptions {
   bool ranked() const { return ranked_; }
   void set_ranked(bool b) { ranked_ = b; }
 
+  bool do_cross_product() const { return do_cross_product_; }
+  void set_do_cross_product(bool b) { do_cross_product_ = b; }
+
  private:
 
-  bool multi_line_;
-  bool line_by_line_;
-  bool dot_nl_;
-  bool start_anchor_;
-  bool end_anchor_;
-  bool early_output_;
-  bool save_anchors_;
-  bool ranked_; // Ranked enumeration
+  bool multi_line_        = false;
+  bool line_by_line_      = false;
+  bool dot_nl_            = false;
+  bool start_anchor_      = false;
+  bool end_anchor_        = false;
+  bool early_output_      = false;
+  bool save_anchors_      = false;
+  bool ranked_            = false; // Ranked enumeration
+  bool do_cross_product_  = true;
 }; // end class RegExOptions
 
 } // end namespace rematch

@@ -67,7 +67,7 @@ void RankedEvaluator::read(char a, long pos) {
         h = p->old_heap_; // Then we need the old heap;
 
       if(t->S() != 0)
-        h = h->extend_by({t->S(), pos});
+        h = h->extend_by({t->S(), pos+1});
 
       h = h->increase_by(t->weight());
 
@@ -87,9 +87,10 @@ void RankedEvaluator::read(char a, long pos) {
 Match_ptr RankedEvaluator::enumerate() {
   if(!h_out_->empty()) {
     std::list<CapturePlace> word = h_out_->find_min();
+    auto minprio = h_out_->min_prio();
     h_out_ = h_out_->delete_min();
 
-    return std::make_unique<Match>(automaton_.vfact_, word);
+    return std::make_unique<Match>(automaton_.vfact_, word, minprio);
   }
   return nullptr;
 }

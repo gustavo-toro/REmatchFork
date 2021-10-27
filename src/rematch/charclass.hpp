@@ -11,6 +11,8 @@
 
 namespace rematch {
 
+const int RUNE_MAX = 127;
+
 struct CharRange {
 	CharRange() : lo(0), hi(0) {}
 	CharRange(char l, char h): lo(l), hi(h) {}
@@ -69,7 +71,9 @@ class CharClassBuilder {
 
 	friend std::ostream& operator<<(std::ostream &os, CharClassBuilder const &b);
 
-	bool is_dot() const { return nchars_ == CHAR_MAX+1;}
+	bool is_dot() const { return nchars_ == RUNE_MAX+1; }
+
+	static std::string repr(int ch);
 
  private:
 	int nchars_;
@@ -86,7 +90,7 @@ class CharClass {
 
 	~CharClass();
 
-	bool is_dot() const {return nranges_ == 1 && ranges_[0].lo == 0 && ranges_[0].hi == CHAR_MAX;}
+	bool is_dot() const {return nranges_ == 1 && ranges_[0].lo == 0 && ranges_[0].hi == RUNE_MAX;}
 
 	friend std::ostream& operator<<(std::ostream &os, CharClass const &cc);
  private:

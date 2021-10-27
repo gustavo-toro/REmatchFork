@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <list>
 #include <cassert>
 #include <map>
@@ -40,6 +41,26 @@ std::string DFA::pprint() {
   // Typical set construction for keeping visited states
   std::unordered_set<unsigned int> visited;
 
+  struct MapElem {
+    uint from;
+    uint to;
+    std::bitset<32> S;
+
+    bool operator==(const MapElem &rhs) const {
+      return from == rhs.from && to == rhs.to && S == rhs.S;
+    }
+  };
+
+  auto MapElemHash = [](const MapElem& el) {
+    size_t res = 0;
+    boost::hash_combine(res, el.from);
+    boost::hash_combine(res, el.to);
+    boost::hash_combine(res, el.S.to_ulong());
+    return res;
+  };
+
+  std::unordered_map<MapElem, CharClassBuilder, decltype(MapElemHash)> table(10, MapElemHash);
+
   // Use of list to implement a FIFO queue
   std::list<DetState*> queue;
 
@@ -51,33 +72,23 @@ std::string DFA::pprint() {
   while(!queue.empty()) {
     current = queue.front();
     queue.pop_front();
-
     for (size_t i = 0; i < 128; i++) {
       if(current->transitions_[i] == nullptr) continue;
       auto trans = current->transitions_[i].get();
-      cond.clear();
-      cond << "t " << *current << ' ' ;
-      if(i == 0)
-          ss << "0x0";
-        else if((char)i == '\n')
-          ss << "\\n";
-        else if((char)i == ' ')
-          ss << "' '";
-        else if((char)i == '\t')
-          ss << "\\t";
-        else
-          ss << (char)i;
-      std::string prefix = cond.str();
+      if(trans->type_ == 0) continue;
       if(trans->type_ & Transition::Type::kDirect) {// Direct type
-        ss << prefix << ' ' << trans->direct_->id;
+        auto ok = table.insert({{current->id, trans->direct_->id, 0}, CharClassBuilder(i)});
+        if(!ok.second)
+          ok.first->second.add_single(i);
         if (visited.find(trans->direct_->id) == visited.end()) {
           visited.insert(trans->direct_->id);
           queue.push_back(trans->direct_);
         }
       }
       if(trans->type_ & Transition::Type::kSingleCapture) {
-        ss << prefix << '/' << variable_factory_->print_varset(trans->capture_->S)
-                     << ' ' << trans->capture_->next->id;
+        auto ok = table.insert({{current->id, trans->capture_->next->id, trans->capture_->S}, CharClassBuilder(i)});
+        if(!ok.second)
+          ok.first->second.add_single(i);
         if (visited.find(trans->capture_->next->id) == visited.end()) {
           visited.insert(trans->capture_->next->id);
           queue.push_back(trans->capture_->next);
@@ -85,8 +96,9 @@ std::string DFA::pprint() {
       } // Single capture
       if(trans->type_ & Transition::Type::kMultiCapture) {
         for(auto &capture: *trans->captures_) {
-          ss << prefix << '/' << variable_factory_->print_varset(capture->S)
-                       << ' ' << capture->next->id;
+          auto ok = table.insert({{current->id, capture->next->id, capture->S}, CharClassBuilder(i)});
+          if(!ok.second)
+            ok.first->second.add_single(i);
           if (visited.find(capture->next->id) == visited.end()) {
             visited.insert(capture->next->id);
             queue.push_back(capture->next);
@@ -96,17 +108,23 @@ std::string DFA::pprint() {
     }
   }
 
+  for(auto& el: table) {
+    ss << "T " << el.first.from << " {" << el.second << "|(" << variable_factory_->print_varset(el.first.S)
+       << ")} "  << el.first.to << '\n';
+  }
+
   // Code final states
   for (size_t i = 0; i < finalStates.size(); ++i) {
     if(finalStates[i]->isFinal) {
-      ss << "f " << *finalStates[i] << '\n';
+      ss << "f " << finalStates[i]->id << '\n';
     }
   }
 
   // Code initial state
-  ss << "i " << *init_state_;
+  ss << "i " << init_state_->id;
 
   return ss.str();
 }
 
 } // end namespace rematch
+

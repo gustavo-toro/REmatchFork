@@ -29,6 +29,7 @@ class RegEx {
 
   RegEx(std::string regex, RegExOptions opt = RegExOptions());
   RegEx(LogicalVA* A, RegExOptions opt = RegExOptions());
+  RegEx(ranked::WeightedVA<>* wVA, RegExOptions opt = RegExOptions());
 
   ~RegEx();
 
@@ -43,6 +44,7 @@ class RegEx {
     kEarlyOutput = 1<<3,
     kSaveAnchors = 1<<4,
     kRanked      = 1<<5, // Ranked enumeration
+    kDoCrossProduct = 1<<6
   };
 
   enum Anchor {

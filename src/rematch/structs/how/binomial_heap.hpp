@@ -114,10 +114,9 @@ class BinomialHeap : public IncrementalHeap<T,G> {
       // NOTE: No need to make a copy of the nodes
       // Node* n1_prim = new Node(n1);
       // Node* n2_prim = new Node(n2);
-
+      n2->sibling_ = n1->child_;
       n1->child_ = n2;
       n2->parent_ = n1;
-      n2->sibling_ = n1->child_;
       n2->key_ = n2->key_ - n1->key_;
       ++n1->degree_;
     }
@@ -128,6 +127,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
     Node* first() const { return child_; }
 
     Node* parent() const { return parent_; }
+    void set_parent(Node* p) { parent_ = p; }
 
     void set_key(G nk) { key_ = nk; }
     G key() const { return key_; }
@@ -151,6 +151,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
     if(head_ == nullptr)
       return new BinHeap(head_, 0);
     Node* new_node = new Node(*head_);
+    new_node->set_key(delta_0_ + new_node->key());
     Node *head, *tail;
     head = tail = new_node;
     for(Node* it = head_->sibling_; it != nullptr; it = it->sibling_) {
@@ -160,7 +161,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
       tail = new_node;
     };
 
-    return new BinHeap(head, delta_0_);
+    return new BinHeap(head, 0);
   };
 
   // Copies the whole root list, but without a skip node (usually the min node)
@@ -179,6 +180,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
     // Copy up until the skip_node
     for(Node* it = head_; it != skip_node; it = it->next()) {
       new_node = new Node(*it);
+      new_node->set_sibling(nullptr);
       if(new_tail != nullptr)
         new_tail->set_sibling(new_node);
       else
@@ -205,10 +207,13 @@ class BinomialHeap : public IncrementalHeap<T,G> {
     Node *new_prev = nullptr, *new_node;
     if(parent_node->child_ != nullptr) {
       new_prev = new Node(*parent_node->child_);
+      new_prev->set_parent(nullptr);
+      new_prev->set_sibling(nullptr);
 
       for(Node* it = parent_node->child_->sibling_; it != nullptr ; it = it->sibling_) {
         new_node = new Node(*it);
         new_node->set_sibling(new_prev);
+        new_node->set_parent(nullptr);
         new_prev = new_node;
       }
     }

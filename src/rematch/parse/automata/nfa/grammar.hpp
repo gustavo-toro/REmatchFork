@@ -24,20 +24,22 @@ struct automata_parser : qi::grammar<Iterator, rematch::automata::any(), ascii::
         using qi::lit;
         using ascii::char_;
         using qi::_val;
+        using qi::attr;
+        using qi::double_;
 
         using boost::phoenix::val;
 
         state_rule = +char_("a-zA-Z0-9,");
 
         opening_variable_rule =
-            lit('<')
-            >> +char_("a-zA-Z0-9")
+            +char_("a-zA-Z0-9")
+            >> lit('<')
             >> qi::attr(true)
             ;
 
         closing_variable_rule =
-            +char_("a-zA-Z0-9")
-            >> lit('>')
+            lit('>')
+            >> +char_("a-zA-Z0-9")
             >> qi::attr(false)
             ;
 
@@ -60,7 +62,7 @@ struct automata_parser : qi::grammar<Iterator, rematch::automata::any(), ascii::
             ;
 
         variable_transition_rule =
-            lit('v')
+            lit('c')
             >> state_rule
             >> variable_set_rule
             >> state_rule
@@ -93,13 +95,13 @@ struct automata_parser : qi::grammar<Iterator, rematch::automata::any(), ascii::
     qi::rule<Iterator, automata::variable()> opening_variable_rule;
     qi::rule<Iterator, automata::variable()> closing_variable_rule;
     qi::rule<Iterator, std::vector<automata::variable>()> variable_set_rule;
-
     // Rules with space skipper
     qi::rule<Iterator, automata::char_transition(), ascii::space_type> char_transition_rule;
     qi::rule<Iterator, automata::variable_transition(), ascii::space_type> variable_transition_rule;
     qi::rule<Iterator, automata::epsilon_transition(), ascii::space_type> epsilon_transition_rule;
     qi::rule<Iterator, automata::initial_state(), ascii::space_type> initial_state_rule;
     qi::rule<Iterator, automata::final_state(), ascii::space_type> final_state_rule;
+
 
     qi::rule<Iterator, automata::any(), ascii::space_type> start;
 };

@@ -38,7 +38,7 @@ class DetManager {
 
  public:
 	DetManager() = default;
-	DetManager(std::string pattern, bool raw_automata=false);
+	DetManager(std::string pattern, bool raw_automata=false, bool do_cross_product=true);
 
 	rematch::Transition* next_transition(DetState* q, char a);
 
@@ -53,6 +53,8 @@ class DetManager {
 	DFA& dfa() {return *dfa_;}
 	ExtendedVA& nfa() {return *nfa_;}
 	MacroDFA& mdfa() {return *mdfa_;}
+
+	void fully_determinize();
 
  private:
 	void computeCaptures(DetState* p, DetState* q, char a);

@@ -68,6 +68,8 @@ class LogicalVA {
 
   void set_initial(State* p);
 
+  void set_do_cross_product( bool b ) { do_cross_product_ = b; }
+
  private:
 
   // Creates a new State for the automaton.
@@ -79,6 +81,7 @@ class LogicalVA {
   State* init_state_;
 
   bool is_raw_;
+  bool do_cross_product_ = true;
 
   std::shared_ptr<VariableFactory> v_factory_;
   std::shared_ptr<FilterFactory> f_factory_;

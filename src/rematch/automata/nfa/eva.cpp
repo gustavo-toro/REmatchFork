@@ -15,7 +15,8 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
 		:	variable_factory_(A.varFactory()),
 			filter_factory_(A.filterFactory()),
 			currentID(0),
-			is_raw_(A.is_raw_) {
+			is_raw_(A.is_raw_),
+			do_cross_product_(A.do_cross_product_) {
 	/* Constructs an extended-VA from a logical-VA */
 
 	// Get rid off e-transitions
@@ -61,7 +62,7 @@ ExtendedVA :: ExtendedVA(LogicalVA &A)
 	// std::cout << "EvA afterer:\n" << pprint() << "\n\n";
 
   #ifndef NOPT_CROSSPROD
-	if(!is_raw_)
+	if(!is_raw_ && do_cross_product_)
 	  crossProdOpt();
   #endif
 

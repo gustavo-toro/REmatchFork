@@ -16,8 +16,10 @@
 
 namespace rematch {
 
-DetManager::DetManager(std::string pattern, bool raw_automata) {
+DetManager::DetManager(std::string pattern, bool raw_automata, bool do_cross_product) {
 	auto lva = regex2LVA(pattern);
+
+	if (do_cross_product == false) lva->set_do_cross_product(false);
 
 	if (raw_automata) lva->adapt_capture_jumping();
 
@@ -43,6 +45,34 @@ DetManager::DetManager(std::string pattern, bool raw_automata) {
 	}
 	// computeCaptures(q, q, 0);
 	// q->add_direct(0, q);
+}
+
+void DetManager::fully_determinize() {
+	std::vector<DetState*> stack;
+
+	dfa().initState()->mark = true;
+	stack.push_back(dfa_->initState());
+
+	while(!stack.empty()) {
+		DetState* p = stack.back(); stack.pop_back();
+		for(char a=0; a < 127; ++a) {
+			Transition* t = next_transition(p, a);
+			if(t->type_ & Transition::kDirect && !t->direct_->mark) {
+				stack.push_back(t->direct_);
+				t->direct_->mark = true;
+			} if(t->type_ & Transition::kSingleCapture && !t->capture_->next->mark) {
+				stack.push_back(t->capture_->next);
+				t->capture_->next->mark = true;
+			} if(t->type_ & Transition::kMultiCapture) {
+				for(auto &cap: *t->captures_) {
+					if(!cap->next->mark) {
+						stack.push_back(cap->next);
+						cap->next->mark = true;
+					}
+				}
+			}
+		}
+	}
 }
 
 

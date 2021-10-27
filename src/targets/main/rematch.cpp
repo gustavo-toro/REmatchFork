@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
 	// Output mode
 	app.add_option("--mode",mode,"Mode option.")
-		->check(CLI::IsMember({"benchmark","noutputs","spans","submatches"}));
+		->check(CLI::IsMember({"benchmark","noutputs","spans","submatches","determinize"}));
 
 	// // Anchor specification
 	// app.add_option("-a,--anchors",anchors,"Use anchors for regex")
@@ -60,6 +60,8 @@ int main(int argc, char *argv[]) {
 		opts.set_output_option(rematch::NMAPPINGS);
 	else if(mode == "submatches")
 		opts.set_output_option(rematch::SUBMATCHES);
+	else if(mode == "determinize")
+		opts.set_output_option(rematch::DETERMINIZE);
 
 	if(rgxpath.size())
 		rgx = file2str(rgxpath);

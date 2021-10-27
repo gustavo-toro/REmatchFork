@@ -45,10 +45,10 @@ class Match {
   Match() = default;
 
   Match(std::shared_ptr<VariableFactory> vf, std::vector<int64_t> m)
-      : data_(m), var_factory_(vf) {}
+      : data_(m), var_factory_(vf), prio_(-1.0) {}
 
-  Match(std::shared_ptr<VariableFactory> vf, std::list<CapturePlace> l)
-      : data_(vf->size()*2, -1), var_factory_(vf) {
+  Match(std::shared_ptr<VariableFactory> vf, std::list<CapturePlace> l, double prio)
+      : data_(vf->size()*2, -1), var_factory_(vf), prio_(prio) {
     for(auto& cp: l) {
       for(size_t j=0; j < vf->size()*2; ++j)
         if(cp.S[j])
@@ -87,6 +87,8 @@ class Match {
   std::vector<int64_t> data_;
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
+
+  double prio_;
 
 }; // end class Match
 

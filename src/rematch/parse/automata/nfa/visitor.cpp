@@ -1,6 +1,6 @@
 #include "visitor.hpp"
 
-#include "parse/automata/ast.hpp"
+#include "parse/automata/nfa/ast.hpp"
 #include "automata/nfa/lva.hpp"
 #include "automata/nfa/state.hpp"
 #include "factories/factories.hpp"
@@ -55,37 +55,32 @@ void file_to_automata :: operator()(automata::char_transition const &ct) {
 }
 
 // Case 2: variable transition
-void file_to_automata :: operator()(automata::variable_transition const &vt)
-{
+void file_to_automata :: operator()(automata::variable_transition const &vt) {
     rematch::State *from_state = get_state(vt.from_state);
     rematch::State *to_state = get_state(vt.to_state);
 
     std::bitset<32> bitset_code;
-    for (automata::variable const &variable : vt.variables)
-    {
+    for (automata::variable const &variable : vt.variables) {
         bitset_code |= get_variable_code(variable);
     }
     from_state->addCapture(bitset_code, to_state);
 }
 
 // Case 3: epsilon transition
-void file_to_automata :: operator()(automata::epsilon_transition const &et)
-{
+void file_to_automata :: operator()(automata::epsilon_transition const &et) {
     rematch::State *from_state = get_state(et.from_state);
     rematch::State *to_state = get_state(et.to_state);
     from_state->addEpsilon(to_state);
 }
 
 // Case 4: initial state
-void file_to_automata :: operator()(automata::initial_state const &is)
-{
+void file_to_automata :: operator()(automata::initial_state const &is) {
     rematch::State *state = get_state(is.state);
     automata->set_initial(state);
 }
 
 // Case 5: final state
-void file_to_automata :: operator()(automata::final_state const &fs)
-{
+void file_to_automata :: operator()(automata::final_state const &fs) {
     rematch::State *state = get_state(fs.state);
     state->setFinal(true);
     automata->finalStates.push_back(state);

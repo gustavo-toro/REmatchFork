@@ -6,7 +6,7 @@ namespace rematch {
 
 RegEx::RegEx(std::string pattern, rematch::RegExOptions rgx_opts)
     : pattern_(pattern),
-      dman_(pattern),
+      dman_(pattern, 0, rgx_opts.do_cross_product()),
       raw_dman_(pattern, 1),
       flags_(parseFlags(rgx_opts)) {}
 
@@ -14,6 +14,11 @@ RegEx::RegEx(LogicalVA *A, RegExOptions opts)
       : pattern_(""),
         flags_(parseFlags(opts)),
         wva_(new ranked::WeightedVA<>(*A)) {}
+
+RegEx::RegEx(ranked::WeightedVA<>* wVA, RegExOptions opts)
+    : pattern_(""),
+      flags_(parseFlags(opts)),
+      wva_(wVA) {}
 
 // Explicitly declared here for correct use of unique_ptr later
 RegEx::~RegEx() {}
@@ -26,7 +31,8 @@ MatchIterator RegEx::findIter(std::shared_ptr<Document> d) {
     std::shared_ptr<StrDocument> strd = std::static_pointer_cast<StrDocument>(d);
     // FIXME: Should use StrDocument
     const std::string* s = new std::string(strd->to_string());
-    wva_->set_random_weights(1, 5);
+    // wva_->set_random_weights(1, 5);
+    std::cout << "wVA:\n" << *wva_ << '\n';
     eval = new ranked::RankedEvaluator(*wva_, *s);
   } else {
     eval = new NormalEvaluatorNew(*this, d);
@@ -61,12 +67,13 @@ Match_ptr RegEx::find(const std::string &text) {
 
 
 uint8_t RegEx::parseFlags(rematch::RegExOptions rgx_opts) {
-  uint8_t ret =  rgx_opts.multi_line()    * kMultiLine    |
-                 rgx_opts.line_by_line()  * kLineByLine   |
-                 rgx_opts.dot_nl()        * kDotNL        |
-                 rgx_opts.early_output()  * kEarlyOutput  |
-                 rgx_opts.save_anchors()  * kSaveAnchors  |
-                 rgx_opts.ranked()        * kRanked;
+  uint8_t ret =  rgx_opts.multi_line()        * kMultiLine    |
+                 rgx_opts.line_by_line()      * kLineByLine   |
+                 rgx_opts.dot_nl()            * kDotNL        |
+                 rgx_opts.early_output()      * kEarlyOutput  |
+                 rgx_opts.save_anchors()      * kSaveAnchors  |
+                 rgx_opts.ranked()            * kRanked       |
+                 rgx_opts.do_cross_product()  * kDoCrossProduct;
   return ret;
 }
 

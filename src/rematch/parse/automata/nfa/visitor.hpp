@@ -1,10 +1,10 @@
-#ifndef VISITOR_AUTOMATA_HPP
-#define VISITOR_AUTOMATA_HPP
+#ifndef SRC_REMATCH_PARSE_AUTOMATA_VISITOR_HPP
+#define SRC_REMATCH_PARSE_AUTOMATA_VISITOR_HPP
 
 #include "automata/nfa/lva.hpp"
 #include "charclass.hpp"
 
-#include "parse/automata/ast.hpp"
+#include "parse/automata/nfa/ast.hpp"
 #include "parse/regex/ast.hpp"
 
 #include <bitset>
@@ -44,4 +44,4 @@ struct file_to_automata : boost::static_visitor<void>
 
 } // end namespace rematch
 
-#endif
+#endif // SRC_REMATCH_PARSE_AUTOMATA_VISITOR_HPP
