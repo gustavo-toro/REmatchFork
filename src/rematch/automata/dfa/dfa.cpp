@@ -109,7 +109,7 @@ std::string DFA::pprint() {
   }
 
   for(auto& el: table) {
-    ss << "T " << el.first.from << " {" << el.second << "|(" << variable_factory_->print_varset(el.first.S)
+    ss << "t " << el.first.from << " {" << el.second << "|(" << variable_factory_->print_varset(el.first.S)
        << ")} "  << el.first.to << '\n';
   }
 

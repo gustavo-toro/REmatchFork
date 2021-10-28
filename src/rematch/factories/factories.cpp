@@ -161,7 +161,7 @@ std::string FilterFactory::pprint() {
 int FilterFactory::add_filter(CharClassBuilder ccb) {
 	auto res = code_map_.insert({ccb, size_});
 	if(res.second) {
-		filter_map_.insert({size_, ccb});
+		filter_map_.push_back(ccb);
 		return size_++;
 	} else {
 		return res.first->second;
@@ -186,12 +186,12 @@ void FilterFactory::merge(FilterFactory &rest) {
 	* post-processing.
 	*/
 
-	for(auto &it : rest.filter_map_) {
-		if(contains(it.second))
+	for(auto &ccb : rest.filter_map_) {
+		if(contains(ccb))
 			throw parsing::BadRegex("Regex is not functional.");
 
-		filter_map_[size_] = it.second;
-		code_map_[it.second] = size_;
+		filter_map_.push_back(ccb);
+		code_map_[ccb] = size_;
 		size_++;
 	}
 }
@@ -244,8 +244,8 @@ BitsetWrapper FilterFactory :: applyFilters(char a) {
 
 	if(it == bitsetMap.end()) {
 		BitsetWrapper bitsetVector(size_);
-		for(auto &it: filter_map_) {
-			bitsetVector.set(it.first, it.second.contains(a));
+		for(size_t i=0; i < filter_map_.size(); ++i) {
+			bitsetVector.set(i, filter_map_[i].contains(a));
 		}
 		bitsetMap.insert(std::make_pair(a, bitsetVector));
 

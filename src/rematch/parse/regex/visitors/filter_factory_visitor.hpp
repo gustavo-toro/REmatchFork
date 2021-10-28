@@ -1,5 +1,5 @@
-#ifndef PARSER__VISITORS__FILTER_FACTORY_VISITOR
-#define PARSER__VISITORS__FILTER_FACTORY_VISITOR
+#ifndef SRC_REMATCH_PARSE_REGEX_VISITORS_FILTER_FACTORY_VISITOR_HPP
+#define SRC_REMATCH_PARSE_REGEX_VISITORS_FILTER_FACTORY_VISITOR_HPP
 
 #include <boost/variant.hpp>
 #include <boost/variant/get.hpp>
@@ -35,4 +35,4 @@ struct regex2filters : boost::static_visitor<void> {
 } // end namespace visitors
 } // end namespace rematch
 
-#endif // PARSER__VISITORS__FILTER_FACTORY_VISITOR
+#endif // SRC_REMATCH_PARSE_REGEX_VISITORS_FILTER_FACTORY_VISITOR_HPP

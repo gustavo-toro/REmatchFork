@@ -14,7 +14,6 @@ __pycache__/
 *.obj
 *.out
 misc/
-datasets/
 build/
 embuild/
 bin/
@@ -28,11 +27,7 @@ tmp
 .vscode
 .VSCodeCounter
 callgrind.out.*
-exp/
-exp/re2/.vscode
-exp/syn
-exp/doc.txt
-exp/*.rgx
+exp
 perf.data*
 env_test/
 

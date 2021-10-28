@@ -178,7 +178,13 @@ std::ostream& operator<<(std::ostream &os, CharClassBuilder const &b) {
 		return os << CharClassBuilder::repr(b.ranges_.begin()->lo);
 	}
 	os << '[';
-	for(auto &range: b.ranges_) {
+	bool negated = false;
+	CharClassBuilder ccbcpy(b);
+	if (b.nchars_ > (RUNE_MAX+1) / 2) {
+		os << '^';
+		ccbcpy.negate();
+	}
+	for(auto &range: ccbcpy.ranges_) {
 		if(range.lo == range.hi)
 			os << CharClassBuilder::repr(range.lo);
 		else
@@ -206,11 +212,13 @@ std::unique_ptr<CharClass> CharClassBuilder::get_charclass() {
 
 std::string CharClassBuilder::repr(int ch) {
 	std::stringstream ss;
-	if(ch < 32) {
-		ss << '\\' << std::hex << ch;
-	} else {
+	if(ch == '\n')
+		ss << "\\n";
+	else if(ch < 32)
+		ss << '\\' << (int)ch;
+	else
 		ss << (char)ch;
-	}
+
 	return ss.str();
 }
 

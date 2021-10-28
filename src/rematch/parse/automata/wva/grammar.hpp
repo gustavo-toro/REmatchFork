@@ -48,7 +48,7 @@ struct wva_parser : qi::grammar<Iterator, rematch::ast::wva::any(), ascii::space
             ;
 
         weighted_transition_rule =
-            lit('T')
+            lit('t')
             >> state_rule
             >> '{' >> charclass_rule >> '|'
             >> '(' >> variable_set_rule >> ')'

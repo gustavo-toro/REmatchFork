@@ -55,7 +55,7 @@ void DetManager::fully_determinize() {
 
 	while(!stack.empty()) {
 		DetState* p = stack.back(); stack.pop_back();
-		for(char a=0; a < 127; ++a) {
+		for(char a=0; a <= RUNE_MAX && a >= 0; ++a) {
 			Transition* t = next_transition(p, a);
 			if(t->type_ & Transition::kDirect && !t->direct_->mark) {
 				stack.push_back(t->direct_);

@@ -31,7 +31,7 @@ MatchIterator RegEx::findIter(std::shared_ptr<Document> d) {
     std::shared_ptr<StrDocument> strd = std::static_pointer_cast<StrDocument>(d);
     // FIXME: Should use StrDocument
     const std::string* s = new std::string(strd->to_string());
-    // wva_->set_random_weights(1, 5);
+    wva_->set_random_weights(1, 10);
     std::cout << "wVA:\n" << *wva_ << '\n';
     eval = new ranked::RankedEvaluator(*wva_, *s);
   } else {

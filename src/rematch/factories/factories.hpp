@@ -116,7 +116,7 @@ class FilterFactory {
 	size_t size_ = 0;
 	// Ordered vector that stores the variables.
 	std::unordered_map<CharClassBuilder, int> code_map_;
-	std::unordered_map<int, CharClassBuilder> filter_map_;
+	std::vector<CharClassBuilder> filter_map_;
 	// Char (document-readed) -> Bitset hash table
 	std::unordered_map<char, BitsetWrapper> bitsetMap;
 };
