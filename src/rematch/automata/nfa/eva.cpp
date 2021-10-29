@@ -13,7 +13,7 @@ namespace rematch {
 
 // FIXME: Hacer dos clases, EvaluationVA y SearchVA, que hereden de un VA.
 
-ExtendedVA::ExtendedVA(const LogicalVA &A)
+ExtendedVA::ExtendedVA(LogicalVA &A)
 		:	variable_factory_(A.varFactory()),
 			filter_factory_(A.filterFactory()),
 			currentID(0),
@@ -94,6 +94,8 @@ ExtendedVA::ExtendedVA(const LogicalVA &A)
 	relabelStates();
 
 	searchSuperFinals();
+
+	std::cout << "eVA: \n" << pprint() << '\n';
 }
 
 ExtendedVA::ExtendedVA():
@@ -136,47 +138,6 @@ ExtendedVA::ExtendedVA(const ExtendedVA &A)
 		for(auto filter: state->filters)
 			filter->reset_states(copy_table[filter->next]);
 	}
-}
-
-void ExtendedVA::normal_init() {
-	State* s = A.new_state();
-	CharClassBuilder ccb;  ccb.add_single('\0');
-	s->addFilter(filter_factory_->get_code(ccb), A.init_state_);
-	A.init_state_ = s;
-
-	epsilonClosure(A);
-	adaptReachableStates(A);
-
-	#ifndef NOPT_OFFSET
-		offsetOpt();
-	#endif
-
-	pruneUselessStates();
-
-	captureClosure();
-
-	cleanUselessCaptureStates();
-
-	cleanUselessCaptureTransitions();
-
-  #ifndef NOPT_CROSSPROD
-	  crossProdOpt();
-  #endif
-
-	relabelStates();
-
-	searchSuperFinals();
-}
-
-void ExtendedVA::raw_init() {
-	epsilonClosure(A);
-	adaptReachableStates(A);
-
-	pruneUselessStates();
-
-	relabelStates();
-
-	compute_if_dfa_searchable();
 }
 
 void ExtendedVA :: addCapture(State* state, std::bitset<32> bs, State* next) {

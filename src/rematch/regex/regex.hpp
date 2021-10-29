@@ -27,7 +27,7 @@ class RegEx {
 
   using flags_t = uint8_t;
 
-  RegEx(std::string regex, RegExOptions opt = RegExOptions());
+  RegEx(const std::string &regex, RegExOptions opt = RegExOptions());
   RegEx(LogicalVA* A, RegExOptions opt = RegExOptions());
   RegEx(ranked::WeightedVA<>* wVA, RegExOptions opt = RegExOptions());
 

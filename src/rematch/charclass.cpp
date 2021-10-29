@@ -255,19 +255,4 @@ bool CharClass::operator<(const CharClass& cc) const {
 	return nranges_ < cc.nranges_;
 }
 
-
-std::ostream& operator<<(std::ostream &os, CharClassBuilder const &cc) {
-	if(cc.is_dot()) return os << '.';
-	else if(cc.nchars_ == 1) return os << (char)cc.ranges_.begin()->lo;
-	os << "[";
-	for(auto &range: cc.ranges_) {
-		if(range.lo == range.hi)
-			os << (char)range.lo;
-		else
-			os << (char)range.lo << '-' << (char)range.hi;
-	}
-	os << "]";
-	return os;
-}
-
 } // end namespace rematch

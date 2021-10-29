@@ -64,7 +64,7 @@ void DetManager::fully_determinize() {
 				stack.push_back(t->capture_->next);
 				t->capture_->next->mark = true;
 			} if(t->type_ & Transition::kMultiCapture) {
-				for(auto &cap: *t->captures_) {
+				for(auto &cap: t->captures_) {
 					if(!cap->next->mark) {
 						stack.push_back(cap->next);
 						cap->next->mark = true;

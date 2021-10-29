@@ -95,7 +95,7 @@ std::string DFA::pprint() {
         }
       } // Single capture
       if(trans->type_ & Transition::Type::kMultiCapture) {
-        for(auto &capture: *trans->captures_) {
+        for(auto &capture: trans->captures_) {
           auto ok = table.insert({{current->id, capture->next->id, capture->S}, CharClassBuilder(i)});
           if(!ok.second)
             ok.first->second.add_single(i);

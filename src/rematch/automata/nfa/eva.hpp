@@ -35,7 +35,7 @@ class ExtendedVA {
 
 	std::unordered_map<unsigned int, State*> idMap;
 
-	ExtendedVA(const LogicalVA &A);
+	ExtendedVA(LogicalVA &A);
 	ExtendedVA();
 
 	// ~ExtendedVA();
@@ -104,11 +104,6 @@ class ExtendedVA {
 
 
  private:
-	// Initialization of a normal (capturing) eVA.
-	void normal_init(const LogicalVA& A);
-
-	// Initialization of a raw (non-capturing) eVA.
-	void raw_init(const LogicalVA& A);
 
 	void getInvTopSortCapturesUtil(CapturePtr &cap, CaptureVector &L);
 	CaptureVector reachableCaptures(CapturePtr &cap);

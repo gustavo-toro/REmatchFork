@@ -5,10 +5,10 @@
 
 namespace rematch {
 
-RegEx::RegEx(const std::string &pattern, rematch::RegExOptions rgx_opts)
+RegEx::RegEx(const std::string &pattern, RegExOptions rgx_opts)
     : pattern_(pattern),
-      dman_(pattern, 0, rgx_opts.do_cross_product()),
-      raw_dman_(pattern, 1),
+      dman_(std::make_unique<DetManager>(pattern, 0, rgx_opts.do_cross_product())),
+      raw_dman_(std::make_unique<DetManager>(pattern, 1)),
       flags_(parseFlags(rgx_opts)) {}
 
 RegEx::RegEx(LogicalVA *A, RegExOptions opts)
@@ -28,22 +28,22 @@ RegEx::~RegEx() {}
 MatchIterator RegEx::findIter(std::shared_ptr<Document> d) {
   Evaluator* eval;
 
+  std::shared_ptr<StrDocument> strd = std::static_pointer_cast<StrDocument>(d);
+
   if( flags_ & kRanked ) {  // Ranked enumeration is pretty basic for the moment
-    std::shared_ptr<StrDocument> strd = std::static_pointer_cast<StrDocument>(d);
     // FIXME: Should use StrDocument
     const std::string* s = new std::string(strd->to_string());
     wva_->set_random_weights(1, 10);
     std::cout << "wVA:\n" << *wva_ << '\n';
     eval = new ranked::RankedEvaluator(*wva_, *s);
   } else {
-    eval = new NormalEvaluatorNew(*this, d);
+    eval = new EarlyOutputFilterEvaluatorNewV2(*this, strd);
     return MatchIterator(eval);
     if (flags_ & kEarlyOutput) {
       if (flags_ & kLineByLine) {
         eval = new EarlyOutputLineEvaluator(*this, d);
       } else {
-        if(dman_.nfa().is_dfa_searchable()) {
-          std::shared_ptr<StrDocument> strd = std::static_pointer_cast<StrDocument>(d);
+        if(dman_->nfa().is_dfa_searchable()) {
           eval = new EarlyOutputFilterEvaluator(*this, strd);
         } else {
           eval = new EarlyOutputEvaluator(*this, d);

@@ -40,6 +40,8 @@ void Interface::run() {
 void Interface::normal_run() {
 	rematch::RegExOptions rgx_opts; // Assign options for regex
 
+	std::unique_ptr<rematch::RegEx> regex;
+
 	// Select options
 	rgx_opts.set_line_by_line(options_.line_by_line());
 	rgx_opts.set_early_output(options_.early_output());
@@ -47,18 +49,18 @@ void Interface::normal_run() {
 	rematch::MatchIterator m_iter;
 	if(options_.output_option() == rematch::DETERMINIZE) {
 		rgx_opts.set_do_cross_product(false);
-		rematch::RegEx regex(pattern_, rgx_opts);
-		regex.detManager().fully_determinize();
-		std::cout << regex.detManager().dfa().pprint() << '\n';
+		regex = std::make_unique<rematch::RegEx>(pattern_, rgx_opts);
+		regex->detManager().fully_determinize();
+		std::cout << regex->detManager().dfa().pprint() << '\n';
 		return;
 	}
 	if(options_.ranked()) {
 		rematch::ranked::WeightedVA<>* A = rematch::parse_wva_file(pattern_);
-		rematch::RegEx regex(A, rgx_opts);
-		m_iter = regex.findIter(document_);
+		regex = std::make_unique<rematch::RegEx>(A, rgx_opts);
+		m_iter = regex->findIter(document_);
 	} else {
-		rematch::RegEx regex(pattern_, rgx_opts);
-		m_iter = regex.findIter(document_);
+		regex = std::make_unique<rematch::RegEx>(pattern_, rgx_opts);
+		m_iter = regex->findIter(document_);
 	}
 
 	auto out_option = options_.output_option();
