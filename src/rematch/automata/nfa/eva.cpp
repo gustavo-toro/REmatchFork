@@ -25,6 +25,8 @@ ExtendedVA::ExtendedVA(LogicalVA &A)
 
 	// FIXME: Separar código de creación para autómata raw
 
+	// std::cout << "LVA: " << A.pprint() << '\n';
+
 	if(!is_raw_) {
 		State* s = A.new_state();
 		CharClassBuilder ccb;
@@ -58,44 +60,11 @@ ExtendedVA::ExtendedVA(LogicalVA &A)
 
 	// Get rid off e-transitions
 
-	// FIXME: Separar código de creación para autómata raw
-
-	if(!is_raw_) {
-		State* s = A.new_state();
-		CharClassBuilder ccb;
-		ccb.add_single('\0');
-		s->addFilter(filter_factory_->get_code(ccb), A.init_state_);
-		A.init_state_ = s;
-	}
-
-	epsilonClosure(A);
-
-	adaptReachableStates(A);
-
-	compute_if_dfa_searchable();
-
-	#ifndef NOPT_OFFSET
-	offsetOpt();
-	#endif
-
-	pruneUselessStates();
-
-	captureClosure();
-
-	cleanUselessCaptureStates();
-
-	cleanUselessCaptureTransitions();
-
-  #ifndef NOPT_CROSSPROD
-	if(!is_raw_)
-	  crossProdOpt();
-  #endif
-
 	relabelStates();
 
 	searchSuperFinals();
 
-	std::cout << "eVA: \n" << pprint() << '\n';
+	// std::cout << "eVA: \n" << pprint() << '\n';
 }
 
 ExtendedVA::ExtendedVA():

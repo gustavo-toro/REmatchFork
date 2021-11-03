@@ -62,10 +62,10 @@ class HoWPaper : public HeapOfWords<T,G> {
     auto Q_p = Q_->delete_min();
     HoW *h_r_prim = h_r->delete_min();
     auto R_p = h_r_prim->Q_;
-    if (R_p->empty()) {
+
+    if (R_p->empty())
       return new HoW(Q_p);
-    }
-    // TODO: Documentar esto
+
     G delta = R_p->min_prio() - R->min_prio();
     G g = Q_->min_prio() + delta;
     return new HoW(Q_p->add({a, h_r_prim}, g));

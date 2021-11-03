@@ -136,11 +136,11 @@ class WeightedVA {
         // Look for an inmediate range to the left of [lo, hi]. If exists
         // then erase and extend [lo, hi] accordingly
         if(lo > 0) {
-          auto it = std::lower_bound(tmap_.begin(), tmap_.end(), IntervalMap(lo-1, lo-1));
-          if(it != tmap_.end() && lo-1 >= it->hi ) {
+          auto it = std::lower_bound(tmap_.begin(), tmap_.end(), IntervalMap(lo, lo));
+          if(it != tmap_.end() && lo >= it->lo && it->lo < it->hi) {
             int it_lo = it->lo, it_hi = it->hi;
-            it->lo = lo;
-            it = tmap_.emplace(it, it_lo, lo-1, it->transitions);
+            it->lo = lo+1;
+            it = tmap_.emplace(it, it_lo, lo, it->transitions);
             ++it; // Move iterator to the element pushed to the right
             if(hi < it->hi) {
               it->hi = hi;
@@ -152,11 +152,11 @@ class WeightedVA {
         // Look for an inmediate range to the right of [lo, hi]. If exists
         // then erase and extend [lo, hi] accordingly
         if(hi < RUNE_MAX) {
-          auto it = std::lower_bound(tmap_.begin(), tmap_.end(), IntervalMap(hi+1, hi+1));
-          if(it != tmap_.end() && hi+1 >= it->hi ) {
+          auto it = std::lower_bound(tmap_.begin(), tmap_.end(), IntervalMap(hi, hi));
+          if(it != tmap_.end() && hi >= it->lo && it->lo < it->hi) {
             int it_hi = it->hi;
             it->hi = hi;
-            tmap_.emplace(it, hi+1, it_hi, it->transitions);
+            tmap_.emplace(it+1, hi+1, it_hi, it->transitions);
             // Not necesary to check for lo. Did it in previous step.
           }
         }

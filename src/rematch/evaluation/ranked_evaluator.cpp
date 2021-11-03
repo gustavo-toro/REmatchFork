@@ -43,7 +43,7 @@ Match_ptr RankedEvaluator::next() {
 void RankedEvaluator::preprocessing() {
   char a;
   for(; i_pos_ < text_.size(); ++i_pos_) {
-    a = text_[i_pos_];
+    a = text_[i_pos_] & 0x7F; // Only ASCII
     read(a, i_pos_);
   }
 

@@ -125,7 +125,6 @@ FORCE_INLINE void EarlyOutputFilterEvaluatorNewV2::reading(char a, int64_t pos) 
     if(nextTransition == nullptr) {
       nextTransition = rgx_.detManager().next_transition(curr_state, a);
     }
-
     // Decrease the refcount before checking the transition. This is for
     // correct identification of the case of an empty transition, to mark the
     // node as unused.

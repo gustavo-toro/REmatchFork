@@ -1,5 +1,5 @@
-#ifndef STRUCTS__HOW__HOW_HPP
-#define STRUCTS__HOW__HOW_HPP
+#ifndef SRC_REMATCH_STRUCTS_HOW_HOW_HPP
+#define SRC_REMATCH_STRUCTS_HOW_HOW_HPP
 
 #include <string>
 
@@ -28,4 +28,4 @@ class HeapOfWords {
 } // end namespace ranked
 } // end namespace rematch
 
-#endif // STRUCTS__HOW__HOW_HPP
+#endif // SRC_REMATCH_STRUCTS_HOW_HOW_HPP

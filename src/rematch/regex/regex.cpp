@@ -33,8 +33,8 @@ MatchIterator RegEx::findIter(std::shared_ptr<Document> d) {
   if( flags_ & kRanked ) {  // Ranked enumeration is pretty basic for the moment
     // FIXME: Should use StrDocument
     const std::string* s = new std::string(strd->to_string());
-    wva_->set_random_weights(1, 10);
-    std::cout << "wVA:\n" << *wva_ << '\n';
+    wva_->set_random_weights(0,1);
+    // std::cout << "wVA:\n" << *wva_ << '\n';
     eval = new ranked::RankedEvaluator(*wva_, *s);
   } else {
     eval = new EarlyOutputFilterEvaluatorNewV2(*this, strd);

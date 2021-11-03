@@ -187,6 +187,8 @@ std::ostream& operator<<(std::ostream &os, CharClassBuilder const &b) {
 	for(auto &range: ccbcpy.ranges_) {
 		if(range.lo == range.hi)
 			os << CharClassBuilder::repr(range.lo);
+		else if ( range.hi - range.lo == 1)
+			os << CharClassBuilder::repr(range.lo) << CharClassBuilder::repr(range.hi);
 		else
 			os << CharClassBuilder::repr(range.lo) << '-' << CharClassBuilder::repr(range.hi);
 	}
