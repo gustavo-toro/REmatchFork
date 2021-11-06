@@ -23,7 +23,7 @@ bool regex_epsilon::operator()(ast::concat const &c) const {
 bool regex_epsilon::operator()(ast::iter const &it) const {
 	// if any repetition has size zero is enough
 	for (auto rep : it.repetitions)
-		if (rep.start_ == 0) return true;		
+		if (rep.start_ == 0) return true;
 	// if expr has epsilon is enough
 	if ((*this)(it.expr)) return true;
 	return false;
