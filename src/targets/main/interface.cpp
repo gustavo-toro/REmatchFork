@@ -80,7 +80,7 @@ void Interface::normal_run() {
 		for(auto match = m_iter.next(); match != nullptr; match = m_iter.next()) {
 			std::cout << *match  << "\t(" << match->pprint(str_doc) << ")"  << std::endl;
 		}
-	} 
+	}
 }
 
 void Interface::benchmark_run() {
@@ -92,10 +92,20 @@ void Interface::benchmark_run() {
 
 	Timer t; 								// Start timer for automata creation
 
-	rematch::RegExOptions rgx_opt;
-	rgx_opt.set_line_by_line(options_.line_by_line());
-	rgx_opt.set_early_output(options_.early_output());
-	rematch::RegEx regex(pattern_, rgx_opt);
+	rematch::RegExOptions rgx_opts;
+	rgx_opts.set_line_by_line(options_.line_by_line());
+	rgx_opts.set_early_output(options_.early_output());
+	rgx_opts.set_ranked(options_.ranked());
+
+	std::unique_ptr<rematch::RegEx> regex;
+
+	if(options_.ranked()) {
+		rematch::ranked::WeightedVA<>* A = rematch::parse_wva_file(pattern_);
+		regex = std::make_unique<rematch::RegEx>(A, rgx_opts);
+	} else {
+		regex = std::make_unique<rematch::RegEx>(pattern_, rgx_opts);
+	}
+
 	rematch::Match_ptr match_ptr;
 
 	initAutomataTime = t.elapsed(); 		// Automata creation time
@@ -103,18 +113,18 @@ void Interface::benchmark_run() {
 
 	n_mappings = 0;
 
-	rematch::MatchIterator match_iter = regex.findIter(document_);
+	rematch::MatchIterator match_iter = regex->findIter(document_);
 
 	for(auto match = match_iter.next(); match != nullptr; match = match_iter.next()) {
 		n_mappings++;
 	}
 
-	numOfCaptures = regex.capture_counter();
-	numOfReadings = regex.reading_counter();
+	numOfCaptures = regex->capture_counter();
+	numOfReadings = regex->reading_counter();
 
-	detSize = regex.dfa_counter();
-	nfaSize = regex.nfa_counter();
-	mdfaSize = regex.mdfa_counter();
+	// detSize = regex->dfa_counter();
+	// nfaSize = regex->nfa_counter();
+	// mdfaSize = regex->mdfa_counter();
 
 
 	// std::cout << "\nRaw DFA:\n" <<  regex.detManager().DFA().pprint() << '\n';
@@ -140,9 +150,9 @@ void Interface::benchmark_run() {
 	std::cout
 	<< "Number of mappings\t\t" 			<< 	pwc(n_mappings)											<<	'\n'
 	<< "Memory used \t\t\t"						<<	memoryUsed	 												<< 	'\n'
-	<< "MDFASize \t\t\t"							<<	mdfaSize														<<	'\n'
-	<< "DetSize \t\t\t"								<<	detSize															<<	'\n'
-	<< "eVASize \t\t\t"								<<	nfaSize															<< 	'\n'
+	// << "MDFASize \t\t\t"							<<	mdfaSize														<<	'\n'
+	// << "DetSize \t\t\t"								<<	detSize															<<	'\n'
+	// << "eVASize \t\t\t"								<<	nfaSize															<< 	'\n'
 	<< "Init Automata time\t\t"				<<	pwc(initAutomataTime) 							<< 	" ms\n"
 	<< "Evaluate time\t\t\t"					<<	pwc(evaluateTime)										<< 	" ms\n"
 	<< "Total time\t\t\t"							<<	pwc(totTime) 												<< 	" ms\n\n";

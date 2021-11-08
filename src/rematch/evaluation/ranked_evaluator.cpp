@@ -58,7 +58,8 @@ void RankedEvaluator::preprocessing() {
 void RankedEvaluator::read(char a, long pos) {
   new_states_.clear();
   for(wVA::State *p: current_states_) {
-    for(auto &t: p->next_transitions(a)) {
+    auto transitions = p->next_transitions(a);
+    for(auto &t: transitions) {
       wVA::State* q = t->next(); // next state
 
       auto h = p->heap_;

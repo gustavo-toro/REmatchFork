@@ -6,6 +6,7 @@
 #include <random>
 #include <unordered_map>
 #include <deque>
+#include <chrono>
 
 #include "automata/nfa/state.hpp"
 #include "automata/nfa/lva.hpp"
@@ -137,10 +138,10 @@ class WeightedVA {
         // then erase and extend [lo, hi] accordingly
         if(lo > 0) {
           auto it = std::lower_bound(tmap_.begin(), tmap_.end(), IntervalMap(lo, lo));
-          if(it != tmap_.end() && lo >= it->lo && it->lo < it->hi) {
+          if(it != tmap_.end() && lo > it->lo && it->lo < it->hi) {
             int it_lo = it->lo, it_hi = it->hi;
-            it->lo = lo+1;
-            it = tmap_.emplace(it, it_lo, lo, it->transitions);
+            it->lo = lo;
+            it = tmap_.emplace(it, it_lo, lo-1, it->transitions);
             ++it; // Move iterator to the element pushed to the right
             if(hi < it->hi) {
               it->hi = hi;
@@ -267,7 +268,9 @@ class WeightedVA {
   void set_random_weights(double lw_bound, double up_bound) {
 
     std::uniform_real_distribution<double> unif(lw_bound, up_bound); // distribution
-    std::default_random_engine rng;
+
+    uint seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine rng(seed);
 
     for(State* p: states_) {
       for(auto& t: p->transitions_) {
