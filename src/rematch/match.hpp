@@ -41,8 +41,14 @@ class Match {
 	// Returns a vector with the variable names in order
 	std::vector<std::string> variables() const;
 
+	// Returns the first span of a variable
+	boost::optional<Span> span(std::string var) const;
+
 	// Returns a variable's captured spans
 	SpanVec spans(std::string var) const;
+
+	// Returns the first substring of a variable
+	std::string group(std::string var, std::shared_ptr<StrDocument>& doc) const;
 
 	// Returns a variable's captured substrings
 	StrVec groups(std::string var, std::shared_ptr<StrDocument>& doc) const;

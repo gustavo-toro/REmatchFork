@@ -38,7 +38,7 @@ Match_ptr Enumerator::next() {
 		auto &indexes = current.last_indexes;
 		depth_stack_.pop_back();
 
-		for (size_t j = 0; j < var_factory_->size(); j++) 
+		for (size_t j = 0; j < var_factory_->size(); j++)
 			current_mapping_[j].erase(current_mapping_[j].begin(), current_mapping_[j].end() - indexes[j]);
 
 		if (node->isNodeEmpty()) {
@@ -50,6 +50,7 @@ Match_ptr Enumerator::next() {
 			depth_stack_.emplace_back(node->next, current.end_node, indexes);
 		}
 
+		// por que checkeamos esto?
 		if (node->start != nullptr) {
 			for (size_t j = var_factory_->size() * 2; j-- > 0 ;) {
 				if (node->S[j]) {
@@ -57,7 +58,6 @@ Match_ptr Enumerator::next() {
 					indexes[j / 2]++;
 				}
 			}
-
 			depth_stack_.emplace_back(node->start, node->end, indexes);
 		}
 	}

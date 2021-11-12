@@ -9,8 +9,12 @@ namespace rematch {
 namespace visitors {
 
 vfptr regex2vars::operator()(ast::altern const &node) const {
-  // Call the same struct on the first member of altern
 	auto vfact = (*this)(node.front());
+	
+	for (size_t i = 1; i < node.size(); ++i) {
+		auto current = (*this)(node[i]);
+		vfact->merge(*current);
+	}
 	return vfact;
 }
 

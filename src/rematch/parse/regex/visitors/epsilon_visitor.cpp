@@ -5,7 +5,6 @@
 
 namespace rematch {
 namespace visitors {
-
 bool regex_epsilon::operator()(ast::altern const &node) const {
 	// if any member has epsilon is enough
 	for (auto c : node) 
