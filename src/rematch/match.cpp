@@ -6,19 +6,11 @@ Match::operator bool() const {
 	for (auto d : data_)
 		if (!d.empty()) return true;
 	return false;
-};
+}
 
 std::vector<std::string> Match::variables() const {
 	return var_factory_->variables();
-};
-
-StrVec Match::groups(std::string var, std::shared_ptr<StrDocument>& doc) const {
-	StrVec ret;
-	int pos = var_factory_->position(var);
-	for (size_t i = 0; i < data_[pos].size() / 2; ++i)
-		ret.push_back(doc->substring(data_[pos][2 * i], data_[pos][2 * i + 1]));
-	return ret;
-};
+}
 
 SpanVec Match::spans(std::string var) const {
 	SpanVec ret;
@@ -26,11 +18,44 @@ SpanVec Match::spans(std::string var) const {
 	for (size_t i = 0; i < data_[pos].size() / 2; ++i)
 		ret.push_back(std::make_pair(data_[pos][2 * i], data_[pos][2 * i + 1]));
 	return ret;
-};
+}
+
+boost::optional<Span> Match::span(std::string var) const {
+	int pos = var_factory_->position(var);
+	if (data_[pos].empty()) return boost::none;
+	return std::make_pair(data_[pos][0], data_[pos][1]);
+}
+
+StrVec Match::groups(std::string var, std::shared_ptr<StrDocument>& doc) const {
+	StrVec ret;
+	int pos = var_factory_->position(var);
+	for (size_t i = 0; i < data_[pos].size() / 2; ++i)
+		ret.push_back(doc->substring(data_[pos][2 * i], data_[pos][2 * i + 1]));
+	return ret;
+}
+
+boost::optional<std::string> Match::group(std::string var, std::shared_ptr<StrDocument>& doc) const {
+	int pos = var_factory_->position(var);
+	if (data_[pos].empty()) return boost::none;
+	return doc->substring(data_[pos][0], data_[pos][1]);
+}
 
 std::string Match::pprint(std::shared_ptr<StrDocument>& doc) const {
+	// TESTING GROUP
+	// for (size_t i = 0; i < data_.size(); ++i) {
+	// 	boost::optional<std::string> opt_g = group(var_factory_->get_var(i), doc);
+	// 	if (opt_g) {
+	// 		std::string g = *opt_g;
+	// 		std::cout << "First group: " << g << '\n';
+	// 	} else {
+	// 		std::cout << "No group\n";
+	// 	}
+	// }
+	// TESTING GROUP
+
 	std::stringstream ss;
-	for(size_t i=0; i < data_.size(); ++i) {
+
+	for (size_t i = 0; i < data_.size(); ++i) {
 		std::string var = var_factory_->get_var(i);
 		ss << var << " = ";
 		for (auto sub : groups(var, doc))
@@ -38,9 +63,21 @@ std::string Match::pprint(std::shared_ptr<StrDocument>& doc) const {
 		ss << '\n';
 	}
 	return ss.str();
-};
+}
 
 std::ostream& operator<<(std::ostream& os, Match& m) {
+	// TESTING SPAN
+	// for (size_t i = 0; i < m.data_.size(); ++i) {
+	// 	boost::optional<Span> opt_s = m.span(m.var_factory_->get_var(i));
+	// 	if (opt_s) {
+	// 		Span s = *opt_s;
+	// 		std::cout << "First span: " << '|' << s.first << ',' << s.second << ">\n";
+	// 	} else {
+	// 		std::cout << "No span\n";
+	// 	}
+	// }
+	// TESTING SPAN
+
 	for (size_t i = 0; i < m.data_.size(); ++i) {
 		os << m.var_factory_->get_var(i)
 			 << " =";
@@ -54,6 +91,6 @@ std::ostream& operator<<(std::ostream& os, Match& m) {
 		os << '\n';
 	}
 	return os;
-};
+}
 
 }  // namespace rematch
