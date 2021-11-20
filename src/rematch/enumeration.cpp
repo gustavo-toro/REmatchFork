@@ -42,7 +42,7 @@ Match_ptr Enumerator::next() {
 			current_mapping_[j].erase(current_mapping_[j].begin(), current_mapping_[j].end() - indexes[j]);
 
 		if (node->isNodeEmpty()) {
-			std::unique_ptr<Match> ret(new Match(var_factory_, current_mapping_));
+			Match_ptr ret(new Match(var_factory_, current_mapping_));
 			return ret;
 		}
 
