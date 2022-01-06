@@ -68,6 +68,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
       }
       next_x = x->next();
     }
+
     return H1_down;
   }
 
@@ -285,6 +286,11 @@ class BinomialHeap : public IncrementalHeap<T,G> {
 
   Node* head_ = nullptr; // First setted to nullptr
   G delta_0_;
+
+  union garbage_collection {
+    uint nreferences;
+    BinomialHeap<T,G>* next_free;
+  }
 
 }; // end class BinomialHeap
 
