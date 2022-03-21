@@ -290,7 +290,7 @@ class BinomialHeap : public IncrementalHeap<T,G> {
   union garbage_collection {
     uint nreferences;
     BinomialHeap<T,G>* next_free;
-  }
+  };
 
 }; // end class BinomialHeap
 

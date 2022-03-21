@@ -5,7 +5,7 @@
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/phoenix/bind/bind_function.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include "ast.hpp"

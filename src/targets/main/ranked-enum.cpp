@@ -19,10 +19,13 @@ int main(int argc, char *argv[]) {
 
 	std::string docpath, rgxpath, autompath, mode{"spans"}, anchors{"none"};
 
+	bool determinize{false};
+
 	// Document input options
 	docinput->add_option("-d,--document,document", docpath, "Input document file.")
 			 																								->check(CLI::ExistingFile);
 	docinput->add_option("-t,--text", doc, "Input text.");
+	docinput->add_flag("--determinize", determinize, "Use determinization");
 	docinput->require_option(1);
 
 	// Regex input optsions
@@ -49,6 +52,8 @@ int main(int argc, char *argv[]) {
 		opts.set_output_option(rematch::NMAPPINGS);
 	else if(mode == "submatches")
 		opts.set_output_option(rematch::SUBMATCHES);
+	else if(determinize)
+		opts.set_output_option(rematch::DETERMINIZE);
 
 	if(rgxpath.size())
 		rgx = file2str(rgxpath);

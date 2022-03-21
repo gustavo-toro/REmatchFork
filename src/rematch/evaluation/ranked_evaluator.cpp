@@ -60,7 +60,7 @@ void RankedEvaluator::read(char a, long pos) {
   for(wVA::State *p: current_states_) {
     auto transitions = p->next_transitions(a);
     if(transitions.empty()) {
-      collect_garbage(p->heap_);
+      // collect_garbage(p->heap_);
     }
     for(auto &t: transitions) {
       wVA::State* q = t->next(); // next state
