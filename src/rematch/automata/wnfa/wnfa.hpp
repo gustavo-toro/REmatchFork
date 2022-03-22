@@ -64,6 +64,32 @@ class WeightedVA {
 
     State(std::shared_ptr<FilterFactory> ff, uint id) : id_(id), ffact_(ff) {}
 
+    ~State() {
+      for(auto& trans: transitions_) {
+        // Remove from backward transitions vector
+        std::remove(trans->next()->backward_transitions_.begin(),
+                    trans->next()->backward_transitions_.end(),
+                    trans);
+      }
+      for(auto& btrans: backward_transitions_) {
+        // Remove from transition vector
+        std::remove(btrans->prev()->transitions_.begin(),
+                    btrans->prev()->transitions_.end(),
+                    btrans);
+
+        // And remove from transition map
+        for(auto it = btrans->prev()->tmap_.begin(); it != btrans->prev()->tmap_.end();) {
+          auto jt = std::remove(it->transitions.begin(),
+                                it->transitions.end(),
+                                btrans);
+
+          if(jt == it->transitions.begin())
+            it = btrans->prev()->tmap_.erase(it);
+          else ++it;
+        }
+      }
+    }
+
     void set_accepting(bool b) { accepting_ = b; }
     bool accepting() const { return accepting_;  }
 
@@ -80,6 +106,9 @@ class WeightedVA {
     void set_accepting_weight(G w) { accepting_weight_ = w; }
 
     std::vector<Transition*> transitions() const { return transitions_; }
+    std::vector<Transition*> backward_transitions() const {
+      return backward_transitions_;
+    }
 
     std::vector<Transition*> next_transitions(char a) const {
       typename std::vector<IntervalMap>::const_iterator it, first, last;
@@ -109,6 +138,7 @@ class WeightedVA {
     Transition& add_transition(uint code, capture_t S, G weight, State* next) {
       Transition *t = new Transition(this, next, weight, code, S);
       transitions_.push_back(t);
+      next->backward_transitions_.push_back(t);
       update_transition_map(t);
       return *t;
     }
@@ -187,6 +217,7 @@ class WeightedVA {
     }
 
     std::vector<State::Transition*> transitions_;
+    std::vector<State::Transition*> backward_transitions_;
 
     std::vector<IntervalMap> tmap_;
 
@@ -245,7 +276,7 @@ class WeightedVA {
     for(auto &capt: A.initState()->captures)
       init_state_->add_transition(0, capt->code, 0, states_table[capt->next]);
 
-    fix_reachable_states();
+    fix_useful_states();
   };
 
   // Getters
@@ -329,40 +360,68 @@ class WeightedVA {
 
   // Resets the states_ and accepting_states_ vectors to only the states that
   // are reachable from the initial state.
-  void fix_reachable_states() {
+  void fix_useful_states() {
     for(auto& p: states_) {
-      p->visited_at_ = -1;
+      p->visited_at_ = 0;
     }
+
+    const int kReachable  = 1 << 0; // 0000 0000 0000 0001
+    const int kUseful     = 1 << 1; // 0000 0000 0000 0010
 
     std::deque<State*> queue;
 
     queue.push_back(init_state_);
-    init_state_->visited_at_ = 0;
-
+    init_state_->visited_at_ |= kReachable;
 
     std::vector<State*> n_states, n_accepting_states;
 
     while(!queue.empty()) {
-      State* p = queue.front();
-      queue.pop_front();
+      State* p = queue.front(); queue.pop_front();
 
-      p->visited_at_ = 1;
-      n_states.push_back(p);
-      if(p->accepting_)
+      if(p->accepting_) {
         n_accepting_states.push_back(p);
+      }
 
       for(auto &t:  p->transitions_) {
-        if(t->next()->visited_at_ < 0) {
-          t->next()->visited_at_ = 0;
+        if(!(t->next()->visited_at_ & kReachable)) {
+          t->next()->visited_at_ |= kReachable;
           queue.push_back(t->next());
         }
       }
+    }
+
+    for(auto& accept_state: n_accepting_states) {
+      queue.push_back(accept_state);
+      accept_state->visited_at_ |= kUseful;
+
+      while(!queue.empty()) {
+        State* p = queue.front(); queue.pop_front();
+        for(auto &t:  p->backward_transitions_) {
+          if(!(t->prev()->visited_at_ & kUseful)) {
+            if(t->prev()->visited_at_ & kReachable)
+              n_states.push_back(t->prev());
+            t->prev()->visited_at_ |= kUseful;
+            queue.push_back(t->prev());
+          }
+        }
+      }
+    }
+
+    n_states.insert(n_states.end(), n_accepting_states.begin(),
+                                    n_accepting_states.end());
+
+    for(auto *p: states_) {
+      if(p->visited_at_ != (kReachable | kUseful))
+        delete p;
     }
 
     states_.swap(n_states);
     accepting_states_.swap(n_accepting_states);
 
   };
+
+  // --- Private member variables --- //
+
   std::vector<State*> states_;
   std::vector<State*> accepting_states_;
 

@@ -9,6 +9,9 @@
 #include <list>
 #include <cassert>
 #include <map>
+#include <random>
+#include <chrono>
+#include <iomanip>
 
 #include "structs/dag/nodelist.hpp"
 #include "captures.hpp"
@@ -108,20 +111,25 @@ std::string DFA::pprint() {
     }
   }
 
+  std::uniform_real_distribution<double> unif(0, 1);
+
+  uint seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine rng(seed);
+
   for(auto& el: table) {
     ss << "t " << el.first.from << " {" << el.second << "|(" << variable_factory_->print_varset(el.first.S)
-       << ")} "  << el.first.to << '\n';
+       << ")|"  << std::setprecision(2) << unif(rng) <<  "} "  << el.first.to << '\n';
   }
 
   // Code final states
   for (size_t i = 0; i < finalStates.size(); ++i) {
     if(finalStates[i]->isFinal) {
-      ss << "f " << finalStates[i]->id << '\n';
+      ss << "f " << finalStates[i]->id << " {" << std::setprecision(2) << unif(rng) << "}\n";
     }
   }
 
   // Code initial state
-  ss << "i " << init_state_->id;
+  ss << "i " << init_state_->id << " {" << std::setprecision(2) << unif(rng) <<'}';
 
   return ss.str();
 }
