@@ -41,18 +41,6 @@ boost::optional<std::string> Match::group(std::string var, std::shared_ptr<StrDo
 }
 
 std::string Match::pprint(std::shared_ptr<StrDocument>& doc) const {
-	// TESTING GROUP
-	// for (size_t i = 0; i < data_.size(); ++i) {
-	// 	boost::optional<std::string> opt_g = group(var_factory_->get_var(i), doc);
-	// 	if (opt_g) {
-	// 		std::string g = *opt_g;
-	// 		std::cout << "First group: " << g << '\n';
-	// 	} else {
-	// 		std::cout << "No group\n";
-	// 	}
-	// }
-	// TESTING GROUP
-
 	std::stringstream ss;
 
 	for (size_t i = 0; i < data_.size(); ++i) {
@@ -66,18 +54,6 @@ std::string Match::pprint(std::shared_ptr<StrDocument>& doc) const {
 }
 
 std::ostream& operator<<(std::ostream& os, Match& m) {
-	// TESTING SPAN
-	// for (size_t i = 0; i < m.data_.size(); ++i) {
-	// 	boost::optional<Span> opt_s = m.span(m.var_factory_->get_var(i));
-	// 	if (opt_s) {
-	// 		Span s = *opt_s;
-	// 		std::cout << "First span: " << '|' << s.first << ',' << s.second << ">\n";
-	// 	} else {
-	// 		std::cout << "No span\n";
-	// 	}
-	// }
-	// TESTING SPAN
-
 	for (size_t i = 0; i < m.data_.size(); ++i) {
 		os << m.var_factory_->get_var(i)
 			 << " =";

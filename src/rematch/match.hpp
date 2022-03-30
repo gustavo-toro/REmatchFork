@@ -53,26 +53,22 @@ class Match {
 	// Returns the first captured substring of a variable
 	boost::optional<std::string> group(std::string var, std::shared_ptr<StrDocument>& doc) const;
 
-	// para una query de la forma  : !x{}+!y{!x{}}
-	// tener estructura árbol de la forma:
-	//         root
-	//        /    \
-	//       x      y
-	//               \
-	//                x
-	// al hacer m.inner_match('x'), retornaría un nuevo Match, filtrando
-	// los matches según el árbol (m.spans('y') retornaría un vector vacío):
-	//         root
-	//          |
-	//          x
-	// otro ejemplo, m.inner_match('y'), si hago m.spans('x'), no estarán los
-	// x pertenecientes a la otra rama del árbol.
-	//        root
-	//         |
-	//         y
-	//         |
-	//         x
-	Match_ptr inner_match(std::string var) const;
+	// Given a var, returns the SubMatch of the current Match
+	/* USE CASE:
+		Match m;
+		for (Span &s_table : m.spans("TABLE")) {
+			Match m_table = m.submatch(s_table);
+			// std::cout << 'table between' << s_table << '\n';
+			for (Span &s_row : m_table.spans("ROW")) {
+				Match m_row = m_table.submatch(s_row);
+				// std::cout << 'row between' << s_row << '\n';
+				for (Span &s_cell : m_row.spans("CELL")) {
+					// std::cout << 'cell between' << s_cell << '\n';
+				}
+			}
+		}
+	*/
+	Match submatch(Span s) const;
 
 	// Pretty print captured substrings
 	std::string pprint(std::shared_ptr<StrDocument>& doc) const;
