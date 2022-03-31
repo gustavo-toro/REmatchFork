@@ -12,13 +12,9 @@ vfptr regex2vars::operator()(ast::altern const &node) const {
   // Call the same struct on the first member of altern
 	auto vfact = (*this)(node.front());
 
-  // If there are more members on the altern, check that the same variables
-  // are used (so that the regex is functional).
-	if(node.size() > 1) {
-		for (size_t i = 1; i < node.size(); ++i)
-			if(!(*vfact == *((*this)(node[i])))) {
-				throw parsing::BadRegex("Not a functional regex.");
-			};
+	for (size_t i = 1; i < node.size(); ++i) {
+		auto current = (*this)(node[i]);
+		vfact->merge(*current);
 	}
 	return vfact;
 }
@@ -37,11 +33,7 @@ vfptr regex2vars::operator()(ast::concat const &c) const {
 }
 
 vfptr regex2vars::operator()(ast::iter const &it) const {
-	auto vfact = (*this)(it.expr);
-	if(!it.repetitions.empty() && !vfact->empty()){
-		throw parsing::BadRegex("Not a functional regex.");
-	}
-	return vfact;
+	return (*this)(it.expr);
 }
 
 vfptr regex2vars::operator()(ast::group const &g) const {
