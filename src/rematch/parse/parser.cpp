@@ -33,7 +33,8 @@ std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
 
  	doParse(regex, tree);
 
-	std::shared_ptr<VariableFactory> v = visitors::regex2vars()(tree);
+  visitors::regex_epsilon()(tree);
+  std::shared_ptr<VariableFactory> v = visitors::regex2vars()(tree);
 
   auto v1 = visitors::regex2filters();
   v1(tree);
