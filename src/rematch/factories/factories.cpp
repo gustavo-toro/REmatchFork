@@ -115,9 +115,11 @@ void VariableFactory :: merge(VariableFactory &rhs) {
 		auto it = std::lower_bound(data_.begin(), data_.end(), var);
 		if(size() >= MAX_VARS) {}
 		// TODO: Throw an exception;
-		data_.insert(it, var);
-		offsetMap.push_back(0);
-		offsetMap.push_back(0);
+		if (it == data_.end()) {
+			data_.insert(it, var);
+			offsetMap.push_back(0);
+			offsetMap.push_back(0);
+		}
 	}
 
 }
