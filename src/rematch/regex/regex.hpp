@@ -6,7 +6,6 @@
 
 #include "match.hpp"
 #include "memmanager.hpp"
-#include "enumeration.hpp"
 
 #include "automata/nfa/eva.hpp"
 #include "automata/nfa/sva.hpp"
