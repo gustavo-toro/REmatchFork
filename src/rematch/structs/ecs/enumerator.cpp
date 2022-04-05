@@ -23,12 +23,12 @@ Match_ptr Enumerator::next() {
     EnumState current_state = stack_.back();
     ECS::Node *current_node = current_state.node;
     std::vector<int64_t> &trim_counter = current_state.trim_counter;
+    
+    stack_.pop_back();
 
     // Trim each variable array from the right
     for (size_t j = 0; j < var_factory_->size(); j++)
       current_mapping_[j].erase(current_mapping_[j].begin(), current_mapping_[j].end() - trim_counter[j]);
-
-    stack_.pop_back();
 
     if (current_node->is_bottom()) {
       tot_mappings_++;
@@ -38,7 +38,7 @@ Match_ptr Enumerator::next() {
 
     if (current_node->is_output()) {  // If label node
       internal::ECS::Data dt = current_node->data();
-      for (size_t j = 0; j < var_factory_->size() * 2; j++) {
+      for (size_t j = var_factory_->size() * 2; j-- > 0 ;) {
         if (dt.S[j]) {
           current_mapping_[j / 2].push_front(dt.i - var_factory_->get_offset(j));
           trim_counter[j / 2]++;

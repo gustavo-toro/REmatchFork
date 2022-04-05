@@ -1,13 +1,13 @@
 #ifndef MATCH_HPP
 #define MATCH_HPP
 
-#include <string>
-#include <map>
-#include <utility>
-#include <stdexcept>
-#include <vector>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "factories/factories.hpp"
 
@@ -26,10 +26,9 @@ using Match_ptr = Match*;
 using Match_ptr = std::unique_ptr<Match>;
 #endif
 
-
-using Span = std::pair<int64_t,int64_t>;
-using SpanMap = std::map<std::string, Span>;
-using SpanVect = std::vector<Span>;
+using Span = std::pair<int64_t, int64_t>;
+using SpanVec = std::vector<Span>;
+using StringVec = std::vector<std::string>;
 
 // Represents a match for easy access to the captured spans and substrings.
 // It doesn't store the correspondings substrings, so it's assumed that the
@@ -40,46 +39,38 @@ class Match {
   friend class Interface;
 
  public:
-
   Match() = default;
 
   Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m)
       : data_(m), var_factory_(vf) {}
 
-  operator bool() const {return !data_.empty();}
-
-  int64_t start(std::string varname) const;
-  int64_t end(std::string varname) const;
-
+  // TODO: Implement this
+  operator bool() const;
+  // Returns a variable's [i, j) span
   Span span(std::string var) const;
-
+  // TODO: Implement this
+  SpanVec spans(std::string var) const;
   // Returns a variable's captured substring
   std::string group(std::string var, std::shared_ptr<StrDocument>& doc) const;
-
-  // Returns referece to the sublaying document.
-  const std::string& doc() const;
-
+  // TODO: Implement this
+  StringVec groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
-
-  //
-  Match_ptr submatches(Span s);
-
-  SpanMap& data();
-
+  // TODO: Implement this
+  Match_ptr submatches(Span s) const;
+  // Pretty print
   std::string pprint(std::shared_ptr<StrDocument>& doc) const;
-
-  friend std::ostream& operator<<(std::ostream &os, Match &m);
+  // ostream representation
+  friend std::ostream& operator<<(std::ostream& os, Match& m);
 
  private:
-
+  // Stores each variable spans
   std::vector<std::deque<int64_t>> data_;
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
 
-}; // end class Match
+};  // end class Match
 
-} // end namespace rematch
+}  // end namespace rematch
 
-
-#endif // MATCH_HPP
+#endif  // MATCH_HPP
