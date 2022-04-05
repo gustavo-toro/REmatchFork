@@ -43,7 +43,7 @@ class Match {
 
   Match() = default;
 
-  Match(std::shared_ptr<VariableFactory> vf, std::vector<int64_t> m)
+  Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m)
       : data_(m), var_factory_(vf) {}
 
   operator bool() const {return !data_.empty();}
@@ -62,6 +62,9 @@ class Match {
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
 
+  //
+  Match_ptr submatches(Span s);
+
   SpanMap& data();
 
   std::string pprint(std::shared_ptr<StrDocument>& doc) const;
@@ -70,12 +73,7 @@ class Match {
 
  private:
 
-
-  // Enumerator needs to access data_ to fill out the mappings
-  void set_mapping(int var_code, int64_t pos) {data_[var_code] = pos;}
-
-  // No advantage in using STL containers like std::map and std::unordered_map.
-  std::vector<int64_t> data_;
+  std::vector<std::deque<int64_t>> data_;
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
 

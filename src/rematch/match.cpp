@@ -10,7 +10,9 @@ namespace rematch {
 Span Match::span(std::string var) const {
   try {
     int pos = var_factory_->position(var);
-    return std::make_pair(data_[pos*2], data_[pos*2 + 1]);
+    // TODO: change empty return
+	  if (data_[pos].empty()) return std::make_pair(-3, -3);
+	  return std::make_pair(data_[pos][0], data_[pos][1]);
   } catch (...) {
     throw std::logic_error("No mapping assigned to variable.");
   }
@@ -20,7 +22,9 @@ Span Match::span(std::string var) const {
 std::string Match::group(std::string var, std::shared_ptr<StrDocument>& doc) const {
   try {
     int pos = var_factory_->position(var);
-    return doc->substring(data_[pos*2], data_[pos*2 + 1]);
+    // TODO: change empty return
+	  if (data_[pos].empty()) return "";
+	  return doc->substring(data_[pos][0], data_[pos][1]);
   } catch (...) {
     throw std::logic_error("No mapping assigned to variable.");
   }
@@ -44,16 +48,23 @@ std::string Match::pprint(std::shared_ptr<StrDocument>& doc) const {
 }
 
 std::ostream& operator<<(std::ostream &os, Match &m) {
-  for(size_t i=0; i < m.data_.size() - 2; i += 2) {
-    os << m.var_factory_->get_var(i/2)
-       << " = |" << m.data_[i] << ',' << m.data_[i+1] << ">\t";
-  }
-
-  os << m.var_factory_->get_var((m.data_.size()-2)/2)
-       << " = |" << m.data_[m.data_.size()-2] << ','
-       << m.data_[m.data_.size()-1] << ">";
-
-  return os;
+  std::cout << "COUNT:" << m.data_.size() << "\n\n";
+  for (size_t i = 0; i < m.data_.size(); ++i) {
+		os << m.var_factory_->get_var(i)
+			 << " =";
+    for (size_t j = 0; j < m.data_[i].size(); ++j) {
+      os << m.data_[i][j] << '.';
+    }
+		// for (size_t j = 0; j < m.data_[i].size() / 2; ++j) {
+		// 	os << " |"
+		// 		 << m.data_[i][2 * j]
+		// 		 << ','
+		// 		 << m.data_[i][2 * j + 1]
+		// 		 << '>';
+		// }
+		os << '\n';
+	}
+	return os;
 }
 
 } // end namespace rematch
