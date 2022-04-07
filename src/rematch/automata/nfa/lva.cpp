@@ -203,7 +203,7 @@ void LogicalVA::cat(LogicalVA &a2) {
 
   if( has_epsilon() )
     init_state_->add_epsilon(a2.init_state_);
-  else if( a2.has_epsilon() )
+  if( a2.has_epsilon() )
     accepting_state_->add_epsilon(a2.accepting_state_);
 
   // Set a2 final states as new final states
