@@ -73,9 +73,9 @@ We divided this document in 10 different documents, each one containing the firs
 ### Results
 Our results for the execution time and memory usage of the tool `ranked-enum` compared to the usage of the `rematch` tool are summarized in the following plots:
 
-![image](time.png)
+![image](time.jpg)
 
-![image](memory.png)
+![image](memory.jpg)
 
 ### Analysis
 
