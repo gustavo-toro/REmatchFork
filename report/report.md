@@ -61,7 +61,7 @@ That codes that a certain `state` is initial or final (`i` or `f`) and with a ce
 The user then might try to change the weights in particular for the transitions manually, and then input the resulting file to the `ranked-enumeration` tool.
 
 ## Experiments
-As a simple experiment, we have provide different random-weighted DFA's based on a set of simple queries acting on logs of sparql. Here we show the first 3 lines of the originial 2000 lines document:
+As a simple experiment, we have provide different random-weighted DFA's based on a set of simple queries acting on logs of sparql. Here we show the first 3 lines of the original 2000 lines document (`1.2 MiB`):
 ```
 Sat,  8 Nov 2014 04:03:50 +0000	bm.rkbexplorer.com	sparql	PREFIX id: <http://bm.rkbexplorer.com/id/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX owl:  <http://www.w3.org/2002/07/owl#> PREFIX bm:   <http://www.britishmuseum.ac.uk/ontologies/conservation#> SELECT DISTINCT ?a_analysisDate, ?a_analysisTitle, ?a WHERE { <http://bm.rkbexplorer.com/id/merlin-PDB354> bm:hasObjectScience ?analysis . ?analysis bm:ID ?a ; bm:analysisTitle ?a_analysisTitle OPTIONAL {?analysis bm:analysisDate ?a_analysisDate }}
 Sat,  8 Nov 2014 04:03:51 +0000	darmstadt.rkbexplorer.com	sparql	ASK WHERE   { ?s ?p ?o } 
