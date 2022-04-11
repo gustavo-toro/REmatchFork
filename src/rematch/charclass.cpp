@@ -214,8 +214,11 @@ std::unique_ptr<CharClass> CharClassBuilder::get_charclass() {
 
 std::string CharClassBuilder::repr(int ch) {
 	std::stringstream ss;
+	std::string spec = "\\+*?(){}[]|!.-";
 	if(ch == '\n')
 		ss << "\\n";
+	else if(std::find(spec.begin(), spec.end(), ch) != spec.end())
+		ss << "\\" << (char)ch;
 	else if(ch < 32)
 		ss << '\\' << (int)ch;
 	else

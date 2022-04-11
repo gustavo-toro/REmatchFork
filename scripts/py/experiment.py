@@ -73,20 +73,20 @@ def main():
 		            spreadsheet_id,
 								"Query {}!D16".format(query),
 								get_rgx("{0}/exp/benchmark/{1}/exp0{2}/rematch.rgx".format(HOME_DIR, DATASET, query)))
-		writeInCell(SHEETS_SERVICE,
-		            spreadsheet_id,
-								"Query {}!D17".format(query),
-								get_rgx("{0}/exp/benchmark/{1}/exp0{2}/perl.rgx".format(HOME_DIR, DATASET, query)))
+		# writeInCell(SHEETS_SERVICE,
+		#             spreadsheet_id,
+		# 						"Query {}!D17".format(query),
+		# 						get_rgx("{0}/exp/benchmark/{1}/exp0{2}/perl.rgx".format(HOME_DIR, DATASET, query)))
 		# writeInCell(SHEETS_SERVICE,
 		#             spreadsheet_id,
 		# 						"Query {}!D18".format(query),
 		# 						get_rgx("{0}/exp/{1}/exp{2}/script.awk".format(HOME_DIR, DATASET, query)))
 		for row in TOT_ROWS:
 			for col in TOT_COLS:
-				current_range = 'Query {0}!{1}{2}'.format(query, col, row+2)
+				current_range = 'Query {0}!{1}{2}'.format(query, col, row+3)
 
 				print("\nAt cell", current_range)
-				args = BINARIES[col]['args'].format(HOME_DIR, DATASET, row, query)
+				args = BINARIES[col]['args'].format(HOME_DIR, query, row*200)
 				callcommand = BINARIES[col]['command'].format(HOME_DIR)
 				subcommand = "{0} {1}".format(callcommand, args)
 				command = COMMAND.format(subcommand)
