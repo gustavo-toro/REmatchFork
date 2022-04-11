@@ -15,7 +15,6 @@ SHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 here = pth.dirname(pth.abspath(__file__))
 
-
 def get_or_create_spreadsheet(drive_service, parent_folder, name, template=TEMPLATE_FILE):
     """Looks for a spreadsheet (not trashed) given a parentId and a name.
     If nothing is found then copies a spreadsheet from copyFromId and sets
@@ -72,7 +71,6 @@ def get_sheets_service():
             pickle.dump(creds, token)
 
     return build('sheets', 'v4', credentials=creds)
-
 
 def get_drive_service():
     creds = None

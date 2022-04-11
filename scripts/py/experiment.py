@@ -1,6 +1,7 @@
 import json
 import os.path as pth
 from datetime import date
+from time import sleep
 
 import googleutils
 
@@ -12,7 +13,7 @@ with open(pth.join(here, "settings.json")) as jsonFile:
 		data = json.load(jsonFile)
 
 PARENT_FOLDER = "17o1x6mwadxvxguhDiPCOArl6WH633vOa"
-TEMPLATE_FILE = "1jakMn4ckrESICFFFuRhRcwNN-VeswGRgnv_LjeYVHew"
+TEMPLATE_FILE = "1vtZH2LQfH8hqzxQmrNJ49PXmB4S8-3al_O1VnmqHL0E"
 
 SCOPES = data['scopes']
 SHEETS = data['sheets']
@@ -72,7 +73,7 @@ def main():
 		writeInCell(SHEETS_SERVICE,
 		            spreadsheet_id,
 								"Query {}!D16".format(query),
-								get_rgx("{0}/exp/benchmark/{1}/exp0{2}/rematch.rgx".format(HOME_DIR, DATASET, query)))
+								get_rgx("{0}/exp/benchmark_ranked/exp0{1}/rematch.rgx".format(HOME_DIR, query)))
 		# writeInCell(SHEETS_SERVICE,
 		#             spreadsheet_id,
 		# 						"Query {}!D17".format(query),
@@ -104,12 +105,12 @@ def main():
 
 				writeInCell(SHEETS_SERVICE,
 									  spreadsheet_id,
-									  "Query {0}!{1}{2}".format(query, chr(ord(col)+2*len(BINARIES)), row+2),
+									  "Query {0}!{1}{2}".format(query, chr(ord(col)+2*len(BINARIES)), row+3),
 										nout)
 
 				writeInCell(SHEETS_SERVICE,
 										spreadsheet_id,
-										"Query {0}!{1}{2}".format(query, chr(ord(col)+len(BINARIES)), row+2),
+										"Query {0}!{1}{2}".format(query, chr(ord(col)+len(BINARIES)), row+3),
 										mem)
 
 				print("\tIteration {0} -> t={1:.2f}s".format(1, float(t)))
@@ -125,6 +126,7 @@ def main():
 				t = totTime/NEXP
 				print("Avg time: {0:.2f}s".format(t))
 				writeInCell(SHEETS_SERVICE, spreadsheet_id, current_range, t)
+				sleep(1)
 
 if __name__ == '__main__':
 	main()
