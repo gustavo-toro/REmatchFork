@@ -5,19 +5,23 @@ Here we present the tool to make use of the ranked enumeration experimental feat
 ##### First steps
 As a mere simple example to see what the tool does, we can use the following command:
 ```
-./ranked-enum -t 'abba' -r '.*!x{a|b}.*'
+build/Release/bin/ranked-enum -t 'abba' -r '.*!x{a|b}.*'
 ```
 What this does is to internally produce a weighted-DFA equivalent to the input expression. The weights in this DFA are random, so this command is just to show the tool as a proof-of-concept.
 ##### Common usage
 A more useful way to use the tool would imply the use of a storage file for the weighted-DFA. Luckily, the tool has a determinization output option:
 ```
-./ranked-enum -e '.*!x{a|b}.*' --determinize > A1.txt
+build/Release/bin/ranked-enum -e '.*!x{a|b}.*' --determinize > A1.txt
 ```
 With that we generate the transition table for the weighted-DFA in the file `A1.txt`. Now we can call the tool with that input:
 ```
-./ranked-enum  -t 'abba' -a A1.txt
+build/Release/bin/ranked-enum -t 'abba' -a A1.txt
 ```
-For example we can get the following mappings with their corresponding:
+We can also call the tool with a document file `doc.txt` as input:
+```
+build/Release/bin/ranked-enum -d doc.txt -a A1.txt
+```
+For example we can get the following mappings with their corresponding values:
 ```
 x = |1,2> (2.43)
 x = |2,3> (2.82)
@@ -75,10 +79,33 @@ Our results for the execution time and memory usage of the tool `ranked-enum` co
 
 ### Analysis
 
-We 
+We observe that the execution of the ranked algorithm is significantly slower when compared to the _un-weighted_ version (the `REmatch` library). This, in our opinion, is closely related to the fact that the memory usage is much grater also.
+
+The problem araises when we consider that the Heaps of Words are getting allocated seamesly for every possible run considered through the document. Unlike `REmatch`'s execution, `ranked-enum`'s execution doesn't implement a garbage collector optimized for accounting unuseful runs in the wVA.
+
+It is then needed to implement some kind of _pruning_ over the DAG-structure of Heaps. This seems not trivial to do, at least not in the same way that `REmatch` does it, mainly because of the intricacy of the data structures. One should have to dynamically reuse the DAG's allocated space procedurally through the evaluation. We propose this optimization for future work.
 
 ## Developer Documentation
-We now present a developer documentation for the classes/structures present in the source code of the project.
+We now present a developer documentation for the compilation of the codebase and the classes/structures present in it.
+
+### Installation
+
+First, `ranked-enum` has a dependency on CMake (>= 3.14) and the Boost Libraries (>= 1.58). This are the dependencies of `REmatch` also. We asume that the user is on a Debian-based distro. For windows installation of these dependencies we recommend to follow the links of the projects homepages.
+
+To install CMake and Boost Libraries:
+```
+sudo apt-get install cmake libboost-all-dev
+```
+To build the project
+```
+cmake -H. -Bbuild/Release
+cmake --build build/Release
+```
+Consequently, the `ranked-enum` tool will be at `build/Release/bin/ranked-enum`. For more information on the usage refer to:
+```
+build/Release/bin/rematch --help
+```
+
 ### Files
 The tool is embedded inside the `REmatch` project, which its execution is relatively complex inside its codebase. However this guide serves only for the code related to the `ranked-enumeration` tool. The following files are the important ones in the code of the `ranked-enumeration` tool:
 ```
