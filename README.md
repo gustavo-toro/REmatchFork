@@ -1,6 +1,6 @@
 # Ranked REmatch Enumeration
 
-This is an implementation of the algorithm described in the paper [Ranked Enumeration of MSO Logic on Words](https://arxiv.org/abs/2010.08042) by [Pierre Bouhris](https://www.cristal.univ-lille.fr/~bourhis/pierre.en.html), Alejandro Grez, Louis Jachiet and [Cristian Riveros](https://criveros.sitios.ing.uc.cl/).
+This is an implementation of the algorithm described in the paper [Ranked Enumeration of MSO Logic on Words](https://arxiv.org/abs/2010.08042) by [Pierre Bouhris](https://www.cristal.univ-lille.fr/~bourhis/pierre.en.html), [Alejandro Grez](https://dblp.org/pid/206/6914.html), [Louis Jachiet](https://louis.jachiet.com/) and [Cristian Riveros](https://criveros.sitios.ing.uc.cl/).
 
 The implementation is highly dependant on the framework given by the [REmatch](https://github.com/REmatchChile/REmatch) project ([webtool for testing REmatch](http://rematch.cl/)).
 
