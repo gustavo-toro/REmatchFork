@@ -2,14 +2,8 @@
 ## User Documentation
 Here we present the tool to make use of the ranked enumeration experimental feature inside the REmatch project. This part asumes that the user already has the ```ranked``` binary file. If not then please refer to the developer documentation.
 
-##### First steps
-As a mere simple example to see what the tool does, we can use the following command:
-```
-build/Release/bin/ranked-enum -t 'abba' -r '.*!x{a|b}.*'
-```
-What this does is to internally produce a weighted-DFA equivalent to the input expression. The weights in this DFA are random, so this command is just to show the tool as a proof-of-concept.
 ##### Common usage
-A more useful way to use the tool would imply the use of a storage file for the weighted-DFA. Luckily, the tool has a determinization output option:
+The usage of the `ranked-enum` tool depends on a storage file for the weighted-DFA that we'll use as an input pattern. Luckily, the tool has a determinization output option:
 ```
 build/Release/bin/ranked-enum -e '.*!x{a|b}.*' --determinize > A1.txt
 ```
