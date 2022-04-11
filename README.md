@@ -1,8 +1,58 @@
 # Ranked REmatch Enumeration
-## User Documentation
-Here we present the tool to make use of the ranked enumeration experimental feature inside the REmatch project. This part asumes that the user already has the ```ranked``` binary file. If not then please refer to the developer documentation.
 
-##### Common usage
+This is an implementation of the algorithm described in the paper [Ranked Enumeration of MSO Logic on Words](https://arxiv.org/abs/2010.08042) by [Pierre Bouhris](https://www.cristal.univ-lille.fr/~bourhis/pierre.en.html), Alejandro Grez, Louis Jachiet and [Cristian Riveros](https://criveros.sitios.ing.uc.cl/).
+
+The implementation is highly dependant on the framework given by the [REmatch](https://github.com/REmatchChile/REmatch) project ([webtool for testing REmatch](http://rematch.cl/)).
+
+This and the REmatch project are still a work in progress. The main implementation was done by Nicolás Van Sint Jan ([nicovsj@protonmail.com](mailto:nicovsj@protonmail.com)).
+
+### Table of Contents
+
+- [Ranked REmatch Enumeration](#ranked-rematch-enumeration)
+    - [Table of Contents](#table-of-contents)
+  - [User Documentation](#user-documentation)
+    - [Common usage](#common-usage)
+    - [Editing the weighted-VA transitions](#editing-the-weighted-va-transitions)
+  - [Experiments](#experiments)
+    - [Document](#document)
+    - [Results](#results)
+    - [Analysis](#analysis)
+  - [Developer Documentation](#developer-documentation)
+    - [Installation](#installation)
+    - [Files](#files)
+    - [Classes](#classes)
+      - [Automata](#automata)
+        - [Weighted Variable Automaton (`class WeightedVA<T,G>`)](#weighted-variable-automaton-class-weightedvatg)
+          - [Member variables](#member-variables)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones)
+        - [State (`class WeightedVA<T,G>::State`)](#state-class-weightedvatgstate)
+          - [Member variables](#member-variables-1)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-1)
+      - [Heaps](#heaps)
+        - [Heap of Words (`class HeapOfWords<T,G>`)](#heap-of-words-class-heapofwordstg)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-2)
+        - [Heap of Words found on the paper (`class HoWPaper<T,G>`)](#heap-of-words-found-on-the-paper-class-howpapertg)
+          - [Member variables](#member-variables-2)
+        - [Heap (`class Heap<T,G>`)](#heap-class-heaptg)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-3)
+        - [Heap (`class Heap<T,G>`)](#heap-class-heaptg-1)
+          - [Member variables:](#member-variables-3)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-4)
+        - [Incremental Heap (`class IncrementalHeap<T,G>`)](#incremental-heap-class-incrementalheaptg)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-5)
+        - [Binomial Heap (`class BinomialHeap<T,G>`)](#binomial-heap-class-binomialheaptg)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-6)
+      - [Evaluation](#evaluation)
+        - [Ranked Evaluator (`class RankedEvaluator`)](#ranked-evaluator-class-rankedevaluator)
+          - [Member variables:](#member-variables-4)
+          - [Member functions (non-trivial ones):](#member-functions-non-trivial-ones-7)
+
+
+## User Documentation
+Here we present the tool to make use of the ranked enumeration experimental feature inside the REmatch project. This part asumes that the user already has the ```ranked``` binary file. If not then please refer to the [developer documentation](#installation-install) section.
+
+
+### Common usage
 The usage of the `ranked-enum` tool depends on a storage file for the weighted-DFA that we'll use as an input pattern. Luckily, the tool has a determinization output option:
 ```
 build/Release/bin/ranked-enum -e '.*!x{a|b}.*' --determinize > A1.txt
@@ -23,7 +73,7 @@ x = |0,1> (3.07)
 x = |3,4> (3.61)
 ```
 As the example shows, the corrects mappings will be ordered from lowest to highest value.
-##### Editing the weighted-VA transitions
+### Editing the weighted-VA transitions
 The user however might want to input his own weights to the input automaton. If we look at `A1.txt`:
 ```
 t 6 {.|()|0.79} 8
@@ -55,10 +105,11 @@ That codes that a certain `state` is initial or final (`i` or `f`) and with a ce
 The user then might try to change the weights in particular for the transitions manually, and then input the resulting file to the `ranked-enumeration` tool.
 
 ## Experiments
+### Document
 As a simple experiment, we have provide different random-weighted DFA's based on a set of simple queries acting on logs of sparql. Here we show the first 3 lines of the original 2000 lines document (`1.2 MiB`):
 ```
 Sat,  8 Nov 2014 04:03:50 +0000	bm.rkbexplorer.com	sparql	PREFIX id: <http://bm.rkbexplorer.com/id/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX owl:  <http://www.w3.org/2002/07/owl#> PREFIX bm:   <http://www.britishmuseum.ac.uk/ontologies/conservation#> SELECT DISTINCT ?a_analysisDate, ?a_analysisTitle, ?a WHERE { <http://bm.rkbexplorer.com/id/merlin-PDB354> bm:hasObjectScience ?analysis . ?analysis bm:ID ?a ; bm:analysisTitle ?a_analysisTitle OPTIONAL {?analysis bm:analysisDate ?a_analysisDate }}
-Sat,  8 Nov 2014 04:03:51 +0000	darmstadt.rkbexplorer.com	sparql	ASK WHERE   { ?s ?p ?o } 
+Sat,  8 Nov 2014 04:03:51 +0000	darmstadt.rkbexplorer.com	sparql	ASK WHERE   { ?s ?p ?o }
 Sat,  8 Nov 2014 04:03:52 +0000	bm.rkbexplorer.com	sparql	PREFIX id: <http://bm.rkbexplorer.com/id/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX owl:  <http://www.w3.org/2002/07/owl#> PREFIX bm:   <http://www.britishmuseum.ac.uk/ontologies/conservation#> SELECT DISTINCT ?e_agreedTreatment,?e_treatmentReason, ?t_treatmentEndDate, ?c, ?e, ?t WHERE { <http://bm.rkbexplorer.com/id/merlin-JCF4286> bm:hasObjectConservation ?c . ?c bm:hasConservationEvent ?e . ?e bm:hasTreatment ?t ; bm:treatmentReason ?treatmentReasonTerm . ?t bm:parentConservation ?c OPTIONAL {?e bm:agreedTreatment ?e_agreedTreatment } . OPTIONAL { ?treatmentReasonTerm rdfs:label ?e_treatmentReason } . OPTIONAL { ?t bm:treatmentEndDate ?t_treatmentEndDate } }
 
 ```
@@ -84,7 +135,7 @@ We now present a developer documentation for the compilation of the codebase and
 
 ### Installation
 
-First, `ranked-enum` has a dependency on CMake (>= 3.14) and the Boost Libraries (>= 1.58). This are the dependencies of `REmatch` also. We asume that the user is on a Debian-based distro. For windows installation of these dependencies we recommend to follow the links of the projects homepages.
+First, `ranked-enum` has a dependency on [CMake](https://cmake.org/) (>= 3.14) and the [Boost Libraries](https://www.boost.org/) (>= 1.58). This are the dependencies of `REmatch` also. We asume that the user is on a Debian-based distro. For windows installation of these dependencies we recommend to follow the links of the projects homepages.
 
 To install CMake and Boost Libraries:
 ```
@@ -400,6 +451,3 @@ To understand the behavior of the algorithm, please refer to the paper.
 
 + `void read(char a, long pos)`
     Internal function that executes a step of the algorithm for each read character `a` and in a given position `pos`.
-
-
-
