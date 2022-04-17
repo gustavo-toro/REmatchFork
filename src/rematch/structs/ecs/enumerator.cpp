@@ -16,10 +16,7 @@ namespace internal {
 
 Enumerator::Enumerator(RegEx &r)
     : var_factory_(r.vfactory()),
-      current_mapping_(var_factory_->size(), std::deque<int64_t>(0)) {
-        // Add empty match if required
-        if (r.logicalVA().has_epsilon()) add_node(new ECS::Node(ECS::NodeType::kBottom));
-      }
+      current_mapping_(var_factory_->size(), std::deque<int64_t>(0)) { }
 
 Match_ptr Enumerator::next() {
   while (!stack_.empty()) {
