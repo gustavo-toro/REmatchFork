@@ -27,8 +27,6 @@ using Match_ptr = std::unique_ptr<Match>;
 #endif
 
 using Span = std::pair<int64_t, int64_t>;
-using SpanVec = std::vector<Span>;
-using StringVec = std::vector<std::string>;
 
 // Represents a match for easy access to the captured spans and substrings.
 // It doesn't store the correspondings substrings, so it's assumed that the
@@ -41,33 +39,33 @@ class Match {
  public:
   Match() = default;
 
-  Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m)
-      : data_(m), var_factory_(vf) {}
+  Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m, std::map<size_t, std::bitset<32>> om)
+      : var_factory_(vf), data_(m), ordered_data_(om) {}
 
-  // TODO: Implement this
-  operator bool() const;
   // Returns a variable's [i, j) span
   Span span(std::string var) const;
   // TODO: Implement this
-  SpanVec spans(std::string var) const;
+  // Iter<Span> spans(std::string var) const;
   // Returns a variable's captured substring
   std::string group(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // TODO: Implement this
-  StringVec groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
+  // Iter<std::string> groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
   // TODO: Implement this
-  Match_ptr submatches(Span s) const;
+  Match submatch(Span s) const;
   // Pretty print
   std::string pprint(std::shared_ptr<StrDocument>& doc) const;
   // ostream representation
   friend std::ostream& operator<<(std::ostream& os, Match& m);
 
  private:
-  // Stores each variable spans
-  std::vector<std::deque<int64_t>> data_;
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
+  // Stores each variable spans
+  std::vector<std::deque<int64_t>> data_;
+  // Stores opening and closing variables ordered by position
+  std::map<size_t, std::bitset<32>> ordered_data_;
 
 };  // end class Match
 

@@ -16,40 +16,43 @@ namespace internal {
 
 Enumerator::Enumerator(RegEx &r)
     : var_factory_(r.vfactory()),
-      current_mapping_(var_factory_->size(), std::deque<int64_t>(0)) { }
+      current_mapping_(var_factory_->size(), std::deque<int64_t>(0)) {}
 
 Match_ptr Enumerator::next() {
   while (!stack_.empty()) {
     EnumState current_state = stack_.back();
     ECS::Node *current_node = current_state.node;
     std::vector<int64_t> &trim_counter = current_state.trim_counter;
-    
+    std::map<size_t, std::bitset<32>> &ordered_mapping = current_state.ordered_mapping;
+
     stack_.pop_back();
 
-    // Trim each variable array from the right
+    // Erase each variable array, keeping the last trim_counter[j] elements
     for (size_t j = 0; j < var_factory_->size(); j++)
       current_mapping_[j].erase(current_mapping_[j].begin(), current_mapping_[j].end() - trim_counter[j]);
 
     if (current_node->is_bottom()) {
       tot_mappings_++;
-      Match_ptr ret(new Match(var_factory_, current_mapping_));
+      Match_ptr ret(new Match(var_factory_, current_mapping_, ordered_mapping));
       return ret;
     }
 
     if (current_node->is_output()) {  // If label node
       internal::ECS::Data dt = current_node->data();
-      for (size_t j = var_factory_->size() * 2; j-- > 0 ;) {
+      for (size_t j = var_factory_->size() * 2; j-- > 0;) {
         if (dt.S[j]) {
           current_mapping_[j / 2].push_front(dt.i - var_factory_->get_offset(j));
           trim_counter[j / 2]++;
+          // Store variable on its position
+          auto pos = dt.i - var_factory_->get_offset(j);
+          ordered_mapping[pos][j] = 1;
         }
         // TODO: Hacer una version con/sin offset dependiendo del automata
       }
-
-      stack_.emplace_back(current_node->next(), trim_counter);
+      stack_.emplace_back(current_node->next(), trim_counter, ordered_mapping);
     } else {  // If union node
-      stack_.emplace_back(current_node->right(), trim_counter);
-      stack_.emplace_back(current_node->left(), trim_counter);
+      stack_.emplace_back(current_node->right(), trim_counter, ordered_mapping);
+      stack_.emplace_back(current_node->left(), trim_counter, ordered_mapping);
     }
   }  // end while()
 

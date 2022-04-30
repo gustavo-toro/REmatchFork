@@ -23,7 +23,6 @@ namespace rematch {
 class RegEx;
 
 namespace internal {
-
 // Interface for enumerating the DAG-like structure obtained after
 // the evaluation step (preprocessing the ourput). It uses the common
 // methods next() and hasNext() for obtaining the outputs.
@@ -32,7 +31,7 @@ class Enumerator {
   Enumerator(RegEx& r);
 
   void add_node(internal::ECS::Node* n) {
-    stack_.emplace_back(n, std::vector<int64_t>(var_factory_->size(), 0));
+    stack_.emplace_back(n, std::vector<int64_t>(var_factory_->size(), 0), std::map<size_t, std::bitset<32>>());
   };
 
   bool has_next() const { return !stack_.empty(); }
@@ -43,15 +42,18 @@ class Enumerator {
   void next(Match* m);
 
  private:
-  // Stores the current node and each variable counter for trimming
-  // its array of spans.
+  // Stores the current node and other state elements
   struct EnumState {
     ECS::Node* node;
+    // Counter for trimming each variable deque
     std::vector<int64_t> trim_counter;
+    // Ordered map of positions and variables
+    std::map<size_t, std::bitset<32>> ordered_mapping;
 
-    EnumState(ECS::Node* n, std::vector<int64_t> tc)
-        : node(n), trim_counter(tc) {}
+    EnumState(ECS::Node* n, std::vector<int64_t> tc, std::map<size_t, std::bitset<32>> om)
+        : node(n), trim_counter(tc), ordered_mapping(om) {}
   };  // end struct EnumState
+
   // Reference to Variable Factory
   std::shared_ptr<VariableFactory> var_factory_;
   // Stack
