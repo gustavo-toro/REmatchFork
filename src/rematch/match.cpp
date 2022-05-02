@@ -18,14 +18,19 @@ SpanIterator Match::spans(std::string var) const {
 }
 
 Span Match::span(std::string var) const {
-  try {
-    int pos = var_factory_->position(var);
-    // TODO: change empty return
-    if (data_[pos].empty()) return std::make_pair(-3, -3);
-    return std::make_pair(data_[pos][0], data_[pos][1]);
-  } catch (...) {
-    throw std::logic_error("No mapping assigned to variable.");
-  }
+  int pos = var_factory_->position(var);
+  // TODO: change empty return
+  if (data_[pos].empty()) return std::make_pair(-3, -3);
+  return std::make_pair(data_[pos][0], data_[pos][1]);
+}
+
+void Match::submatch(std::string var) const {
+  // Match m = Match(var_factory_, data_, ordered_mapping);
+  // auto it = ordered_data.begin();
+  // while (it != ordered_data.end()) {
+  //   std::cout << it->first << '\t' << it->second << std::endl;
+  //   it++;
+  // }
 }
 
 std::string Match::group(std::string var, std::shared_ptr<StrDocument>& doc) const {

@@ -1,9 +1,14 @@
-#ifndef SPAN_ITERATOR_HPP
-#define SPAN_ITERATOR_HPP
+#ifndef STRUCTS__MATCH__SPAN_ITERATOR_HPP
+#define STRUCTS__MATCH__SPAN_ITERATOR_HPP
 
-#include "match.hpp"
+#include <bitset>
+#include <map>
+#include <utility>
 
 namespace rematch {
+
+using Span = std::pair<int64_t, int64_t>;
+using MatchData = std::map<int64_t, std::bitset<32>>;
 
 class SpanIterator {
   public:
@@ -17,4 +22,4 @@ class SpanIterator {
 
 } // end namespace rematch
 
-#endif // SPAN_ITERATOR_HPP
+#endif // STRUCTS__MATCH__SPAN_ITERATOR_HPP

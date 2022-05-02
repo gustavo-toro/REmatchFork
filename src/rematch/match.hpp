@@ -39,18 +39,20 @@ class Match {
   Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m, MatchData d)
       : var_factory_(vf), data_(m), ordered_data(d) {}
 
-  // TODO: Implement this
+  // Returns a variable's iterator of spans
   SpanIterator spans(std::string var) const;
-  // Returns a variable's [i, j) span
+  // TODO: REMOVE data_ DEPENDENCY 
+  // Returns a variable's span
   Span span(std::string var) const;
+  // TODO: Implement this
+  void submatch(std::string var) const;
+  // TODO: REMOVE data_ DEPENDENCY 
   // Returns a variable's captured substring
   std::string group(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // TODO: Implement this
   // Iter<std::string> groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
-  // TODO: Implement this
-  Match submatch(Span s) const;
   // Pretty print
   std::string pprint(std::shared_ptr<StrDocument>& doc) const;
   // ostream representation

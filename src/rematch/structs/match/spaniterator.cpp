@@ -1,7 +1,5 @@
 #include "spaniterator.hpp"
 
-#include "match.hpp"
-
 namespace rematch {
 
 SpanIterator::SpanIterator(const MatchData* d, int i)
