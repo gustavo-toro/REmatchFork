@@ -31,7 +31,7 @@ class Enumerator {
   Enumerator(RegEx& r);
 
   void add_node(internal::ECS::Node* n) {
-    stack_.emplace_back(n, std::vector<int64_t>(var_factory_->size(), 0), std::map<size_t, std::bitset<32>>());
+    stack_.emplace_back(n, std::vector<int64_t>(var_factory_->size(), 0), MatchData());
   };
 
   bool has_next() const { return !stack_.empty(); }
@@ -48,9 +48,9 @@ class Enumerator {
     // Counter for trimming each variable deque
     std::vector<int64_t> trim_counter;
     // Ordered map of positions and variables
-    std::map<size_t, std::bitset<32>> ordered_mapping;
+    MatchData ordered_mapping;
 
-    EnumState(ECS::Node* n, std::vector<int64_t> tc, std::map<size_t, std::bitset<32>> om)
+    EnumState(ECS::Node* n, std::vector<int64_t> tc, MatchData om)
         : node(n), trim_counter(tc), ordered_mapping(om) {}
   };  // end struct EnumState
 

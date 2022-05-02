@@ -23,7 +23,7 @@ Match_ptr Enumerator::next() {
     EnumState current_state = stack_.back();
     ECS::Node *current_node = current_state.node;
     std::vector<int64_t> &trim_counter = current_state.trim_counter;
-    std::map<size_t, std::bitset<32>> &ordered_mapping = current_state.ordered_mapping;
+    MatchData &ordered_mapping = current_state.ordered_mapping;
 
     stack_.pop_back();
 
@@ -41,11 +41,12 @@ Match_ptr Enumerator::next() {
       internal::ECS::Data dt = current_node->data();
       for (size_t j = var_factory_->size() * 2; j-- > 0;) {
         if (dt.S[j]) {
-          current_mapping_[j / 2].push_front(dt.i - var_factory_->get_offset(j));
+          int64_t idx = dt.i - var_factory_->get_offset(j);
+          
+          current_mapping_[j / 2].push_front(idx);
           trim_counter[j / 2]++;
-          // Store variable on its position
-          auto pos = dt.i - var_factory_->get_offset(j);
-          ordered_mapping[pos][j] = 1;
+          // Store variable on its index
+          ordered_mapping[idx][j] = 1;
         }
         // TODO: Hacer una version con/sin offset dependiendo del automata
       }

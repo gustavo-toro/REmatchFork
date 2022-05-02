@@ -4,8 +4,18 @@
 #include <sstream>
 
 #include "evaluation/document/strdocument.hpp"
+#include "structs/match/spaniterator.hpp"
 
 namespace rematch {
+
+SpanIterator Match::spans(std::string var) const {
+  int pos = var_factory_->position(var);
+  SpanIterator s_iter = SpanIterator(&ordered_data, pos);
+  // for(auto span = s_iter.next(); span != nullptr; span = s_iter.next()) {
+  //   std::cout << '|' << span->first << ',' << span->second << '>' << std::endl;
+  // }
+  return s_iter;
+}
 
 Span Match::span(std::string var) const {
   try {
