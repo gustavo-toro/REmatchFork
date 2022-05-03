@@ -9,7 +9,7 @@ namespace rematch {
 
 SpanIterator Match::spans(std::string var) const {
   int pos = var_factory_->position(var);
-  SpanIterator s_iter = SpanIterator(&ordered_data, pos);
+  SpanIterator s_iter = SpanIterator(&data, pos);
   return s_iter;
 }
 
@@ -21,7 +21,10 @@ Span* Match::span(std::string var) const {
 
 Match Match::submatch(Span* s) const {
   // TODO: FILTER DATA
-  Match m = Match(var_factory_, data_, ordered_data);
+  Match m = Match(var_factory_, data);
+  // std::lower_bound;
+  // algo >= s->first;
+  // algo <  s->second;
   return m;
 }
 

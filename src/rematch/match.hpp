@@ -37,8 +37,8 @@ class Match {
  public:
   Match() = default;
 
-  Match(std::shared_ptr<VariableFactory> vf, std::vector<std::deque<int64_t>> m, MatchData d)
-      : var_factory_(vf), data_(m), ordered_data(d) {}
+  Match(std::shared_ptr<VariableFactory> vf, MatchData md)
+      : var_factory_(vf), data(md) { }
 
   // Returns a variable's iterator of spans
   SpanIterator spans(std::string var) const;
@@ -60,10 +60,11 @@ class Match {
  private:
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
-  // Stores each variable spans
-  std::vector<std::deque<int64_t>> data_;
   // Stores opening and closing variables ordered by position
-  MatchData ordered_data;
+  MatchData data;
+  // TODO
+  // MatchData::const_iterator s;
+  // MatchData::const_iterator e;
 
 };  // end class Match
 
