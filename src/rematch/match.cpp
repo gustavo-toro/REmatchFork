@@ -4,44 +4,37 @@
 #include <sstream>
 
 #include "evaluation/document/strdocument.hpp"
-#include "structs/match/spaniterator.hpp"
 
 namespace rematch {
 
 SpanIterator Match::spans(std::string var) const {
   int pos = var_factory_->position(var);
   SpanIterator s_iter = SpanIterator(&ordered_data, pos);
-  // for(auto span = s_iter.next(); span != nullptr; span = s_iter.next()) {
-  //   std::cout << '|' << span->first << ',' << span->second << '>' << std::endl;
-  // }
   return s_iter;
 }
 
-Span Match::span(std::string var) const {
-  int pos = var_factory_->position(var);
-  // TODO: change empty return
-  if (data_[pos].empty()) return std::make_pair(-3, -3);
-  return std::make_pair(data_[pos][0], data_[pos][1]);
+Span* Match::span(std::string var) const {
+  SpanIterator s_iter = spans(var);
+  Span* s = s_iter.next();
+  return s;
 }
 
-void Match::submatch(std::string var) const {
-  // Match m = Match(var_factory_, data_, ordered_mapping);
-  // auto it = ordered_data.begin();
-  // while (it != ordered_data.end()) {
-  //   std::cout << it->first << '\t' << it->second << std::endl;
-  //   it++;
-  // }
+Match Match::submatch(Span* s) const {
+  // TODO: FILTER DATA
+  Match m = Match(var_factory_, data_, ordered_data);
+  return m;
 }
 
-std::string Match::group(std::string var, std::shared_ptr<StrDocument>& doc) const {
-  try {
-    int pos = var_factory_->position(var);
-    // TODO: change empty return
-    if (data_[pos].empty()) return "";
-    return doc->substring(data_[pos][0], data_[pos][1]);
-  } catch (...) {
-    throw std::logic_error("No mapping assigned to variable.");
-  }
+StringIterator Match::groups(std::string var, std::shared_ptr<StrDocument>& doc) const {
+  SpanIterator s_iter = spans(var);
+  StringIterator g_iter = StringIterator(s_iter, doc);
+  return g_iter;
+}
+
+std::string* Match::group(std::string var, std::shared_ptr<StrDocument>& doc) const {
+  StringIterator g_iter = groups(var, doc);
+  std::string* g = g_iter.next();
+  return g;
 }
 
 std::vector<std::string> Match::variables() const {
@@ -50,28 +43,27 @@ std::vector<std::string> Match::variables() const {
 
 std::string Match::pprint(std::shared_ptr<StrDocument>& doc) const {
   std::stringstream ss;
-  for (size_t i = 0; i < data_.size(); i++) {
-    ss << var_factory_->get_var(i) << " =";
-    for (size_t j = 0; j < data_[i].size() / 2; j++) {
-      ss << " \""
-         << doc->substring(data_[i][2 * j], data_[i][2 * j + 1])
-         << "\"";
+  for (size_t i = 0; i < var_factory_->size(); i++) {
+    std::string var = var_factory_->get_var(i);
+    StringIterator g_iter = groups(var, doc);
+    ss << var << " =";
+    for (auto g = g_iter.next(); g != nullptr; g = g_iter.next()) {
+      ss << " \"" << *g << '\"';
     }
+    ss << std::endl;
   }
   return ss.str();
 }
 
 std::ostream& operator<<(std::ostream& os, Match& m) {
-  for (size_t i = 0; i < m.data_.size(); i++) {
-    os << m.var_factory_->get_var(i) << " =";
-    for (size_t j = 0; j < m.data_[i].size() / 2; j++) {
-      os << " |"
-         << m.data_[i][2 * j]
-         << ','
-         << m.data_[i][2 * j + 1]
-         << '>';
+  for (size_t i = 0; i < m.var_factory_->size(); i++) {
+    std::string var = m.var_factory_->get_var(i);
+    SpanIterator s_iter = m.spans(var);
+    os << var << " =";
+    for (auto s = s_iter.next(); s != nullptr; s = s_iter.next()) {
+      os << " |" << s->first << ',' << s->second << '>';
     }
-    os << '\n';
+    os << std::endl;
   }
   return os;
 }

@@ -11,6 +11,7 @@
 
 #include "factories/factories.hpp"
 #include "structs/match/spaniterator.hpp"
+#include "structs/match/stringiterator.hpp"
 
 namespace rematch {
 
@@ -41,16 +42,14 @@ class Match {
 
   // Returns a variable's iterator of spans
   SpanIterator spans(std::string var) const;
-  // TODO: REMOVE data_ DEPENDENCY 
   // Returns a variable's span
-  Span span(std::string var) const;
-  // TODO: Implement this
-  void submatch(std::string var) const;
-  // TODO: REMOVE data_ DEPENDENCY 
+  Span* span(std::string var) const;
+  // Return a variable's iterator of captured substrings
+  StringIterator groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // Returns a variable's captured substring
-  std::string group(std::string var, std::shared_ptr<StrDocument>& doc) const;
+  std::string* group(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // TODO: Implement this
-  // Iter<std::string> groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
+  Match submatch(Span* s) const;
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
   // Pretty print

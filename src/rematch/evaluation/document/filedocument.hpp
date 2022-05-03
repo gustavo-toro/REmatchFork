@@ -1,6 +1,8 @@
 #ifndef EVALUATION__DOCUMENT__FILEDOCUMENT_HPP
 #define EVALUATION__DOCUMENT__FILEDOCUMENT_HPP
 
+#include <vector>
+
 #include "evaluation/document/document.hpp"
 
 namespace rematch {
