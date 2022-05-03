@@ -35,7 +35,7 @@ ExtendedVA::ExtendedVA(LogicalVA const &A, Anchor a)
 	}
 
 	#ifndef NOPT_OFFSET
-		offsetOpt();
+		// offsetOpt();
 	#endif
 
 	captureClosure();
