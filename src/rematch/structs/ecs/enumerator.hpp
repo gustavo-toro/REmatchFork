@@ -46,10 +46,10 @@ class Enumerator {
   struct EnumState {
     ECS::Node* node;
     // Ordered map of positions and variables
-    MatchData ordered_mapping;
+    MatchData current_mapping;
 
-    EnumState(ECS::Node* n, MatchData om)
-        : node(n), ordered_mapping(om) {}
+    EnumState(ECS::Node* n, MatchData md)
+        : node(n), current_mapping(md) {}
   };  // end struct EnumState
   // Reference to Variable Factory
   std::shared_ptr<VariableFactory> var_factory_;

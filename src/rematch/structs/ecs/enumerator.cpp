@@ -21,13 +21,13 @@ Match_ptr Enumerator::next() {
   while (!stack_.empty()) {
     EnumState current_state = stack_.back();
     ECS::Node *current_node = current_state.node;
-    MatchData &ordered_mapping = current_state.ordered_mapping;
+    MatchData &current_mapping = current_state.current_mapping;
 
     stack_.pop_back();
 
     if (current_node->is_bottom()) {
       tot_mappings_++;
-      Match_ptr ret(new Match(var_factory_, ordered_mapping));
+      Match_ptr ret(new Match(var_factory_, current_mapping));
       return ret;
     }
 
@@ -35,14 +35,14 @@ Match_ptr Enumerator::next() {
       internal::ECS::Data dt = current_node->data();
       for (size_t j = var_factory_->size() * 2; j-- > 0;) {
         if (dt.S[j]) {
-          ordered_mapping[dt.i - var_factory_->get_offset(j)][j] = 1;
+          current_mapping[dt.i - var_factory_->get_offset(j)][j] = 1;
         }
         // TODO: Hacer una version con/sin offset dependiendo del automata
       }
-      stack_.emplace_back(current_node->next(), ordered_mapping);
+      stack_.emplace_back(current_node->next(), current_mapping);
     } else {  // If union node
-      stack_.emplace_back(current_node->right(), ordered_mapping);
-      stack_.emplace_back(current_node->left(), ordered_mapping);
+      stack_.emplace_back(current_node->right(), current_mapping);
+      stack_.emplace_back(current_node->left(), current_mapping);
     }
   }  // end while()
 

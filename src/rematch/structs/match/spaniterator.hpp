@@ -15,7 +15,7 @@ class SpanIterator {
     SpanIterator(const MatchData* d, int i);
     Span* next();
   private:
-    const MatchData* ordered_data;
+    const MatchData* data;
     int pos;
     MatchData::const_iterator it;
 }; // end class SpanIterator
