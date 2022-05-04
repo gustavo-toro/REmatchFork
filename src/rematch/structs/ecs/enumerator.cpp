@@ -27,7 +27,7 @@ Match_ptr Enumerator::next() {
 
     if (current_node->is_bottom()) {
       tot_mappings_++;
-      Match_ptr ret(new Match(var_factory_, current_mapping));
+      Match_ptr ret(new Match(var_factory_, std::make_shared<MatchData>(current_mapping)));
       return ret;
     }
 

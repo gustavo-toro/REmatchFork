@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <map>
+#include <memory>
 #include <utility>
 
 namespace rematch {
@@ -12,12 +13,13 @@ using MatchData = std::map<int64_t, std::bitset<32>>;
 
 class SpanIterator {
   public:
-    SpanIterator(const MatchData* d, int i);
+    SpanIterator(const std::shared_ptr<MatchData> d, int i, MatchData::const_iterator s, MatchData::const_iterator e);
     Span* next();
   private:
-    const MatchData* data;
+    const std::shared_ptr<MatchData> data;
     int pos;
-    MatchData::const_iterator it;
+    MatchData::const_iterator it_lower;
+    MatchData::const_iterator it_upper;
 }; // end class SpanIterator
 
 } // end namespace rematch

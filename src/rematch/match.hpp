@@ -37,8 +37,14 @@ class Match {
  public:
   Match() = default;
 
-  Match(std::shared_ptr<VariableFactory> vf, MatchData md)
-      : var_factory_(vf), data(md) { }
+  Match(std::shared_ptr<VariableFactory> vf, std::shared_ptr<MatchData> md)
+      : var_factory_(vf), data(md) {
+    it_lower = data->begin();
+    it_upper = data->end();
+  }
+
+  Match(std::shared_ptr<VariableFactory> vf, std::shared_ptr<MatchData> md, MatchData::const_iterator s, MatchData::const_iterator e)
+      : var_factory_(vf), data(md), it_lower(s), it_upper(e) { }
 
   // Returns a variable's iterator of spans
   SpanIterator spans(std::string var) const;
@@ -48,8 +54,8 @@ class Match {
   StringIterator groups(std::string var, std::shared_ptr<StrDocument>& doc) const;
   // Returns a variable's captured substring
   std::string* group(std::string var, std::shared_ptr<StrDocument>& doc) const;
-  // TODO: Implement this
-  Match submatch(Span* s) const;
+  // Returns a pointer to a Match with spans between s
+  Match_ptr submatch(Span* s) const;
   // Returns a vector with the variable names in order
   std::vector<std::string> variables() const;
   // Pretty print
@@ -61,10 +67,10 @@ class Match {
   // Access to variable names
   std::shared_ptr<VariableFactory> var_factory_;
   // Stores opening and closing variables ordered by position
-  MatchData data;
-  // TODO
-  // MatchData::const_iterator s;
-  // MatchData::const_iterator e;
+  std::shared_ptr<MatchData> data;
+  // Range of this match. Submatches should be a subrange of its "parent"
+  MatchData::const_iterator it_lower;
+  MatchData::const_iterator it_upper;
 
 };  // end class Match
 
