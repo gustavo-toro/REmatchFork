@@ -26,19 +26,21 @@ parenthesis: '(' altern ')';
 
 assign: VARNAME '{' altern '}';
 
-atom: charX;
+atom: set | character;
 
-// set: '[' '^'? set_items ']';
+set: '[' '^'? set_items ']';
 
-// set_items: set_item set_items?;
+set_items: set_item set_items?;
 
-// set_item: range | set_char;
+set_item: set_char | range;
 
-// range: set_char '-' set_char;
+set_char:
+  '\\' (HAT | HYPHEN | R_BRACK)
+  | ~(HAT | HYPHEN | R_BRACK);
 
-// set_char: '\\' (HAT | HYPHEN | R_BRACK) | ~(HAT | HYPHEN | R_BRACK);
+range: set_char '-' set_char;
 
-charX:
+character:
   ESCAPE_CHARS
   | '\\' (
     EXCLAMATION_MARK

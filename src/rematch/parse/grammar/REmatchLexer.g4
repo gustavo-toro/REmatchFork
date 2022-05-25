@@ -2,7 +2,7 @@ lexer grammar REmatchLexer;
 
 // Composed tokens
 VARNAME: EXCLAMATION_MARK [A-Za-z0-9\-_]+;
-ESCAPE_CHARS: '\\' [aAbBdDfnrsStvwWzZ];
+ESCAPE_CHARS: BACKSLASH [aAbBdDfnrsStvwWzZ];
 UINT: '0' | [1-9] [0-9]*;
 
 DOT: '.';
