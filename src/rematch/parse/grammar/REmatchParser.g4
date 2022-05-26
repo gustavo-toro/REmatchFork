@@ -18,7 +18,7 @@ iter: group rep?;
 
 rep: '?' | '*' | '+' | span;
 
-span: '{' (UINT | ',' UINT | ',' UINT | UINT ',' UINT) '}';
+span: '{' (UINT | ',' UINT | UINT ',' | UINT ',' UINT) '}';
 
 group: parenthesis | assign | atom;
 
@@ -26,11 +26,11 @@ parenthesis: '(' altern ')';
 
 assign: VARNAME '{' altern '}';
 
-atom: set | character;
+atom: set | character | META_CHARS | DOT;
 
 set: '[' '^'? set_items ']';
 
-set_items: set_item set_items?;
+set_items: set_item+;
 
 set_item: set_char | range;
 
@@ -45,10 +45,8 @@ character:
   | '\\' (
     EXCLAMATION_MARK
     | DOT
-    | HAT
     | ASTERISK
     | PLUS
-    | HYPHEN
     | QUESTION_MARK
     | BACKSLASH
     | VERBAR
@@ -59,14 +57,11 @@ character:
     | L_CURLY
     | R_CURLY
   )
-  | '.'
   | ~(
     EXCLAMATION_MARK
     | DOT
-    | HAT
     | ASTERISK
     | PLUS
-    | HYPHEN
     | QUESTION_MARK
     | BACKSLASH
     | VERBAR
