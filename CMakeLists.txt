@@ -7,13 +7,13 @@ if(NOT CMAKE_BUILD_TYPE)
 	message(STATUS "Build type not specified. Using Release by default.")
 endif()
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable testing
-set(REMATCH_BUILD_TESTING ON)
+set(REMATCH_BUILD_TESTING OFF)
 # Enable benchmarks
-set(REMATCH_BUILD_BENCHMARKS ON)
+set(REMATCH_BUILD_BENCHMARKS OFF)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pthread -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra -pthread -O3 -g0 -pedantic")
@@ -35,6 +35,9 @@ set(REMATCH_LIBS "")
 
 include_directories(src/rematch)
 include_directories(SYSTEM src/thirdparty)
+# TODO: Change this
+include_directories(src/thirdparty/antlr4/runtime/src)
+
 
 find_package(Boost 1.58)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
@@ -48,7 +51,5 @@ message("REmatch libs: ${REMATCH_LIBS}")
 add_subdirectory(src/targets)
 
 if(REMATCH_BUILD_TESTING)
-	add_subdirectory(tests)
+add_subdirectory(tests)
 endif(REMATCH_BUILD_TESTING)
-
-
