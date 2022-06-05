@@ -1,7 +1,7 @@
 #------------------- LIBRARY CONFIGURATION ------------------------------------
 
 set(ANTLR4_CPP_RUNTIME antlr4_cpp_runtime CACHE INTERNAL "")
-file(GLOB_RECURSE ANTLR4_SRCS src/*.cpp)
+file(GLOB_RECURSE ANTLR4_SRCS runtime/src/*.cpp)
 set(ANTLR4_CPP_RUNTIME_SRC ${ANTLR4_SRCS})
 
 add_library(${ANTLR4_CPP_RUNTIME} ${ANTLR4_CPP_RUNTIME_SRC})

@@ -1,4 +1,9 @@
-# REmatch: An information extraction tool for regular document spanners 
+# BEFORE COMPILING THIS VERSION
+
+- Install antlr4 globally
+- Run `./src/rematch/parse/grammar/generate.sh` for generating ANTLR4's C++ files.
+
+# REmatch: An information extraction tool for regular document spanners
 
 This implementation is based on the paper `Constant delay algorithms for regular document spanners` by Fernando Florenzano, Cristian Riveros, Martín Ugarte, Stijn Vansummeren and Domagoj Vrgoč.
 
@@ -30,22 +35,28 @@ build/Release/bin/rematch --help
 #### Examples:
 
 Get all spans corresponding to a single letter `a`:
+
 ```
 build/Release/bin/rematch document.txt -e '.*!x{a}.*'
 ```
+
 Same as above but giving the text explicitly from args:
+
 ```
 build/Release/bin/rematch -t "bbbaaabbb" -e '.*!x{a}.*'
 ```
+
 Get all spans corresponding to a pattern in a file:
+
 ```
 build/Release/bin/rematch document.txt regex.txt
 ```
+
 Get benchmark stats (execution time, number of outputs, memory usage, etc.):
+
 ```
 build/Release/bin/rematch document.txt regex.txt --mode=benchmark
 ```
-
 
 ### Testing
 

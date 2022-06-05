@@ -44,6 +44,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 # No need to add Boost's libraries, we're using only boost's headers
 # list(APPEND project_LIBS ${Boost_LIBRARIES})
 
+add_subdirectory(src/thirdparty)
+
 add_subdirectory(src/rematch)
 
 message("REmatch libs: ${REMATCH_LIBS}")
