@@ -18,7 +18,9 @@ iter: group rep?;
 
 rep: '?' | '*' | '+' | span;
 
-span: '{' (UINT | ',' UINT | UINT ',' | UINT ',' UINT) '}';
+span: '{' (uint? ',' uint?) '}';
+
+uint: DIGIT+;
 
 group: parenthesis | assign | atom;
 
@@ -26,19 +28,19 @@ parenthesis: '(' altern ')';
 
 assign: VARNAME '{' altern '}';
 
-atom: set | character | META_CHARS | DOT;
+atom: set | metaChar | character;
 
-set: '[' '^'? set_items ']';
+set: '[' '^'? setItems ']';
 
-set_items: set_item+;
+setItems: setItem+;
 
-set_item: set_char | range;
+setItem: setChar | range;
 
-set_char:
+setChar:
   '\\' (HAT | HYPHEN | R_BRACK)
   | ~(HAT | HYPHEN | R_BRACK);
 
-range: set_char '-' set_char;
+range: setChar '-' setChar;
 
 character:
   ESCAPE_CHARS
@@ -72,3 +74,12 @@ character:
     | L_CURLY
     | R_CURLY
   );
+
+metaChar:
+  DOT
+  | ANY_DIGIT
+  | NOT_ANY_DIGIT
+  | ANY_WHITESPACE
+  | NOT_ANY_WHITESPACE
+  | ANY_ALPHA
+  | NOT_ANY_ALPHA;
