@@ -20,10 +20,10 @@ assignation: '!' variable '{' alternation '}';
 
 variable: ALPHANUMERIC+;
 
-atom: character_class | literal | shared_atom;
+atom: character_class | shared_atom | literal;
 
 character_class: '[' '^'? cc_atom+ ']';
-cc_atom: cc_range | cc_literal | shared_atom;
+cc_atom: cc_range | shared_atom | literal;
 cc_range: cc_literal '-' cc_literal;
 cc_literal: cc_escapes | cc_other;
 cc_escapes: '\\' ('^' | '-' | ']' | '\\');
