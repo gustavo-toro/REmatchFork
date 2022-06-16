@@ -1,85 +1,85 @@
-// https://www2.cs.sfu.ca/~cameron/Teaching/384/99-3/regexp-plg.html
-// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
-// https://www.ibm.com/docs/en/rational-clearquest/9.0.1?topic=tags-meta-characters-in-regular-expressions
-
 parser grammar REmatchParser;
 
 options {
   tokenVocab = REmatchLexer;
 }
 
-root: altern EOF;
+root: alternation EOF;
 
-altern: concat ('|' concat)*;
+alternation: expr ('|' expr)*;
 
-concat: iter+;
+expr: element*;
 
-iter: group rep?;
+element: group quantifier?;
 
-rep: '?' | '*' | '+' | span;
+group: parenthesis | assignation | atom;
 
-span: '{' (uint? ',' uint?) '}';
+parenthesis: '(' alternation ')';
 
-uint: DIGIT+;
+assignation: '!' variable '{' alternation '}';
 
-group: parenthesis | assign | atom;
+variable: ALPHANUMERIC+;
 
-parenthesis: '(' altern ')';
+atom: character_class | literal | shared_atom;
 
-assign: VARNAME '{' altern '}';
+character_class: '[' '^'? cc_atom+ ']';
+cc_atom: cc_range | cc_literal | shared_atom;
+cc_range: cc_literal '-' cc_literal;
+cc_literal: cc_escapes | cc_other;
+cc_escapes: '\\' ('^' | '-' | ']' | '\\');
+cc_other: ~('^' | '-' | ']' | '\\');
 
-atom: set | metaChar | character;
-
-set: '[' '^'? setItems ']';
-
-setItems: setItem+;
-
-setItem: setChar | range;
-
-setChar:
-  '\\' (HAT | HYPHEN | R_BRACK)
-  | ~(HAT | HYPHEN | R_BRACK);
-
-range: setChar '-' setChar;
-
-character:
-  ESCAPE_CHARS
-  | '\\' (
-    EXCLAMATION_MARK
-    | DOT
-    | ASTERISK
-    | PLUS
-    | QUESTION_MARK
-    | BACKSLASH
-    | VERBAR
-    | L_PAR
-    | R_PAR
-    | L_BRACK
-    | R_BRACK
-    | L_CURLY
-    | R_CURLY
-  )
-  | ~(
-    EXCLAMATION_MARK
-    | DOT
-    | ASTERISK
-    | PLUS
-    | QUESTION_MARK
-    | BACKSLASH
-    | VERBAR
-    | L_PAR
-    | R_PAR
-    | L_BRACK
-    | R_BRACK
-    | L_CURLY
-    | R_CURLY
+literal: escapes | other;
+escapes:
+  '\\' (
+    '['
+    | ']'
+    | '('
+    | ')'
+    | '{'
+    | '}'
+    | '*'
+    | '+'
+    | '?'
+    | '|'
+    | '.'
+    | '\\'
+  );
+other:
+  ~(
+    '['
+    | ']'
+    | '('
+    | ')'
+    | '{'
+    | '}'
+    | '*'
+    | '+'
+    | '?'
+    | '|'
+    | '.'
+    | '\\'
   );
 
-metaChar:
-  DOT
-  | ANY_DIGIT
-  | NOT_ANY_DIGIT
-  | ANY_WHITESPACE
-  | NOT_ANY_WHITESPACE
-  | ANY_ALPHA
-  | NOT_ANY_ALPHA;
+shared_atom:
+  DECIMAL_DIGIT
+  | NOT_DECIMAL_DIGIT
+  | HORIZONTAL_WHITESPACE
+  | NOT_HORIZONTAL_WHITESPACE
+  | NEW_LINE
+  | NOT_NEW_LINE
+  | WHITESPACE
+  | NOT_WHITESPACE
+  | VERTICAL_WHITESPACE
+  | NOT_VERTICAL_WHITESPACE
+  | WORD_CHAR
+  | NOT_WORD_CHAR;
+
+quantifier: '?' | '+' | '*' | '{' quantity '}';
+quantity: quantExact | quantRange | quantMin | quantMax;
+quantExact: number;
+quantRange: number ',' number;
+quantMin: number ',';
+quantMax: ',' number;
+
+number: DIGIT+;
