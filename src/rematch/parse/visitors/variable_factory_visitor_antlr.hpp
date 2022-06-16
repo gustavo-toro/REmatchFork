@@ -7,16 +7,15 @@
 
 namespace rematch {
 
-class VariableFactoryVisitor : public REmatchParserVisitor {
+class VariableFactoryVisitor : public REmatchParserBaseVisitor {
  public:
-  virtual std::any visitRoot(REmatchParser::RootContext *ctx) override {
-    auto vfact = visit(ctx->altern());
+  std::any visitRoot(REmatchParser::RootContext *ctx) final {
+    auto vfact = visit(ctx->alternation());
 
     return vfact;
   }
 
-  virtual std::any visitAlternation(
-      REmatchParser::AlternationContext *ctx) override {
+  std::any visitAlternation(REmatchParser::AlternationContext *ctx) final {
     std::any vfact = visit(ctx->expr().front());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
@@ -34,7 +33,7 @@ class VariableFactoryVisitor : public REmatchParserVisitor {
     return vfact;
   }
 
-  virtual std::any visitExpr(REmatchParser::ExprContext *ctx) override {
+  std::any visitExpr(REmatchParser::ExprContext *ctx) final {
     std::any vfact = visit(ctx->element().front());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
@@ -50,16 +49,18 @@ class VariableFactoryVisitor : public REmatchParserVisitor {
     return vfact;
   }
 
-  virtual std::any visitElement(REmatchParser::ElementContext *ctx) override {
+  std::any visitElement(REmatchParser::ElementContext *ctx) final {
     std::any vfact = visit(ctx->group());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
     if (ctx->quantifier() != nullptr && !vfact_cast.empty()) {
       throw parsing::BadRegex("Quantifier cannot be applied to a variable");
     }
+
+    return vfact;
   }
 
-  virtual std::any visitGroup(REmatchParser::GroupContext *ctx) override {
+  std::any visitGroup(REmatchParser::GroupContext *ctx) final {
     std::any vfact;
 
     if (ctx->parenthesis() != nullptr) {
@@ -73,15 +74,13 @@ class VariableFactoryVisitor : public REmatchParserVisitor {
     return vfact;
   }
 
-  virtual std::any visitParenthesis(
-      REmatchParser::ParenthesisContext *ctx) override {
+  std::any visitParenthesis(REmatchParser::ParenthesisContext *ctx) final {
     std::any vfact = visit(ctx->alternation());
 
     return vfact;
   }
 
-  virtual std::any visitAssignation(
-      REmatchParser::AssignationContext *ctx) override {
+  std::any visitAssignation(REmatchParser::AssignationContext *ctx) final {
     std::any vfact = visit(ctx->alternation());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
@@ -93,7 +92,7 @@ class VariableFactoryVisitor : public REmatchParserVisitor {
     return vfact;
   }
 
-  virtual std::any visitAtom(REmatchParser::AtomContext *ctx) override {
+  std::any visitAtom(REmatchParser::AtomContext *ctx) final {
     return std::make_any<VariableFactory>();
   }
 };
