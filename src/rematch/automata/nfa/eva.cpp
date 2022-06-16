@@ -35,7 +35,7 @@ ExtendedVA::ExtendedVA(LogicalVA const &A, Anchor a)
 	}
 
 	#ifndef NDEBUG
-	std::cout << "EvaluationVA before offset:\n" << *this << "\n\n";
+	// std::cout << "EvaluationVA before offset:\n" << *this << "\n\n";
 	#endif
 
 
@@ -52,7 +52,7 @@ ExtendedVA::ExtendedVA(LogicalVA const &A, Anchor a)
 	relabelStates();
 
 	#ifndef NDEBUG
-	std::cout << "EvaluationVA after relabeling:\n" << *this << "\n\n";
+	// std::cout << "EvaluationVA after relabeling:\n" << *this << "\n\n";
 	#endif
 
 }

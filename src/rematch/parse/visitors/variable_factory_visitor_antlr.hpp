@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "antlr4-runtime.h"
 #include "exceptions.hpp"
 #include "factories/factories.hpp"
@@ -9,25 +7,26 @@
 
 namespace rematch {
 
-class VariableFactoryVisitor : public REmatchParserBaseVisitor {
+class VariableFactoryVisitor : public REmatchParserVisitor {
  public:
-  std::any visitRoot(REmatchParser::RootContext *ctx) final {
+  virtual std::any visitRoot(REmatchParser::RootContext *ctx) override {
     auto vfact = visit(ctx->altern());
 
     return vfact;
   }
 
-  std::any visitAltern(REmatchParser::AlternContext *ctx) final {
-    std::any vfact = visit(ctx->concat().front());
+  virtual std::any visitAlternation(
+      REmatchParser::AlternationContext *ctx) override {
+    std::any vfact = visit(ctx->expr().front());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
-    size_t children_size = ctx->concat().size();
+    size_t children_size = ctx->expr().size();
     if (children_size > 1) {
       for (size_t i = 1; i < children_size; i++) {
-        std::any rhs = visit(ctx->concat()[i]);
+        std::any rhs = visit(ctx->expr()[i]);
         VariableFactory &rhs_cast = std::any_cast<VariableFactory &>(rhs);
         if (!(vfact_cast == rhs_cast)) {
-          throw parsing::BadRegex("Not a functional regex. (altern)");
+          throw parsing::BadRegex("Alternation variables differ");
         }
       }
     }
@@ -35,14 +34,14 @@ class VariableFactoryVisitor : public REmatchParserBaseVisitor {
     return vfact;
   }
 
-  std::any visitConcat(REmatchParser::ConcatContext *ctx) final {
-    std::any vfact = visit(ctx->iter().front());
+  virtual std::any visitExpr(REmatchParser::ExprContext *ctx) override {
+    std::any vfact = visit(ctx->element().front());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
-    size_t children_size = ctx->iter().size();
+    size_t children_size = ctx->element().size();
     if (children_size > 1) {
       for (size_t i = 1; i < children_size; i++) {
-        std::any rhs = visit(ctx->iter()[i]);
+        std::any rhs = visit(ctx->element()[i]);
         VariableFactory &rhs_cast = std::any_cast<VariableFactory &>(rhs);
         vfact_cast.merge(rhs_cast);
       }
@@ -51,48 +50,51 @@ class VariableFactoryVisitor : public REmatchParserBaseVisitor {
     return vfact;
   }
 
-  std::any visitIter(REmatchParser::IterContext *ctx) final {
+  virtual std::any visitElement(REmatchParser::ElementContext *ctx) override {
     std::any vfact = visit(ctx->group());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
-    if (ctx->rep() != nullptr && !vfact_cast.empty()) {
-      throw parsing::BadRegex("Not a functional regex. (iter)");
+    if (ctx->quantifier() != nullptr && !vfact_cast.empty()) {
+      throw parsing::BadRegex("Quantifier cannot be applied to a variable");
     }
-
-    return vfact;
   }
 
-  std::any visitGroup(REmatchParser::GroupContext *ctx) final {
+  virtual std::any visitGroup(REmatchParser::GroupContext *ctx) override {
+    std::any vfact;
+
     if (ctx->parenthesis() != nullptr) {
-      return visit(ctx->parenthesis());
-    } else if (ctx->assign() != nullptr) {
-      return visit(ctx->assign());
+      vfact = visit(ctx->parenthesis());
+    } else if (ctx->assignation() != nullptr) {
+      vfact = visit(ctx->assignation());
     } else if (ctx->atom() != nullptr) {
-      return visit(ctx->atom());
+      vfact = visit(ctx->atom());
     }
-  }
-
-  std::any visitParenthesis(REmatchParser::ParenthesisContext *ctx) final {
-    std::any vfact = visit(ctx->altern());
 
     return vfact;
   }
 
-  std::any visitAssign(REmatchParser::AssignContext *ctx) final {
-    std::any vfact = visit(ctx->altern());
+  virtual std::any visitParenthesis(
+      REmatchParser::ParenthesisContext *ctx) override {
+    std::any vfact = visit(ctx->alternation());
+
+    return vfact;
+  }
+
+  virtual std::any visitAssignation(
+      REmatchParser::AssignationContext *ctx) override {
+    std::any vfact = visit(ctx->alternation());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
-    if (vfact_cast.contains(ctx->VARNAME()->getText())) {
-      throw parsing::BadRegex("Not a functional regex. (assign)");
+    if (vfact_cast.contains(ctx->variable()->getText())) {
+      throw parsing::BadRegex("Same variable assigned twice in the same group");
     }
-    vfact_cast.add(ctx->VARNAME()->getText());
+    vfact_cast.add(ctx->variable()->getText());
 
     return vfact;
   }
 
-  std::any visitAtom(REmatchParser::AtomContext *ctx) final {
+  virtual std::any visitAtom(REmatchParser::AtomContext *ctx) override {
     return std::make_any<VariableFactory>();
   }
 };
-
 }  // namespace rematch

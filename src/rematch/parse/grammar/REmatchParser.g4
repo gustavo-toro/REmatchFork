@@ -8,7 +8,7 @@ root: alternation EOF;
 
 alternation: expr ('|' expr)*;
 
-expr: element*;
+expr: element+;
 
 element: group quantifier?;
 

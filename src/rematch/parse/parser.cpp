@@ -22,10 +22,14 @@ std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
   // Build Variable Factory
   VariableFactoryVisitor vfv;
   VariableFactory vfact = std::any_cast<VariableFactory>(vfv.visitRoot(root));
-  std::cout << "2. Variable Factory Built:" << std::endl;
+  std::cout << "2. Variable Factory Built." << std::endl;
   std::cout << vfact.pprint() << std::endl;
 
   // TODO: Build Filter Factory
+  // FilterFactoryVisitor ffv;
+  // ffv.visitRoot(root);
+  // std::cout << "3. Filter Factory Built." << std::endl;
+  // std::cout << ffv.ffact.pprint() << std::endl;
 
   // TODO: Build Logical VA
 
@@ -46,6 +50,7 @@ std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
   // A->set_factories(v, f);
 
   // return A;
+  return 0;
 }
 
 }  // end namespace rematch

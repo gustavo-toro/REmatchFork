@@ -24,7 +24,7 @@ SearchVA::SearchVA(LogicalVA const &A, Anchor a)
   A_prim.relabel_states();
 
   #ifndef NDEBUG
-  std::cout << "SearchVA:\n" << A_prim << "\n\n";
+  // std::cout << "SearchVA:\n" << A_prim << "\n\n";
   #endif
 
   states_.swap(A_prim.states);
