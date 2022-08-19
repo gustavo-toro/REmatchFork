@@ -12,9 +12,9 @@ expr: element+;
 
 element: group quantifier?;
 
-group: parenthesis | assignation | atom;
+group: parentheses | assignation | atom;
 
-parenthesis: '(' alternation ')';
+parentheses: '(' alternation ')';
 
 assignation: '!' variable '{' alternation '}';
 

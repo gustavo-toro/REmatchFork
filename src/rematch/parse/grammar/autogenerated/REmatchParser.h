@@ -23,7 +23,7 @@ public:
 
   enum {
     RuleRoot = 0, RuleAlternation = 1, RuleExpr = 2, RuleElement = 3, RuleGroup = 4, 
-    RuleParenthesis = 5, RuleAssignation = 6, RuleVariable = 7, RuleAtom = 8, 
+    RuleParentheses = 5, RuleAssignation = 6, RuleVariable = 7, RuleAtom = 8, 
     RuleCharacter_class = 9, RuleCc_atom = 10, RuleCc_range = 11, RuleCc_literal = 12, 
     RuleCc_escapes = 13, RuleCc_other = 14, RuleLiteral = 15, RuleEscapes = 16, 
     RuleOther = 17, RuleShared_atom = 18, RuleQuantifier = 19, RuleQuantity = 20, 
@@ -53,7 +53,7 @@ public:
   class ExprContext;
   class ElementContext;
   class GroupContext;
-  class ParenthesisContext;
+  class ParenthesesContext;
   class AssignationContext;
   class VariableContext;
   class AtomContext;
@@ -137,7 +137,7 @@ public:
   public:
     GroupContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ParenthesisContext *parenthesis();
+    ParenthesesContext *parentheses();
     AssignationContext *assignation();
     AtomContext *atom();
 
@@ -148,9 +148,9 @@ public:
 
   GroupContext* group();
 
-  class  ParenthesisContext : public antlr4::ParserRuleContext {
+  class  ParenthesesContext : public antlr4::ParserRuleContext {
   public:
-    ParenthesisContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ParenthesesContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *L_PAR();
     AlternationContext *alternation();
@@ -161,7 +161,7 @@ public:
    
   };
 
-  ParenthesisContext* parenthesis();
+  ParenthesesContext* parentheses();
 
   class  AssignationContext : public antlr4::ParserRuleContext {
   public:

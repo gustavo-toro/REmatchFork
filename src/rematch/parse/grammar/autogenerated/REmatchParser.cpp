@@ -43,7 +43,7 @@ void rematchparserParserInitialize() {
   assert(rematchparserParserStaticData == nullptr);
   auto staticData = std::make_unique<REmatchParserStaticData>(
     std::vector<std::string>{
-      "root", "alternation", "expr", "element", "group", "parenthesis", 
+      "root", "alternation", "expr", "element", "group", "parentheses", 
       "assignation", "variable", "atom", "character_class", "cc_atom", "cc_range", 
       "cc_literal", "cc_escapes", "cc_other", "literal", "escapes", "other", 
       "shared_atom", "quantifier", "quantity", "quantExact", "quantRange", 
@@ -451,8 +451,8 @@ REmatchParser::GroupContext::GroupContext(ParserRuleContext *parent, size_t invo
   : ParserRuleContext(parent, invokingState) {
 }
 
-REmatchParser::ParenthesisContext* REmatchParser::GroupContext::parenthesis() {
-  return getRuleContext<REmatchParser::ParenthesisContext>(0);
+REmatchParser::ParenthesesContext* REmatchParser::GroupContext::parentheses() {
+  return getRuleContext<REmatchParser::ParenthesesContext>(0);
 }
 
 REmatchParser::AssignationContext* REmatchParser::GroupContext::assignation() {
@@ -494,7 +494,7 @@ REmatchParser::GroupContext* REmatchParser::group() {
     case 1: {
       enterOuterAlt(_localctx, 1);
       setState(72);
-      parenthesis();
+      parentheses();
       break;
     }
 
@@ -526,40 +526,40 @@ REmatchParser::GroupContext* REmatchParser::group() {
   return _localctx;
 }
 
-//----------------- ParenthesisContext ------------------------------------------------------------------
+//----------------- ParenthesesContext ------------------------------------------------------------------
 
-REmatchParser::ParenthesisContext::ParenthesisContext(ParserRuleContext *parent, size_t invokingState)
+REmatchParser::ParenthesesContext::ParenthesesContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* REmatchParser::ParenthesisContext::L_PAR() {
+tree::TerminalNode* REmatchParser::ParenthesesContext::L_PAR() {
   return getToken(REmatchParser::L_PAR, 0);
 }
 
-REmatchParser::AlternationContext* REmatchParser::ParenthesisContext::alternation() {
+REmatchParser::AlternationContext* REmatchParser::ParenthesesContext::alternation() {
   return getRuleContext<REmatchParser::AlternationContext>(0);
 }
 
-tree::TerminalNode* REmatchParser::ParenthesisContext::R_PAR() {
+tree::TerminalNode* REmatchParser::ParenthesesContext::R_PAR() {
   return getToken(REmatchParser::R_PAR, 0);
 }
 
 
-size_t REmatchParser::ParenthesisContext::getRuleIndex() const {
-  return REmatchParser::RuleParenthesis;
+size_t REmatchParser::ParenthesesContext::getRuleIndex() const {
+  return REmatchParser::RuleParentheses;
 }
 
 
-std::any REmatchParser::ParenthesisContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any REmatchParser::ParenthesesContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<REmatchParserVisitor*>(visitor))
-    return parserVisitor->visitParenthesis(this);
+    return parserVisitor->visitParentheses(this);
   else
     return visitor->visitChildren(this);
 }
 
-REmatchParser::ParenthesisContext* REmatchParser::parenthesis() {
-  ParenthesisContext *_localctx = _tracker.createInstance<ParenthesisContext>(_ctx, getState());
-  enterRule(_localctx, 10, REmatchParser::RuleParenthesis);
+REmatchParser::ParenthesesContext* REmatchParser::parentheses() {
+  ParenthesesContext *_localctx = _tracker.createInstance<ParenthesesContext>(_ctx, getState());
+  enterRule(_localctx, 10, REmatchParser::RuleParentheses);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {

@@ -29,7 +29,7 @@ public:
 
     virtual std::any visitGroup(REmatchParser::GroupContext *context) = 0;
 
-    virtual std::any visitParenthesis(REmatchParser::ParenthesisContext *context) = 0;
+    virtual std::any visitParentheses(REmatchParser::ParenthesesContext *context) = 0;
 
     virtual std::any visitAssignation(REmatchParser::AssignationContext *context) = 0;
 

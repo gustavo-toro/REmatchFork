@@ -35,7 +35,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitParenthesis(REmatchParser::ParenthesisContext *ctx) override {
+  virtual std::any visitParentheses(REmatchParser::ParenthesesContext *ctx) override {
     return visitChildren(ctx);
   }
 

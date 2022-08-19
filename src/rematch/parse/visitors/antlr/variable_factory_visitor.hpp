@@ -10,7 +10,7 @@ namespace visitors {
 
 class VariableFactoryVisitor : public REmatchParserBaseVisitor {
 public:
-  VariableFactory create_vfact(REmatchParser::RootContext *ctx) {
+  VariableFactory get_vfact(REmatchParser::RootContext *ctx) {
     return std::any_cast<VariableFactory>(visitRoot(ctx));
   }
 
@@ -28,12 +28,6 @@ private:
       for (size_t i = 1; i < children_size; i++) {
         std::any rhs = visit(ctx->expr(i));
         VariableFactory &rhs_cast = std::any_cast<VariableFactory &>(rhs);
-        // TODO: Ask if this is correct
-        // The array-output branch merges alterns, while
-        // the antlr4 branch just throws an error
-        // if (!(vfact_cast == rhs_cast)) {
-        //   throw parsing::BadRegex("Alternation variables differ");
-        // }
         vfact_cast.merge(rhs_cast);
       }
     }
@@ -64,8 +58,8 @@ private:
   std::any visitGroup(REmatchParser::GroupContext *ctx) override {
     std::any vfact;
 
-    if (ctx->parenthesis()) {
-      vfact = visit(ctx->parenthesis());
+    if (ctx->parentheses()) {
+      vfact = visit(ctx->parentheses());
     } else if (ctx->assignation()) {
       vfact = visit(ctx->assignation());
     } else if (ctx->atom()) {
@@ -77,7 +71,7 @@ private:
     return vfact;
   }
 
-  std::any visitParenthesis(REmatchParser::ParenthesisContext *ctx) override {
+  std::any visitParentheses(REmatchParser::ParenthesesContext *ctx) override {
     return visit(ctx->alternation());
   }
 

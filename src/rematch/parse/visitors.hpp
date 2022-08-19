@@ -5,6 +5,7 @@
 // #include "parse/visitors/epsilon_visitor.hpp"
 // #include "parse/visitors/filter_factory_visitor.hpp"
 // #include "parse/visitors/variable_factory_visitor.hpp"
+#include "parse/visitors/antlr/filter_factory_visitor.hpp"
 #include "parse/visitors/antlr/variable_factory_visitor.hpp"
 
 #endif
