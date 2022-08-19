@@ -7,7 +7,7 @@ if(NOT CMAKE_BUILD_TYPE)
 	message(STATUS "Build type not specified. Using Release by default.")
 endif()
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable testing
@@ -35,11 +35,15 @@ set(REMATCH_LIBS "")
 
 include_directories(src/rematch)
 include_directories(SYSTEM src/thirdparty)
+# TODO: Change this
+include_directories(src/thirdparty/antlr4/runtime/src)
 
 find_package(Boost 1.58)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 # No need to add Boost's libraries, we're using only boost's headers
 # list(APPEND project_LIBS ${Boost_LIBRARIES})
+
+add_subdirectory(src/thirdparty)
 
 add_subdirectory(src/rematch)
 

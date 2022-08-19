@@ -5,6 +5,7 @@ file(GLOB fix_srcs
 file(GLOB_RECURSE glob_srcs
   ${CMAKE_CURRENT_SOURCE_DIR}/automata/*.[ch]pp
   ${CMAKE_CURRENT_SOURCE_DIR}/parse/*.[ch]pp
+  ${CMAKE_CURRENT_SOURCE_DIR}/parse/*.h
   ${CMAKE_CURRENT_SOURCE_DIR}/structs/*.[ch]pp
   ${CMAKE_CURRENT_SOURCE_DIR}/det/*.[ch]pp
   ${CMAKE_CURRENT_SOURCE_DIR}/factories/*.[ch]pp
@@ -19,7 +20,7 @@ set(sources ${fix_srcs} ${glob_srcs})
 set(project_LIB ${PROJECT_NAME}lib)
 
 add_library(${project_LIB} ${sources})
-target_link_libraries(${project_LIB} ${REMATCH_LIBS})
+target_link_libraries(${project_LIB} ${REMATCH_LIBS} antlr4_cpp_runtime)
 list(APPEND REMATCH_LIBS ${project_LIB})
 
 # Pass the variable to parent

@@ -1,0 +1,35 @@
+lexer grammar REmatchLexer;
+
+DECIMAL_DIGIT: '\\d';
+NOT_DECIMAL_DIGIT: '\\D';
+HORIZONTAL_WHITESPACE: '\\h';
+NOT_HORIZONTAL_WHITESPACE: '\\H';
+NEW_LINE: '\\n';
+NOT_NEW_LINE: '\\N';
+WHITESPACE: '\\s';
+NOT_WHITESPACE: '\\S';
+VERTICAL_WHITESPACE: '\\v';
+NOT_VERTICAL_WHITESPACE: '\\V';
+WORD_CHAR: '\\w';
+NOT_WORD_CHAR: '\\W';
+
+PIPE: '|';
+EXCLAMAITON: '!';
+L_CURLY: '{';
+R_CURLY: '}';
+L_PAR: '(';
+R_PAR: ')';
+COMMA: ',';
+QUESTION: '?';
+PLUS: '+';
+STAR: '*';
+HAT: '^';
+HYPHEN: '-';
+L_BRACK: '[';
+R_BRACK: ']';
+BACKSLASH: '\\';
+DIGIT: [0-9];
+ALPHANUMERIC: [A-Za-z0-9];
+DOT: '.';
+
+UNRECOGNIZED: .;
