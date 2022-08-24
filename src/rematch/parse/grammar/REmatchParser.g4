@@ -16,18 +16,16 @@ group: parentheses | assignation | atom;
 
 parentheses: '(' alternation ')';
 
-assignation: '!' variable '{' alternation '}';
+assignation: '!' VARNAME '{' alternation '}';
 
-variable: ALPHANUMERIC+;
+atom: characterClass | sharedAtom | literal;
 
-atom: character_class | shared_atom | literal;
-
-character_class: '[' '^'? cc_atom+ ']';
-cc_atom: cc_range | shared_atom | literal;
-cc_range: cc_literal '-' cc_literal;
-cc_literal: cc_escapes | cc_other;
-cc_escapes: '\\' ('^' | '-' | ']' | '\\');
-cc_other: ~('^' | '-' | ']' | '\\');
+characterClass: '[' '^'? ccAtom+ ']';
+ccAtom: ccRange | sharedAtom | literal;
+ccRange: ccLiteral '-' ccLiteral;
+ccLiteral: ccEscapes | ccOther;
+ccEscapes: '\\' ('^' | '-' | ']' | '\\');
+ccOther: ~('^' | '-' | ']' | '\\');
 
 literal: escapes | other;
 escapes:
@@ -61,7 +59,7 @@ other:
     | '\\'
   );
 
-shared_atom:
+sharedAtom:
   DECIMAL_DIGIT
   | NOT_DECIMAL_DIGIT
   | HORIZONTAL_WHITESPACE

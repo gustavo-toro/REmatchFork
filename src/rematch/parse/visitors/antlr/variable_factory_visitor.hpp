@@ -62,10 +62,8 @@ private:
       vfact = visit(ctx->parentheses());
     } else if (ctx->assignation()) {
       vfact = visit(ctx->assignation());
-    } else if (ctx->atom()) {
-      vfact = visit(ctx->atom());
     } else {
-      throw parsing::BadRegex("Unexpected group derivation");
+      vfact = visit(ctx->atom());
     }
 
     return vfact;
@@ -79,8 +77,7 @@ private:
     std::any vfact = visit(ctx->alternation());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
-    std::string var = ctx->variable()->getText();
-
+    std::string var = ctx->VARNAME()->getText();
     if (vfact_cast.contains(var)) {
       throw parsing::BadRegex("Nested the same variables inside asignations");
     }

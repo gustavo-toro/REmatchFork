@@ -43,35 +43,31 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitVariable(REmatchParser::VariableContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitAtom(REmatchParser::AtomContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCharacter_class(REmatchParser::Character_classContext *ctx) override {
+  virtual std::any visitCharacterClass(REmatchParser::CharacterClassContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCc_atom(REmatchParser::Cc_atomContext *ctx) override {
+  virtual std::any visitCcAtom(REmatchParser::CcAtomContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCc_range(REmatchParser::Cc_rangeContext *ctx) override {
+  virtual std::any visitCcRange(REmatchParser::CcRangeContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCc_literal(REmatchParser::Cc_literalContext *ctx) override {
+  virtual std::any visitCcLiteral(REmatchParser::CcLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCc_escapes(REmatchParser::Cc_escapesContext *ctx) override {
+  virtual std::any visitCcEscapes(REmatchParser::CcEscapesContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCc_other(REmatchParser::Cc_otherContext *ctx) override {
+  virtual std::any visitCcOther(REmatchParser::CcOtherContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -87,7 +83,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitShared_atom(REmatchParser::Shared_atomContext *ctx) override {
+  virtual std::any visitSharedAtom(REmatchParser::SharedAtomContext *ctx) override {
     return visitChildren(ctx);
   }
 

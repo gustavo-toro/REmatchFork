@@ -15,20 +15,19 @@ public:
     DECIMAL_DIGIT = 1, NOT_DECIMAL_DIGIT = 2, HORIZONTAL_WHITESPACE = 3, 
     NOT_HORIZONTAL_WHITESPACE = 4, NEW_LINE = 5, NOT_NEW_LINE = 6, WHITESPACE = 7, 
     NOT_WHITESPACE = 8, VERTICAL_WHITESPACE = 9, NOT_VERTICAL_WHITESPACE = 10, 
-    WORD_CHAR = 11, NOT_WORD_CHAR = 12, PIPE = 13, EXCLAMAITON = 14, L_CURLY = 15, 
-    R_CURLY = 16, L_PAR = 17, R_PAR = 18, COMMA = 19, QUESTION = 20, PLUS = 21, 
-    STAR = 22, HAT = 23, HYPHEN = 24, L_BRACK = 25, R_BRACK = 26, BACKSLASH = 27, 
-    DIGIT = 28, ALPHANUMERIC = 29, DOT = 30, UNRECOGNIZED = 31
+    WORD_CHAR = 11, NOT_WORD_CHAR = 12, VARNAME = 13, PIPE = 14, EXCLAMAITON = 15, 
+    L_CURLY = 16, R_CURLY = 17, L_PAR = 18, R_PAR = 19, COMMA = 20, QUESTION = 21, 
+    PLUS = 22, STAR = 23, HAT = 24, HYPHEN = 25, L_BRACK = 26, R_BRACK = 27, 
+    BACKSLASH = 28, ALPHA = 29, DIGIT = 30, DOT = 31, UNRECOGNIZED = 32
   };
 
   enum {
     RuleRoot = 0, RuleAlternation = 1, RuleExpr = 2, RuleElement = 3, RuleGroup = 4, 
-    RuleParentheses = 5, RuleAssignation = 6, RuleVariable = 7, RuleAtom = 8, 
-    RuleCharacter_class = 9, RuleCc_atom = 10, RuleCc_range = 11, RuleCc_literal = 12, 
-    RuleCc_escapes = 13, RuleCc_other = 14, RuleLiteral = 15, RuleEscapes = 16, 
-    RuleOther = 17, RuleShared_atom = 18, RuleQuantifier = 19, RuleQuantity = 20, 
-    RuleQuantExact = 21, RuleQuantRange = 22, RuleQuantMin = 23, RuleQuantMax = 24, 
-    RuleNumber = 25
+    RuleParentheses = 5, RuleAssignation = 6, RuleAtom = 7, RuleCharacterClass = 8, 
+    RuleCcAtom = 9, RuleCcRange = 10, RuleCcLiteral = 11, RuleCcEscapes = 12, 
+    RuleCcOther = 13, RuleLiteral = 14, RuleEscapes = 15, RuleOther = 16, 
+    RuleSharedAtom = 17, RuleQuantifier = 18, RuleQuantity = 19, RuleQuantExact = 20, 
+    RuleQuantRange = 21, RuleQuantMin = 22, RuleQuantMax = 23, RuleNumber = 24
   };
 
   explicit REmatchParser(antlr4::TokenStream *input);
@@ -55,18 +54,17 @@ public:
   class GroupContext;
   class ParenthesesContext;
   class AssignationContext;
-  class VariableContext;
   class AtomContext;
-  class Character_classContext;
-  class Cc_atomContext;
-  class Cc_rangeContext;
-  class Cc_literalContext;
-  class Cc_escapesContext;
-  class Cc_otherContext;
+  class CharacterClassContext;
+  class CcAtomContext;
+  class CcRangeContext;
+  class CcLiteralContext;
+  class CcEscapesContext;
+  class CcOtherContext;
   class LiteralContext;
   class EscapesContext;
   class OtherContext;
-  class Shared_atomContext;
+  class SharedAtomContext;
   class QuantifierContext;
   class QuantityContext;
   class QuantExactContext;
@@ -168,7 +166,7 @@ public:
     AssignationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EXCLAMAITON();
-    VariableContext *variable();
+    antlr4::tree::TerminalNode *VARNAME();
     antlr4::tree::TerminalNode *L_CURLY();
     AlternationContext *alternation();
     antlr4::tree::TerminalNode *R_CURLY();
@@ -180,26 +178,12 @@ public:
 
   AssignationContext* assignation();
 
-  class  VariableContext : public antlr4::ParserRuleContext {
-  public:
-    VariableContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<antlr4::tree::TerminalNode *> ALPHANUMERIC();
-    antlr4::tree::TerminalNode* ALPHANUMERIC(size_t i);
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  VariableContext* variable();
-
   class  AtomContext : public antlr4::ParserRuleContext {
   public:
     AtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    Character_classContext *character_class();
-    Shared_atomContext *shared_atom();
+    CharacterClassContext *characterClass();
+    SharedAtomContext *sharedAtom();
     LiteralContext *literal();
 
 
@@ -209,29 +193,29 @@ public:
 
   AtomContext* atom();
 
-  class  Character_classContext : public antlr4::ParserRuleContext {
+  class  CharacterClassContext : public antlr4::ParserRuleContext {
   public:
-    Character_classContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    CharacterClassContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *L_BRACK();
     antlr4::tree::TerminalNode *R_BRACK();
     antlr4::tree::TerminalNode *HAT();
-    std::vector<Cc_atomContext *> cc_atom();
-    Cc_atomContext* cc_atom(size_t i);
+    std::vector<CcAtomContext *> ccAtom();
+    CcAtomContext* ccAtom(size_t i);
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
-  Character_classContext* character_class();
+  CharacterClassContext* characterClass();
 
-  class  Cc_atomContext : public antlr4::ParserRuleContext {
+  class  CcAtomContext : public antlr4::ParserRuleContext {
   public:
-    Cc_atomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    CcAtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    Cc_rangeContext *cc_range();
-    Shared_atomContext *shared_atom();
+    CcRangeContext *ccRange();
+    SharedAtomContext *sharedAtom();
     LiteralContext *literal();
 
 
@@ -239,14 +223,14 @@ public:
    
   };
 
-  Cc_atomContext* cc_atom();
+  CcAtomContext* ccAtom();
 
-  class  Cc_rangeContext : public antlr4::ParserRuleContext {
+  class  CcRangeContext : public antlr4::ParserRuleContext {
   public:
-    Cc_rangeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    CcRangeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<Cc_literalContext *> cc_literal();
-    Cc_literalContext* cc_literal(size_t i);
+    std::vector<CcLiteralContext *> ccLiteral();
+    CcLiteralContext* ccLiteral(size_t i);
     antlr4::tree::TerminalNode *HYPHEN();
 
 
@@ -254,25 +238,25 @@ public:
    
   };
 
-  Cc_rangeContext* cc_range();
+  CcRangeContext* ccRange();
 
-  class  Cc_literalContext : public antlr4::ParserRuleContext {
+  class  CcLiteralContext : public antlr4::ParserRuleContext {
   public:
-    Cc_literalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    CcLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    Cc_escapesContext *cc_escapes();
-    Cc_otherContext *cc_other();
+    CcEscapesContext *ccEscapes();
+    CcOtherContext *ccOther();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
-  Cc_literalContext* cc_literal();
+  CcLiteralContext* ccLiteral();
 
-  class  Cc_escapesContext : public antlr4::ParserRuleContext {
+  class  CcEscapesContext : public antlr4::ParserRuleContext {
   public:
-    Cc_escapesContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    CcEscapesContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<antlr4::tree::TerminalNode *> BACKSLASH();
     antlr4::tree::TerminalNode* BACKSLASH(size_t i);
@@ -285,11 +269,11 @@ public:
    
   };
 
-  Cc_escapesContext* cc_escapes();
+  CcEscapesContext* ccEscapes();
 
-  class  Cc_otherContext : public antlr4::ParserRuleContext {
+  class  CcOtherContext : public antlr4::ParserRuleContext {
   public:
-    Cc_otherContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    CcOtherContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *HAT();
     antlr4::tree::TerminalNode *HYPHEN();
@@ -301,7 +285,7 @@ public:
    
   };
 
-  Cc_otherContext* cc_other();
+  CcOtherContext* ccOther();
 
   class  LiteralContext : public antlr4::ParserRuleContext {
   public:
@@ -366,9 +350,9 @@ public:
 
   OtherContext* other();
 
-  class  Shared_atomContext : public antlr4::ParserRuleContext {
+  class  SharedAtomContext : public antlr4::ParserRuleContext {
   public:
-    Shared_atomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    SharedAtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *DECIMAL_DIGIT();
     antlr4::tree::TerminalNode *NOT_DECIMAL_DIGIT();
@@ -388,7 +372,7 @@ public:
    
   };
 
-  Shared_atomContext* shared_atom();
+  SharedAtomContext* sharedAtom();
 
   class  QuantifierContext : public antlr4::ParserRuleContext {
   public:

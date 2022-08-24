@@ -12,6 +12,7 @@ VERTICAL_WHITESPACE: '\\v';
 NOT_VERTICAL_WHITESPACE: '\\V';
 WORD_CHAR: '\\w';
 NOT_WORD_CHAR: '\\W';
+VARNAME: ALPHA (ALPHA | DIGIT | '_')*;
 
 PIPE: '|';
 EXCLAMAITON: '!';
@@ -28,8 +29,8 @@ HYPHEN: '-';
 L_BRACK: '[';
 R_BRACK: ']';
 BACKSLASH: '\\';
+ALPHA: [A-Za-z];
 DIGIT: [0-9];
-ALPHANUMERIC: [A-Za-z0-9];
 DOT: '.';
 
 UNRECOGNIZED: .;

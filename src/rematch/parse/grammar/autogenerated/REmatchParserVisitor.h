@@ -33,21 +33,19 @@ public:
 
     virtual std::any visitAssignation(REmatchParser::AssignationContext *context) = 0;
 
-    virtual std::any visitVariable(REmatchParser::VariableContext *context) = 0;
-
     virtual std::any visitAtom(REmatchParser::AtomContext *context) = 0;
 
-    virtual std::any visitCharacter_class(REmatchParser::Character_classContext *context) = 0;
+    virtual std::any visitCharacterClass(REmatchParser::CharacterClassContext *context) = 0;
 
-    virtual std::any visitCc_atom(REmatchParser::Cc_atomContext *context) = 0;
+    virtual std::any visitCcAtom(REmatchParser::CcAtomContext *context) = 0;
 
-    virtual std::any visitCc_range(REmatchParser::Cc_rangeContext *context) = 0;
+    virtual std::any visitCcRange(REmatchParser::CcRangeContext *context) = 0;
 
-    virtual std::any visitCc_literal(REmatchParser::Cc_literalContext *context) = 0;
+    virtual std::any visitCcLiteral(REmatchParser::CcLiteralContext *context) = 0;
 
-    virtual std::any visitCc_escapes(REmatchParser::Cc_escapesContext *context) = 0;
+    virtual std::any visitCcEscapes(REmatchParser::CcEscapesContext *context) = 0;
 
-    virtual std::any visitCc_other(REmatchParser::Cc_otherContext *context) = 0;
+    virtual std::any visitCcOther(REmatchParser::CcOtherContext *context) = 0;
 
     virtual std::any visitLiteral(REmatchParser::LiteralContext *context) = 0;
 
@@ -55,7 +53,7 @@ public:
 
     virtual std::any visitOther(REmatchParser::OtherContext *context) = 0;
 
-    virtual std::any visitShared_atom(REmatchParser::Shared_atomContext *context) = 0;
+    virtual std::any visitSharedAtom(REmatchParser::SharedAtomContext *context) = 0;
 
     virtual std::any visitQuantifier(REmatchParser::QuantifierContext *context) = 0;
 
