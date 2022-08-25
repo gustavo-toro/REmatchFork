@@ -27,7 +27,7 @@ ccLiteral: ccEscapes | ccOther;
 ccEscapes: '\\' ('^' | '-' | ']' | '\\');
 ccOther: ~('^' | '-' | ']' | '\\');
 
-literal: escapes | other;
+literal: escapes | special | other;
 escapes:
   '\\' (
     '['
@@ -43,6 +43,12 @@ escapes:
     | '.'
     | '\\'
   );
+special:
+  TAB
+  | CARRIAGE_RETURN
+  | NEWLINE
+  | VERTICAL_WHITESPACE
+  | FORM_FEED;
 other:
   ~(
     '['
@@ -62,16 +68,10 @@ other:
 sharedAtom:
   DECIMAL_DIGIT
   | NOT_DECIMAL_DIGIT
-  | HORIZONTAL_WHITESPACE
-  | NOT_HORIZONTAL_WHITESPACE
-  | NEW_LINE
-  | NOT_NEW_LINE
   | WHITESPACE
   | NOT_WHITESPACE
-  | VERTICAL_WHITESPACE
-  | NOT_VERTICAL_WHITESPACE
-  | WORD_CHAR
-  | NOT_WORD_CHAR;
+  | ALPHANUMERIC
+  | NOT_ALPHANUMERIC;
 
 quantifier: '?' | '+' | '*' | '{' quantity '}';
 quantity: quantExact | quantRange | quantMin | quantMax;

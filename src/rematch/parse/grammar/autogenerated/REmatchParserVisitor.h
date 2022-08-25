@@ -51,6 +51,8 @@ public:
 
     virtual std::any visitEscapes(REmatchParser::EscapesContext *context) = 0;
 
+    virtual std::any visitSpecial(REmatchParser::SpecialContext *context) = 0;
+
     virtual std::any visitOther(REmatchParser::OtherContext *context) = 0;
 
     virtual std::any visitSharedAtom(REmatchParser::SharedAtomContext *context) = 0;

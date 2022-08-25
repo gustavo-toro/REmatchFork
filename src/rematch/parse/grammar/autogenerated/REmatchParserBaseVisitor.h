@@ -79,6 +79,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitSpecial(REmatchParser::SpecialContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitOther(REmatchParser::OtherContext *ctx) override {
     return visitChildren(ctx);
   }

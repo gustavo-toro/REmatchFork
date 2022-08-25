@@ -12,22 +12,23 @@
 class  REmatchParser : public antlr4::Parser {
 public:
   enum {
-    DECIMAL_DIGIT = 1, NOT_DECIMAL_DIGIT = 2, HORIZONTAL_WHITESPACE = 3, 
-    NOT_HORIZONTAL_WHITESPACE = 4, NEW_LINE = 5, NOT_NEW_LINE = 6, WHITESPACE = 7, 
-    NOT_WHITESPACE = 8, VERTICAL_WHITESPACE = 9, NOT_VERTICAL_WHITESPACE = 10, 
-    WORD_CHAR = 11, NOT_WORD_CHAR = 12, VARNAME = 13, PIPE = 14, EXCLAMAITON = 15, 
-    L_CURLY = 16, R_CURLY = 17, L_PAR = 18, R_PAR = 19, COMMA = 20, QUESTION = 21, 
-    PLUS = 22, STAR = 23, HAT = 24, HYPHEN = 25, L_BRACK = 26, R_BRACK = 27, 
-    BACKSLASH = 28, ALPHA = 29, DIGIT = 30, DOT = 31, UNRECOGNIZED = 32
+    DECIMAL_DIGIT = 1, NOT_DECIMAL_DIGIT = 2, WHITESPACE = 3, NOT_WHITESPACE = 4, 
+    ALPHANUMERIC = 5, NOT_ALPHANUMERIC = 6, TAB = 7, CARRIAGE_RETURN = 8, 
+    NEWLINE = 9, VERTICAL_WHITESPACE = 10, FORM_FEED = 11, VARNAME = 12, 
+    PIPE = 13, EXCLAMAITON = 14, L_CURLY = 15, R_CURLY = 16, L_PAR = 17, 
+    R_PAR = 18, COMMA = 19, QUESTION = 20, PLUS = 21, STAR = 22, HAT = 23, 
+    HYPHEN = 24, L_BRACK = 25, R_BRACK = 26, BACKSLASH = 27, ALPHA = 28, 
+    DIGIT = 29, DOT = 30, UNRECOGNIZED = 31
   };
 
   enum {
     RuleRoot = 0, RuleAlternation = 1, RuleExpr = 2, RuleElement = 3, RuleGroup = 4, 
     RuleParentheses = 5, RuleAssignation = 6, RuleAtom = 7, RuleCharacterClass = 8, 
     RuleCcAtom = 9, RuleCcRange = 10, RuleCcLiteral = 11, RuleCcEscapes = 12, 
-    RuleCcOther = 13, RuleLiteral = 14, RuleEscapes = 15, RuleOther = 16, 
-    RuleSharedAtom = 17, RuleQuantifier = 18, RuleQuantity = 19, RuleQuantExact = 20, 
-    RuleQuantRange = 21, RuleQuantMin = 22, RuleQuantMax = 23, RuleNumber = 24
+    RuleCcOther = 13, RuleLiteral = 14, RuleEscapes = 15, RuleSpecial = 16, 
+    RuleOther = 17, RuleSharedAtom = 18, RuleQuantifier = 19, RuleQuantity = 20, 
+    RuleQuantExact = 21, RuleQuantRange = 22, RuleQuantMin = 23, RuleQuantMax = 24, 
+    RuleNumber = 25
   };
 
   explicit REmatchParser(antlr4::TokenStream *input);
@@ -63,6 +64,7 @@ public:
   class CcOtherContext;
   class LiteralContext;
   class EscapesContext;
+  class SpecialContext;
   class OtherContext;
   class SharedAtomContext;
   class QuantifierContext;
@@ -292,6 +294,7 @@ public:
     LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     EscapesContext *escapes();
+    SpecialContext *special();
     OtherContext *other();
 
 
@@ -326,6 +329,23 @@ public:
 
   EscapesContext* escapes();
 
+  class  SpecialContext : public antlr4::ParserRuleContext {
+  public:
+    SpecialContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *TAB();
+    antlr4::tree::TerminalNode *CARRIAGE_RETURN();
+    antlr4::tree::TerminalNode *NEWLINE();
+    antlr4::tree::TerminalNode *VERTICAL_WHITESPACE();
+    antlr4::tree::TerminalNode *FORM_FEED();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SpecialContext* special();
+
   class  OtherContext : public antlr4::ParserRuleContext {
   public:
     OtherContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -356,16 +376,10 @@ public:
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *DECIMAL_DIGIT();
     antlr4::tree::TerminalNode *NOT_DECIMAL_DIGIT();
-    antlr4::tree::TerminalNode *HORIZONTAL_WHITESPACE();
-    antlr4::tree::TerminalNode *NOT_HORIZONTAL_WHITESPACE();
-    antlr4::tree::TerminalNode *NEW_LINE();
-    antlr4::tree::TerminalNode *NOT_NEW_LINE();
     antlr4::tree::TerminalNode *WHITESPACE();
     antlr4::tree::TerminalNode *NOT_WHITESPACE();
-    antlr4::tree::TerminalNode *VERTICAL_WHITESPACE();
-    antlr4::tree::TerminalNode *NOT_VERTICAL_WHITESPACE();
-    antlr4::tree::TerminalNode *WORD_CHAR();
-    antlr4::tree::TerminalNode *NOT_WORD_CHAR();
+    antlr4::tree::TerminalNode *ALPHANUMERIC();
+    antlr4::tree::TerminalNode *NOT_ALPHANUMERIC();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

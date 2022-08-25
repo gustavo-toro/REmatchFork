@@ -1,19 +1,24 @@
 lexer grammar REmatchLexer;
 
+// Special Character Classes
 DECIMAL_DIGIT: '\\d';
 NOT_DECIMAL_DIGIT: '\\D';
-HORIZONTAL_WHITESPACE: '\\h';
-NOT_HORIZONTAL_WHITESPACE: '\\H';
-NEW_LINE: '\\n';
-NOT_NEW_LINE: '\\N';
 WHITESPACE: '\\s';
 NOT_WHITESPACE: '\\S';
+ALPHANUMERIC: '\\w';
+NOT_ALPHANUMERIC: '\\W';
+
+// Special Characters
+TAB: '\\t';
+CARRIAGE_RETURN: '\\r';
+NEWLINE: '\\n';
 VERTICAL_WHITESPACE: '\\v';
-NOT_VERTICAL_WHITESPACE: '\\V';
-WORD_CHAR: '\\w';
-NOT_WORD_CHAR: '\\W';
+FORM_FEED: '\\f';
+
+// Variables
 VARNAME: ALPHA (ALPHA | DIGIT | '_')*;
 
+// Single Tokens
 PIPE: '|';
 EXCLAMAITON: '!';
 L_CURLY: '{';
