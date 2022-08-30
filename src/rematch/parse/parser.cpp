@@ -10,6 +10,9 @@ LogicalVA doParse(const std::string &input) {
   REmatchLexer lexer(&stream);
   antlr4::CommonTokenStream tokens(&lexer);
   REmatchParser parser(&tokens);
+  parser.removeErrorListeners();
+  antlr4::ParserErrorListener listener;
+  parser.addErrorListener(&listener);
   REmatchParser::RootContext *root = parser.root();
 
   // * Variable Factory
