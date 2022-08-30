@@ -11,7 +11,7 @@
 
 namespace rematch {
 
-void doParse(const std::string& input);
+LogicalVA doParse(const std::string& input);
 std::unique_ptr<LogicalVA> regex2LVA(std::string regex);
 
 } // end namespace rematch

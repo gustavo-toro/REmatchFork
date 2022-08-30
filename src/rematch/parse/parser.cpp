@@ -2,7 +2,7 @@
 
 namespace rematch {
 
-void doParse(const std::string &input) {
+LogicalVA doParse(const std::string &input) {
   std::cout << "Input: " << input << std::endl;
 
   // * Parse Tree
@@ -11,26 +11,29 @@ void doParse(const std::string &input) {
   antlr4::CommonTokenStream tokens(&lexer);
   REmatchParser parser(&tokens);
   REmatchParser::RootContext *root = parser.root();
-  std::cout << "Parse Tree Built." << std::endl;
 
   // * Variable Factory
   visitors::VariableFactoryVisitor vfv;
   VariableFactory vfact = vfv.get_vfact(root);
-  std::cout << "Variable Factory Built." << std::endl;
-  std::cout << vfact.pprint() << std::endl;
+  std::shared_ptr<VariableFactory> vfact_ptr = std::make_shared<VariableFactory>(vfact);
 
   // * Filter Factory
   visitors::FilterFactoryVisitor ffv;
   FilterFactory ffact = ffv.get_ffact(root);
-  std::cout << "Filter Factory Built." << std::endl;
-  std::cout << ffact.pprint() << std::endl;
+  std::shared_ptr<FilterFactory> ffact_ptr = std::make_shared<FilterFactory>(ffact);
+
+  // * Logical VA
+  visitors::AutomataVisitor av(vfact_ptr, ffact_ptr);
+  LogicalVA lva = av.get_lva(root);
+  lva.set_factories(vfact_ptr, ffact_ptr);
+
+  return lva;
 }
 
 std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
-  doParse(regex);
-  std::cout << "FINISHED!" << std::endl;
-
-  return nullptr;
+  LogicalVA lva = doParse(regex);
+  std::unique_ptr<LogicalVA> lva_ptr = std::make_unique<LogicalVA>(lva);
+  return lva_ptr;
 }
 
 } // end namespace rematch
