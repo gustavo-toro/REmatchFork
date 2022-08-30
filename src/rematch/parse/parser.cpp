@@ -3,8 +3,6 @@
 namespace rematch {
 
 LogicalVA doParse(const std::string &input) {
-  std::cout << "Input: " << input << std::endl;
-
   // * Parse Tree
   antlr4::ANTLRInputStream stream(input);
   REmatchLexer lexer(&stream);
