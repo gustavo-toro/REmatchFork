@@ -73,8 +73,24 @@ private:
         A_cast.kleene();
       } else if (quantifier->PLUS()) {
         A_cast.strict_kleene();
+      } else {
+        auto quantity = quantifier->quantity();
+        int lo = 0;
+        int hi = -1;
+        if (quantity->quantExact()) {
+            lo = std::stoi(quantity->quantExact()->number()->getText());
+            hi = lo;
+        } else if (quantity->quantRange()) {
+            lo = std::stoi(quantity->quantRange()->number(0)->getText());
+            hi = std::stoi(quantity->quantRange()->number(1)->getText());
+        } else if (quantity->quantMin()) {
+            lo = std::stoi(quantity->quantMin()->number()->getText());
+        } else if (quantity->quantMax()) {
+            hi = std::stoi(quantity->quantMax()->number()->getText());
+        }
+        assert(lo >= 0);
+        A_cast.repeat(lo, hi);
       }
-      // TODO: rest of quantitifers
     }
 
     return A;
