@@ -11,7 +11,6 @@
 #include <map>
 #include <utility>
 
-#include "parse/ast.hpp"
 #include "charclass.hpp"
 
 namespace rematch {

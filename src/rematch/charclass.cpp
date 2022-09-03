@@ -14,43 +14,6 @@ CharClassBuilder::CharClassBuilder(char c): nchars_(0) { add_single(c); }
 
 CharClassBuilder::CharClassBuilder(char l, char h): nchars_(0) { add_range(l,h); }
 
-CharClassBuilder::CharClassBuilder(ast::special const &s): nchars_(0) {
-	switch(s.code_) {
-		case SpecialCode::kAnyChar:
-			add_range(0, CHAR_MAX);
-			break;
-		case SpecialCode::kAnyDigit:
-			add_range('0', '9');
-			break;
-		case SpecialCode::kAnyWhiteSpace:
-			add_range(9, 13); // Whitespaces: [\n\f\r\t]
-			add_single(32); // Space: ' '
-			break;
-		case SpecialCode::kAnyWord:
-			add_range('A', 'Z');
-			add_range('a', 'z');
-			add_range('0', '9');
-			break;
-		default:
-			break;
-	}
-
-	if(!s.not_negated_) negate();
-}
-
-CharClassBuilder::CharClassBuilder(ast::charset const &cs): nchars_(0) {
-	for(auto &elem: cs.elements) {
-		if(elem.which() == 0) {
-			add_single(boost::get<char>(elem));
-		} else {
-			std::tuple<char, char> tup = boost::get<ast::charset::range>(elem);
-			add_range(std::get<0>(tup), std::get<1>(tup));
-		}
-	}
-	// If it is negated we have to negate the ccb
-	if(cs.negated) negate();
-}
-
 CharClassBuilder::CharClassBuilder(REmatchParser::LiteralContext *ctx): nchars_(0) {
     if (ctx->escapes()) {
         add_single(ctx->getText()[1]);
