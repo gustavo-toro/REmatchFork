@@ -19,7 +19,9 @@ CharClassBuilder::CharClassBuilder(REmatchParser::LiteralContext *ctx): nchars_(
         add_single(ctx->getText()[1]);
     } else if (ctx->special()) {
         auto s = ctx->special();
-        if (s->TAB()) {
+        if (s->DOT()) {
+            add_range(0, CHAR_MAX);
+        } else if (s->TAB()) {
             add_single('\t');
         } else if (s->CARRIAGE_RETURN()) {
             add_single('\r');

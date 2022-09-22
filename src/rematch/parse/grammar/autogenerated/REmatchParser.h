@@ -333,6 +333,7 @@ public:
   public:
     SpecialContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *DOT();
     antlr4::tree::TerminalNode *TAB();
     antlr4::tree::TerminalNode *CARRIAGE_RETURN();
     antlr4::tree::TerminalNode *NEWLINE();
@@ -360,7 +361,6 @@ public:
     antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *QUESTION();
     antlr4::tree::TerminalNode *PIPE();
-    antlr4::tree::TerminalNode *DOT();
     antlr4::tree::TerminalNode *BACKSLASH();
 
 

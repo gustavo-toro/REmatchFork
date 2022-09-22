@@ -44,7 +44,8 @@ escapes:
     | '\\'
   );
 special:
-  TAB
+  DOT
+  | TAB
   | CARRIAGE_RETURN
   | NEWLINE
   | VERTICAL_WHITESPACE
@@ -61,7 +62,6 @@ other:
     | '+'
     | '?'
     | '|'
-    | '.'
     | '\\'
   );
 
