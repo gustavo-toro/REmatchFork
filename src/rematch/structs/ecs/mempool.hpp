@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <spdlog/spdlog.h>
+// #include <spdlog/spdlog.h>
 
 namespace rematch {
 

@@ -12,8 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable testing
 set(REMATCH_BUILD_TESTING ON)
-# Enable benchmarks
-set(REMATCH_BUILD_BENCHMARKS ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pthread -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra -pthread -O3 -g0 -pedantic")
@@ -24,11 +22,6 @@ set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 add_compile_definitions(
 	MACRO_TRANSITIONS_RAW_ARRAYS
 	BENCHMARK_MODE
-	# COUNT_CURRENT_STATES
-	# NOPT_CROSSPROD
-	# NOPT_OFFSET
-	# NOPT_MEMORY
-	# NOPT_EARLYOUTPUT
 )
 
 # Rematch libs starts as empty list
@@ -43,8 +36,6 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 # list(APPEND project_LIBS ${Boost_LIBRARIES})
 
 add_subdirectory(src/thirdparty)
-
-list(APPEND REMATCH_LIBS spdlog)
 
 add_subdirectory(src/rematch)
 

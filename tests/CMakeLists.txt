@@ -1,6 +1,6 @@
 enable_testing()
 
-find_package(CxxTest)
+# find_package(CxxTest)
 
 if(CXXTEST_FOUND)
   include_directories(${CXXTEST_INCLUDE_DIR})
