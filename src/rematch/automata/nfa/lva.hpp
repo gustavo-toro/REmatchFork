@@ -62,6 +62,8 @@ class LogicalVA {
   // Inplace transformation from R to R{min,max}
   void repeat(int min, int max);
 
+  void add_distance(int distance);
+
   // Remove capture transitions as if they were instantaneous (epsilon labeled)
   void remove_captures();
 

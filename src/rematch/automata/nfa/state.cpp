@@ -4,6 +4,8 @@
 #include <list>
 #include <set>
 
+#include <iostream>
+// Remove the top thing
 namespace rematch {
 
 LogicalVA::Capture::Capture(State *from, std::bitset<32> coding, State *next)
@@ -77,9 +79,11 @@ void LogicalVA::State::add_filter(uint code, State *next) {
   auto sp = std::make_shared<LogicalVA::Filter>(this, code, next);
   filters.push_back(sp);
   next->backward_filters_.push_back(sp);
+  // Somehow backward filters is null pointer?
 }
 
 void LogicalVA::State::add_epsilon(State *q) {
+
   for (auto const &epsilon : epsilons)
     if (epsilon->next == q)
       return;

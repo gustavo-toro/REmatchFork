@@ -5,6 +5,7 @@
 #include "grammar.hpp"
 #include "parser.hpp"
 #include "visitors.hpp"
+#include <iostream>
 
 namespace rematch {
 
@@ -28,6 +29,7 @@ bool doParse(const std::string &input, ast::altern &data)
 }
 
 std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
+  std::cout << "regex: " << regex << std::endl;
   ast::altern tree;
 
   doParse(regex, tree);
@@ -41,6 +43,13 @@ std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
   auto A = visitors::regex2LVA(v, f)(tree);
   A->set_factories(v, f);
 
+  std::cout << "LogicalVA:\n" << *A << "\n\n";
+
+  A->add_distance(1);
+
+  std::cout << "Distance 1:\n" << *A << "\n\n";
+
+  // A: LogicalVA
   return A;
 }
 

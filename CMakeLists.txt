@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 
 project(rematch LANGUAGES CXX)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 	message(STATUS "Build type not specified. Using Release by default.")
@@ -11,9 +13,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable testing
-set(REMATCH_BUILD_TESTING ON)
-# Enable benchmarks
-set(REMATCH_BUILD_BENCHMARKS ON)
+set(REMATCH_BUILD_TESTING OFF)
+set(REMATCH_BUILD_BENCHMARKS OFF)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pthread -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra -pthread -O3 -g0 -pedantic")
