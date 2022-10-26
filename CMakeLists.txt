@@ -23,12 +23,10 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 
 add_compile_definitions(
-	MACRO_TRANSITIONS_RAW_ARRAYS
 	BENCHMARK_MODE
-	# COUNT_CURRENT_STATES
-	# NOPT_CROSSPROD
-	# NOPT_OFFSET
 	# NOPT_MEMORY
+	# NOPT_ASCIIARRAY
+	# NOPT_OFFSET
 	# NOPT_EARLYOUTPUT
 )
 
@@ -43,9 +41,9 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 # No need to add Boost's libraries, we're using only boost's headers
 # list(APPEND project_LIBS ${Boost_LIBRARIES})
 
-add_subdirectory(src/thirdparty)
+# add_subdirectory(src/thirdparty)
 
-list(APPEND REMATCH_LIBS spdlog)
+# list(APPEND REMATCH_LIBS spdlog)
 
 add_subdirectory(src/rematch)
 

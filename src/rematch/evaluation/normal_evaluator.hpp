@@ -69,10 +69,11 @@ private:
 
   std::vector<abstract::DState*> current_states_;
   std::vector<abstract::DState*> new_states_;
-
   std::vector<abstract::DState*> reached_final_states_;
 
   SDState *current_dstate_;
+
+  ECS::Node *final_node_{nullptr};
 
   static const size_t kSizeMaxOutputBuffer = 100;
 
@@ -117,14 +118,20 @@ Match_ptr NormalEvaluator<A>::next() {
     return enumerator_.next();
 
   if (evaluation_phase()) { // Then there's output to enumerate
-    #ifndef NOPT_EARLYOUTPUT
     pass_outputs();
+    #ifdef NOPT_EARLYOUTPUT
+    enumerator_.add_node(final_node_);
     #endif
     goto Enumeration;
   }
 
   stats_.dfa_size = dfa_->size();
+  stats_.dfa_total_size = dfa_->tot_size();
   stats_.sdfa_size = sdfa_->size();
+
+  stats_.n_nodes = ds_.n_nodes();
+  stats_.n_reused_nodes = ds_.n_reused_nodes();
+  stats_.pool_total_size = ds_.tot_size();
 
   return nullptr;
 }
@@ -163,10 +170,8 @@ bool NormalEvaluator<A>::evaluation_phase() {
       return true; // On-line output
       #endif
     }
-    #ifdef NOPT_EARLYOUTPUT
     if(i_pos_ >= text_->size())
       return true;
-    #endif
   }
 
   return false;
@@ -177,26 +182,19 @@ inline void NormalEvaluator<A>::reading(char a, int64_t pos) {
   new_states_.clear();
 
   for (auto &p : current_states_) {
-    auto nextTransition = p->next_transition(a);
-
-    if (!nextTransition) {
-      nextTransition = dfa_->next_transition(p, a);
-    }
-
-    auto c = nextTransition->capture_;
-    auto *d = nextTransition->direct_;
-
-    ECS::Node* from_node;
-    #ifdef NOPT_CROSSPROD
-      if(p->visited <= pos)
-        from_node = p->node;
-      else
-        from_node = p->old_node;
+    #ifdef NOPT_ASCIIARRAY
+    auto nextTransition = dfa_->next_base_transition(p, a);
     #else
-      from_node = p->node();
+    auto nextTransition = dfa_->next_transition(p, a);
     #endif
 
-    switch(nextTransition->type_) {
+    auto c = nextTransition.capture_;
+    auto *d = nextTransition.direct_;
+
+    ECS::Node* from_node;
+    from_node = p->node();
+
+    switch(nextTransition.type_) {
       case Transition::Type::kDirect:
         visit(d, from_node, pos);
         break;
@@ -214,14 +212,14 @@ inline void NormalEvaluator<A>::reading(char a, int64_t pos) {
         break;
       case Transition::Type::kMultiDirect:
         visit(d, from_node, pos, false);
-        for(auto &q: nextTransition->directs_) {
+        for(auto &q: nextTransition.directs_) {
           from_node->inc_ref_count();
           visit(q, from_node, pos, false);
         }
         break;
       case Transition::Type::kMultiDirectSingleCapture:
         visit(d, from_node, pos, false);
-        for(auto &q: nextTransition->directs_) {
+        for(auto &q: nextTransition.directs_) {
           from_node->inc_ref_count();
           visit(q, from_node, pos, false);
         }
@@ -230,25 +228,25 @@ inline void NormalEvaluator<A>::reading(char a, int64_t pos) {
         break;
       case Transition::Type::kDirectMultiCapture:
         visit(d, from_node, pos, false);
-        for (auto &capture : nextTransition->captures_) {
+        for (auto &capture : nextTransition.captures_) {
           from_node->inc_ref_count();
           visit(d, ds_.extend(from_node, capture.S, pos+1), pos);
         }
         break;
       case Transition::Type::kMultiDirectMultiCapture:
         visit(d, from_node, pos, false);
-        for(auto &q: nextTransition->directs_) {
+        for(auto &q: nextTransition.directs_) {
           from_node->inc_ref_count();
           visit(q, from_node, pos, false);
         }
-        for (auto &capture : nextTransition->captures_) {
+        for (auto &capture : nextTransition.captures_) {
           from_node->inc_ref_count();
           visit(capture.next, ds_.extend(from_node, capture.S, pos+1), pos);
         }
         break;
       default:
         visit(d, ds_.extend(from_node, c.S, pos+1), pos);
-        for (auto &capture : nextTransition->captures_) {
+        for (auto &capture : nextTransition.captures_) {
           from_node->inc_ref_count();
           visit(capture.next, ds_.extend(from_node, capture.S, pos+1), pos);
         }
@@ -262,9 +260,16 @@ inline void NormalEvaluator<A>::reading(char a, int64_t pos) {
 template <typename A>
 inline void NormalEvaluator<A>::pass_outputs() {
   for (auto &state : reached_final_states_) {
-    enumerator_.add_node(state->node());
-    #ifndef NOPT_EARLYOUTPUT
-    ds_.try_mark_unused(state->node());
+    auto node = state->node();
+    #ifdef NOPT_EARLYOUTPUT
+    if(final_node_ == nullptr)
+      final_node_ = node;
+    else
+      final_node_ = ds_.unite(final_node_, node);
+    #else
+    enumerator_.add_node(node);
+    node->dec_ref_count();
+    ds_.try_mark_unused(node);
     #endif
     state->set_node(nullptr);
   }
@@ -276,9 +281,6 @@ inline void NormalEvaluator<A>::visit(abstract::DState *ns,
                                       ECS::Node* passed_node,
                                       int64_t pos, bool garbage_left) {
   if (ns->visited() <= pos) {
-    #ifdef NOPT_CROSSPROD
-    ns->old_node = ns->node;
-    #endif
     ns->set_node(passed_node);
     ns->set_visited(pos + 1);
     if (ns->accepting())

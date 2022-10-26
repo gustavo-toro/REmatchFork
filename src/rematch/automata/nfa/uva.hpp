@@ -21,9 +21,7 @@ class UnambiguousVA {
 
     State() = delete;
 
-    std::optional<Transition> next_transition(char a) const override {
-      return transitions_[a];
-    }
+    // TODO: Destructor virtual
 
     ECS::Node* node() const override { return node_; }
     void set_node(ECS::Node *n) override { node_ = n; }
