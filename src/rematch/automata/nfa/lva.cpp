@@ -371,18 +371,15 @@ void LogicalVA::repeat(int min, int max) {
 void LogicalVA::add_distance(int distance) {
   // Creation of the char class
   ast::special *s = new ast::special(rematch::SpecialCode::kAnyChar, true);
+  // First we use the copy constructor to create a new automaton representing distance 1
+
   CharClass *cc = new CharClass(*s);
   ffactory_->add_filter(*cc);
   int any_char_code = ffactory_->get_code(*cc);
   // REFACTORING TODO: add the code above to a function in ffactory, create or add kAnyChar
 
-  // The states we will add to the automaton
-  auto new_states = std::vector<State *>();
-  for (auto &state : states) {
-    State *newState = new State();
-    newState->set_accepting(state->accepting());
-    new_states.push_back(newState);
-  }
+  LogicalVA *distance1Automaton = new LogicalVA(*this);
+  std::cout << distance1Automaton->states.size() << std::endl;
 
   // We create a mapping from a state id to its position in states:
   auto state_id_to_index = std::vector<int>(states.size());
@@ -397,43 +394,23 @@ void LogicalVA::add_distance(int distance) {
     // a modification
     for (auto &filter : states[i]->filters) {
       int next_state_id = filter->next->id;
+      if (next_state_id >= states.size()) {
+          continue;
+      }
       int corresponding_index = state_id_to_index[next_state_id];
-      auto new_next_state = new_states[corresponding_index];
-      // Refactoring: the 3 lines above should be a function.
-      new_states[i]->add_filter(filter->code, new_next_state);
+      auto new_next_state = distance1Automaton->states[corresponding_index];
       // Deletion:
       states[i]->add_epsilon(new_next_state);
       // Modification:
       states[i]->add_filter(any_char_code, new_next_state);
     }
 
-    // We add all the original captures
-    for (auto &capture : states[i]->captures) {
-      int next_state_id = capture->next->id;
-      int corresponding_next_state = state_id_to_index[next_state_id];
-      auto new_next_state = new_states[corresponding_next_state];
-      new_states[i]->add_capture(capture->code, new_next_state);
-    }
-
-    // We also add all original epsilon transitions:
-    for (auto &epsilon : states[i]->epsilons) {
-      int next_state_id = epsilon->next->id;
-      if (next_state_id > state_id_to_index.size()) {
-          // We don't add this because it is the epsilon transition
-          // that is used to emulate a deletion.
-          continue;
-      }
-      int next_state_index = state_id_to_index[next_state_id];
-      auto new_next_state = new_states[next_state_index];
-      new_states[i]->add_epsilon(new_next_state);
-    }
-
     // We add the transition for an insertion:
-    states[i]->add_filter(any_char_code, new_states[i]);
+    states[i]->add_filter(any_char_code, distance1Automaton->states[i]);
   }
 
   // Adding all new states to the automaton:
-  states.insert(states.end(), new_states.begin(), new_states.end());
+  states.insert(states.end(), distance1Automaton->states.begin(), distance1Automaton->states.end());
 
   accepting_state_ = new State();
   accepting_state_->set_accepting(true);
