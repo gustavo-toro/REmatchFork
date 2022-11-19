@@ -15,9 +15,6 @@ NEWLINE: '\\n';
 VERTICAL_WHITESPACE: '\\v';
 FORM_FEED: '\\f';
 
-// Variables
-VARNAME: ALPHA (ALPHA | DIGIT | '_')*;
-
 // Single Tokens
 PIPE: '|';
 EXCLAMAITON: '!';

@@ -16,7 +16,8 @@ group: parentheses | assignation | atom;
 
 parentheses: '(' alternation ')';
 
-assignation: '!' VARNAME '{' alternation '}';
+assignation: '!' varname '{' alternation '}';
+varname: ALPHA (ALPHA | DIGIT)*;
 
 atom: characterClass | sharedAtom | literal;
 

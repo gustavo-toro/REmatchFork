@@ -14,21 +14,20 @@ public:
   enum {
     DECIMAL_DIGIT = 1, NOT_DECIMAL_DIGIT = 2, WHITESPACE = 3, NOT_WHITESPACE = 4, 
     ALPHANUMERIC = 5, NOT_ALPHANUMERIC = 6, TAB = 7, CARRIAGE_RETURN = 8, 
-    NEWLINE = 9, VERTICAL_WHITESPACE = 10, FORM_FEED = 11, VARNAME = 12, 
-    PIPE = 13, EXCLAMAITON = 14, L_CURLY = 15, R_CURLY = 16, L_PAR = 17, 
-    R_PAR = 18, COMMA = 19, QUESTION = 20, PLUS = 21, STAR = 22, HAT = 23, 
-    HYPHEN = 24, L_BRACK = 25, R_BRACK = 26, BACKSLASH = 27, ALPHA = 28, 
-    DIGIT = 29, DOT = 30, UNRECOGNIZED = 31
+    NEWLINE = 9, VERTICAL_WHITESPACE = 10, FORM_FEED = 11, PIPE = 12, EXCLAMAITON = 13, 
+    L_CURLY = 14, R_CURLY = 15, L_PAR = 16, R_PAR = 17, COMMA = 18, QUESTION = 19, 
+    PLUS = 20, STAR = 21, HAT = 22, HYPHEN = 23, L_BRACK = 24, R_BRACK = 25, 
+    BACKSLASH = 26, ALPHA = 27, DIGIT = 28, DOT = 29, UNRECOGNIZED = 30
   };
 
   enum {
     RuleRoot = 0, RuleAlternation = 1, RuleExpr = 2, RuleElement = 3, RuleGroup = 4, 
-    RuleParentheses = 5, RuleAssignation = 6, RuleAtom = 7, RuleCharacterClass = 8, 
-    RuleCcAtom = 9, RuleCcRange = 10, RuleCcLiteral = 11, RuleCcEscapes = 12, 
-    RuleCcOther = 13, RuleLiteral = 14, RuleEscapes = 15, RuleSpecial = 16, 
-    RuleOther = 17, RuleSharedAtom = 18, RuleQuantifier = 19, RuleQuantity = 20, 
-    RuleQuantExact = 21, RuleQuantRange = 22, RuleQuantMin = 23, RuleQuantMax = 24, 
-    RuleNumber = 25
+    RuleParentheses = 5, RuleAssignation = 6, RuleVarname = 7, RuleAtom = 8, 
+    RuleCharacterClass = 9, RuleCcAtom = 10, RuleCcRange = 11, RuleCcLiteral = 12, 
+    RuleCcEscapes = 13, RuleCcOther = 14, RuleLiteral = 15, RuleEscapes = 16, 
+    RuleSpecial = 17, RuleOther = 18, RuleSharedAtom = 19, RuleQuantifier = 20, 
+    RuleQuantity = 21, RuleQuantExact = 22, RuleQuantRange = 23, RuleQuantMin = 24, 
+    RuleQuantMax = 25, RuleNumber = 26
   };
 
   explicit REmatchParser(antlr4::TokenStream *input);
@@ -55,6 +54,7 @@ public:
   class GroupContext;
   class ParenthesesContext;
   class AssignationContext;
+  class VarnameContext;
   class AtomContext;
   class CharacterClassContext;
   class CcAtomContext;
@@ -168,7 +168,7 @@ public:
     AssignationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EXCLAMAITON();
-    antlr4::tree::TerminalNode *VARNAME();
+    VarnameContext *varname();
     antlr4::tree::TerminalNode *L_CURLY();
     AlternationContext *alternation();
     antlr4::tree::TerminalNode *R_CURLY();
@@ -179,6 +179,22 @@ public:
   };
 
   AssignationContext* assignation();
+
+  class  VarnameContext : public antlr4::ParserRuleContext {
+  public:
+    VarnameContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> ALPHA();
+    antlr4::tree::TerminalNode* ALPHA(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> DIGIT();
+    antlr4::tree::TerminalNode* DIGIT(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  VarnameContext* varname();
 
   class  AtomContext : public antlr4::ParserRuleContext {
   public:

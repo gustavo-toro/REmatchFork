@@ -33,6 +33,8 @@ public:
 
     virtual std::any visitAssignation(REmatchParser::AssignationContext *context) = 0;
 
+    virtual std::any visitVarname(REmatchParser::VarnameContext *context) = 0;
+
     virtual std::any visitAtom(REmatchParser::AtomContext *context) = 0;
 
     virtual std::any visitCharacterClass(REmatchParser::CharacterClassContext *context) = 0;

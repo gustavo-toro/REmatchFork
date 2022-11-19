@@ -43,6 +43,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitVarname(REmatchParser::VarnameContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitAtom(REmatchParser::AtomContext *ctx) override {
     return visitChildren(ctx);
   }
