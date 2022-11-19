@@ -30,11 +30,18 @@ LogicalVA doParse(const std::string &input) {
   std::shared_ptr<FilterFactory> ffact_ptr = std::make_shared<FilterFactory>(ffact);
 
   // * Logical VA
-  visitors::AutomataVisitor av(vfact_ptr, ffact_ptr);
-  LogicalVA lva = av.get_lva(root);
-  lva.set_factories(vfact_ptr, ffact_ptr);
+  // visitors::AutomataVisitor av(vfact_ptr, ffact_ptr);
+  // LogicalVA lva = av.get_lva(root);
+  // lva.set_factories(vfact_ptr, ffact_ptr);
 
-  return lva;
+  std::cout << "ffact:\n" << ffact.pprint() << std::endl;
+
+  // * Charclass to automaton
+  visitors::CharclassVisitor cv(vfact_ptr, ffact_ptr);
+  cv.do_visit(root);
+
+  // return lva;
+  return LogicalVA();
 }
 
 std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {

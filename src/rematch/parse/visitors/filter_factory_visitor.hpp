@@ -18,7 +18,14 @@ private:
   FilterFactory ffact;
 
   std::any visitLiteral(REmatchParser::LiteralContext *ctx) override {
-    ffact.add_filter(ctx);
+    if (ctx->special() || ctx->escapes()) {
+      ffact.add_filter(ctx);
+    }
+    else if (ctx->other()) {
+      for (char c : ctx->getText()) {
+        ffact.add_filter(c);
+      }
+    }
     return 0;
   }
 

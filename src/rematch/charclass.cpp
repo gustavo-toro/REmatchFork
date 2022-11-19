@@ -14,103 +14,108 @@ CharClassBuilder::CharClassBuilder(char c): nchars_(0) { add_single(c); }
 
 CharClassBuilder::CharClassBuilder(char l, char h): nchars_(0) { add_range(l,h); }
 
-CharClassBuilder::CharClassBuilder(REmatchParser::LiteralContext *ctx): nchars_(0) {
-    if (ctx->escapes()) {
-        add_single(ctx->getText()[1]);
-    } else if (ctx->special()) {
-        auto s = ctx->special();
-        if (s->DOT()) {
-            add_range(0, CHAR_MAX);
-        } else if (s->TAB()) {
-            add_single('\t');
-        } else if (s->CARRIAGE_RETURN()) {
-            add_single('\r');
-        } else if (s->NEWLINE()) {
-            add_single('\n');
-        } else if (s->VERTICAL_WHITESPACE()) {
-            add_single('\v');
-        } else if (s->FORM_FEED()) {
-            add_single('\f');
-        }
-    } else {
-        add_single(ctx->getText()[0]);
+CharClassBuilder::CharClassBuilder(REmatchParser::LiteralContext *ctx)
+    : nchars_(0) {
+  if (ctx->escapes()) {
+    add_single(ctx->getText()[1]);
+  }
+  else if (ctx->special()) {
+    auto s = ctx->special();
+    if (s->DOT()) {
+      add_range(0, CHAR_MAX);
+    } else if (s->TAB()) {
+      add_single('\t');
+    } else if (s->CARRIAGE_RETURN()) {
+      add_single('\r');
+    } else if (s->NEWLINE()) {
+      add_single('\n');
+    } else if (s->VERTICAL_WHITESPACE()) {
+      add_single('\v');
+    } else if (s->FORM_FEED()) {
+      add_single('\f');
     }
+  }
+  else {
+    throw std::runtime_error("Unknown literal: '" + ctx->getText() + "'");
+  }
 }
 
-CharClassBuilder::CharClassBuilder(REmatchParser::SharedAtomContext *ctx): nchars_(0) {
-    if (ctx->DECIMAL_DIGIT()) {
-        add_range(0, 9);
-    } else if (ctx->NOT_DECIMAL_DIGIT()) {
-        add_range(0, 9);
-        negate();
-    } else if (ctx->WHITESPACE()) {
-        add_single(' ');
-        add_single('\t');
-        add_single('\r');
-        add_single('\n');
-        add_single('\v');
-        add_single('\f');
-    } else if (ctx->NOT_WHITESPACE()) {
-        add_single(' ');
-        add_single('\t');
-        add_single('\r');
-        add_single('\n');
-        add_single('\v');
-        add_single('\f');
-        negate();
-    } else if (ctx->ALPHANUMERIC()) {
-        add_range('A', 'Z');
-        add_range('a', 'z');
-        add_range('0', '9');
-        add_single('_');
-    } else if (ctx->NOT_ALPHANUMERIC()) {
-        add_range('A', 'Z');
-        add_range('a', 'z');
-        add_range('0', '9');
-        add_single('_');
-        negate();
-    } else {
-        // TODO: Change this error message
-        throw std::runtime_error("Unknown shared atom: '" + ctx->getText() + "'");
-    }
+CharClassBuilder::CharClassBuilder(REmatchParser::SharedAtomContext *ctx)
+    : nchars_(0) {
+  if (ctx->DECIMAL_DIGIT()) {
+    add_range(0, 9);
+  } else if (ctx->NOT_DECIMAL_DIGIT()) {
+    add_range(0, 9);
+    negate();
+  } else if (ctx->WHITESPACE()) {
+    add_single(' ');
+    add_single('\t');
+    add_single('\r');
+    add_single('\n');
+    add_single('\v');
+    add_single('\f');
+  } else if (ctx->NOT_WHITESPACE()) {
+    add_single(' ');
+    add_single('\t');
+    add_single('\r');
+    add_single('\n');
+    add_single('\v');
+    add_single('\f');
+    negate();
+  } else if (ctx->ALPHANUMERIC()) {
+    add_range('A', 'Z');
+    add_range('a', 'z');
+    add_range('0', '9');
+    add_single('_');
+  } else if (ctx->NOT_ALPHANUMERIC()) {
+    add_range('A', 'Z');
+    add_range('a', 'z');
+    add_range('0', '9');
+    add_single('_');
+    negate();
+  } else {
+    throw std::runtime_error("Unknown shared atom: '" + ctx->getText() + "'");
+  }
 }
 
-CharClassBuilder::CharClassBuilder(REmatchParser::CharacterClassContext *ctx): nchars_(0) {
-    for (auto &ccAtom : ctx->ccAtom()) {
-        if (ccAtom->ccRange()) {
-            auto cr = ccAtom->ccRange();
-            auto l_lo = cr->ccLiteral(0);
-            auto l_hi = cr->ccLiteral(1);
+CharClassBuilder::CharClassBuilder(REmatchParser::CharacterClassContext *ctx)
+    : nchars_(0) {
+  for (auto& ccAtom : ctx->ccAtom()) {
+    if (ccAtom->ccRange()) {
+      // TODO: implement this using non-ascii characters
+      throw std::runtime_error("Character ranges are not supported yet");
+      // auto cr = ccAtom->ccRange();
+      // auto l_lo = cr->ccLiteral(0);
+      // auto l_hi = cr->ccLiteral(1);
 
-            char lo;
-            if (l_lo->ccEscapes()) {
-                lo = l_lo->getText()[1];
-            } else {
-                lo = l_lo->getText()[0];
-            }
-            char hi;
-            if (l_hi->ccEscapes()) {
-                hi = l_hi->getText()[1];
-            } else {
-                hi = l_hi->getText()[0];
-            }
-            add_range(lo, hi);
-        } else if (ccAtom->sharedAtom()) {
-            REmatchParser::SharedAtomContext* sa(ccAtom->sharedAtom());
-            CharClassBuilder cb_sharedAtom(sa);
-            add_charclass(&cb_sharedAtom);
-        } else if (ccAtom->literal()) {
-            REmatchParser::LiteralContext* lc(ccAtom->literal());
-            CharClassBuilder cb_literal(lc);
-            add_charclass(&cb_literal);
-        } else {
-            // TODO: Change this error message
-            throw std::runtime_error("Unknown Character Class Atom: '" + ccAtom->getText() + "'");
-        }
+      // char lo;
+      // if (l_lo->ccEscapes()) {
+      //   lo = l_lo->getText()[1];
+      // } else {
+      //   lo = l_lo->getText()[0];
+      // }
+      // char hi;
+      // if (l_hi->ccEscapes()) {
+      //   hi = l_hi->getText()[1];
+      // } else {
+      //   hi = l_hi->getText()[0];
+      // }
+      // add_range(lo, hi);
+    } else if (ccAtom->sharedAtom()) {
+      REmatchParser::SharedAtomContext* sa(ccAtom->sharedAtom());
+      CharClassBuilder cb_sharedAtom(sa);
+      add_charclass(&cb_sharedAtom);
+    } else if (ccAtom->literal()) {
+      REmatchParser::LiteralContext* lc(ccAtom->literal());
+      CharClassBuilder cb_literal(lc);
+      add_charclass(&cb_literal);
+    } else {
+      throw std::runtime_error("Unknown Character Class Atom: '" + ccAtom->getText() + "'");
     }
-    if (ctx->HAT()) {
-        negate();
-    }
+  }
+  if (ctx->HAT()) {
+    negate();
+  }
 }
 
 bool CharClassBuilder::add_range(char lo, char hi) {
