@@ -10,15 +10,16 @@ namespace visitors {
 
 class VariableFactoryVisitor : public REmatchParserBaseVisitor {
 public:
-  VariableFactory get_vfact(REmatchParser::RootContext *ctx) {
-    return std::any_cast<VariableFactory>(visitRoot(ctx));
-  }
+  std::shared_ptr<VariableFactory> vfact_ptr;
 
-private:
   std::any visitRoot(REmatchParser::RootContext *ctx) override {
-    return visit(ctx->alternation());
-  }
+    std::any vfact = visit(ctx->alternation());
+    VariableFactory& vfact_cast = std::any_cast<VariableFactory &>(vfact);
+    vfact_ptr = std::make_shared<VariableFactory>(vfact_cast);
 
+    return 0;
+  }
+private:
   std::any visitAlternation(REmatchParser::AlternationContext *ctx) override {
     std::any vfact = visit(ctx->expr().front());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
@@ -77,7 +78,7 @@ private:
     std::any vfact = visit(ctx->alternation());
     VariableFactory &vfact_cast = std::any_cast<VariableFactory &>(vfact);
 
-    std::string var = ctx->VARNAME()->getText();
+    std::string var = ctx->varname()->getText();
     if (vfact_cast.contains(var)) {
       throw parsing::BadRegex("Nested the same variables inside asignations");
     }
@@ -86,7 +87,7 @@ private:
     return vfact;
   }
 
-  std::any visitAtom(REmatchParser::AtomContext * /*ctx*/) override {
+  std::any visitAtom(REmatchParser::AtomContext*) override {
     return std::make_any<VariableFactory>();
   }
 };

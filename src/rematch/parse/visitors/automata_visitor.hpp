@@ -118,7 +118,7 @@ private:
     std::any A = visit(ctx->alternation());
     LogicalVA &A_cast = std::any_cast<LogicalVA &>(A);
 
-    std::string var = ctx->VARNAME()->getText();
+    std::string var = ctx->varname()->getText();
     std::bitset<32> op_code = vfact->open_code(var);
     std::bitset<32> cl_code = vfact->close_code(var);
     A_cast.assign(op_code, cl_code);

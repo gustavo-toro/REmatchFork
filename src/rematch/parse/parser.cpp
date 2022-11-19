@@ -21,26 +21,21 @@ LogicalVA doParse(const std::string &input) {
 
   // * Variable Factory
   visitors::VariableFactoryVisitor vfv;
-  VariableFactory vfact = vfv.get_vfact(root);
-  std::shared_ptr<VariableFactory> vfact_ptr = std::make_shared<VariableFactory>(vfact);
+  vfv.visit(root);
+  std::shared_ptr<VariableFactory> vfact_ptr = vfv.vfact_ptr;
 
-  // * Filter Factory
+  std::cout << vfact_ptr->pprint() << std::endl;
+
+  // * Filter Factory and Logical VA
   visitors::FilterFactoryVisitor ffv;
-  FilterFactory ffact = ffv.get_ffact(root);
-  std::shared_ptr<FilterFactory> ffact_ptr = std::make_shared<FilterFactory>(ffact);
+  ffv.visit(root);
+  std::shared_ptr<FilterFactory> ffact_ptr = ffv.ffact_ptr;
+  std::unique_ptr<LogicalVA>     lva_ptr   = std::move(ffv.lva_ptr);
 
-  // * Logical VA
-  // visitors::AutomataVisitor av(vfact_ptr, ffact_ptr);
-  // LogicalVA lva = av.get_lva(root);
-  // lva.set_factories(vfact_ptr, ffact_ptr);
+  std::cout << ffact_ptr->pprint() << std::endl;
+  lva_ptr->set_factories(vfact_ptr, ffact_ptr);
+  std::cout << *lva_ptr << std::endl;
 
-  std::cout << "ffact:\n" << ffact.pprint() << std::endl;
-
-  // * Charclass to automaton
-  visitors::CharclassVisitor cv(vfact_ptr, ffact_ptr);
-  cv.do_visit(root);
-
-  // return lva;
   return LogicalVA();
 }
 

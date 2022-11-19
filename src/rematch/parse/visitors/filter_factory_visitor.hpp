@@ -9,34 +9,58 @@ namespace rematch {
 namespace visitors {
 class FilterFactoryVisitor : public REmatchParserBaseVisitor {
 public:
-  FilterFactory get_ffact(REmatchParser::RootContext *ctx) {
-    visitRoot(ctx);
-    return ffact;
-  }
+  std::shared_ptr<FilterFactory> ffact_ptr;
+  std::unique_ptr<LogicalVA>     lva_ptr;
 
+  FilterFactoryVisitor() : ffact_ptr(std::make_shared<FilterFactory>()) {}
 private:
-  FilterFactory ffact;
+  // TODO: implement cat, altern, etc
 
   std::any visitLiteral(REmatchParser::LiteralContext *ctx) override {
+    std::cout << "visitLiteral:" << ctx->getText() << std::endl;
     if (ctx->special() || ctx->escapes()) {
-      ffact.add_filter(ctx);
+      int code = ffact_ptr->add_filter(ctx);
+      lva_ptr  = std::make_unique<LogicalVA>(code);
     }
-    else if (ctx->other()) {
-      for (char c : ctx->getText()) {
-        ffact.add_filter(c);
+    // ctx->other()
+    else {
+      std::string text = ctx->getText();
+      // Build the main automaton with the first character
+      int code = ffact_ptr->add_filter(text[0]);
+      auto A   = std::make_unique<LogicalVA>(code);
+      // Concatenate the remaining characters
+      for (size_t i = 1; i < text.size(); ++i) {
+        int code = ffact_ptr->add_filter(text[i]);
+        auto B   = std::make_unique<LogicalVA>(code);
+        A->cat(*B);
       }
+      lva_ptr = std::move(A);
     }
     return 0;
   }
 
   std::any visitSharedAtom(REmatchParser::SharedAtomContext *ctx) override {
-    ffact.add_filter(ctx);
+    int code = ffact_ptr->add_filter(ctx);
+    lva_ptr  = std::make_unique<LogicalVA>(code);
     return 0;
   }
 
-  std::any
-  visitCharacterClass(REmatchParser::CharacterClassContext *ctx) override {
-    ffact.add_filter(ctx);
+  std::any visitCcRange(REmatchParser::CcRangeContext *ctx) override {
+    throw std::runtime_error("Character class ranges are not supported yet");
+    return 0;
+  }
+
+  std::any visitCharacterClass(REmatchParser::CharacterClassContext *ctx) override {
+    auto ccAtom = ctx->ccAtom();
+    // Build the main automaton with the first character class atom
+    visit(ccAtom[0]);
+    auto A = std::move(lva_ptr);
+    // Alternation of the remaining ccAtoms
+    for (size_t i = 1; i < ccAtom.size(); ++i) {
+      visit(ccAtom[i]);
+      A->alter(*lva_ptr);
+    }
+    lva_ptr = std::move(A);
     return 0;
   }
 };
