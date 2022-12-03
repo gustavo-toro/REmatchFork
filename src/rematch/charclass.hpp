@@ -44,7 +44,6 @@ class CharClassBuilder {
     // Antlr constructor
     CharClassBuilder(REmatchParser::LiteralContext *ctx);
     CharClassBuilder(REmatchParser::SharedAtomContext *ctx);
-    CharClassBuilder(REmatchParser::CharacterClassContext *ctx);
 
 	using iterator = CharRangeSet::iterator;
 	iterator begin() {return ranges_.begin();}

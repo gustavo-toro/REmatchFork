@@ -36,7 +36,7 @@ CharClassBuilder::CharClassBuilder(REmatchParser::LiteralContext *ctx)
     }
   }
   else {
-    throw std::runtime_error("Unknown literal: '" + ctx->getText() + "'");
+    throw std::runtime_error("Unknown Literal: '" + ctx->getText() + "'");
   }
 }
 
@@ -74,47 +74,7 @@ CharClassBuilder::CharClassBuilder(REmatchParser::SharedAtomContext *ctx)
     add_single('_');
     negate();
   } else {
-    throw std::runtime_error("Unknown shared atom: '" + ctx->getText() + "'");
-  }
-}
-
-CharClassBuilder::CharClassBuilder(REmatchParser::CharacterClassContext *ctx)
-    : nchars_(0) {
-  for (auto& ccAtom : ctx->ccAtom()) {
-    if (ccAtom->ccRange()) {
-      // TODO: implement this using non-ascii characters
-      throw std::runtime_error("Character ranges are not supported yet");
-      // auto cr = ccAtom->ccRange();
-      // auto l_lo = cr->ccLiteral(0);
-      // auto l_hi = cr->ccLiteral(1);
-
-      // char lo;
-      // if (l_lo->ccEscapes()) {
-      //   lo = l_lo->getText()[1];
-      // } else {
-      //   lo = l_lo->getText()[0];
-      // }
-      // char hi;
-      // if (l_hi->ccEscapes()) {
-      //   hi = l_hi->getText()[1];
-      // } else {
-      //   hi = l_hi->getText()[0];
-      // }
-      // add_range(lo, hi);
-    } else if (ccAtom->sharedAtom()) {
-      REmatchParser::SharedAtomContext* sa(ccAtom->sharedAtom());
-      CharClassBuilder cb_sharedAtom(sa);
-      add_charclass(&cb_sharedAtom);
-    } else if (ccAtom->literal()) {
-      REmatchParser::LiteralContext* lc(ccAtom->literal());
-      CharClassBuilder cb_literal(lc);
-      add_charclass(&cb_literal);
-    } else {
-      throw std::runtime_error("Unknown Character Class Atom: '" + ccAtom->getText() + "'");
-    }
-  }
-  if (ctx->HAT()) {
-    negate();
+    throw std::runtime_error("Unknown Shared Atom: '" + ctx->getText() + "'");
   }
 }
 
