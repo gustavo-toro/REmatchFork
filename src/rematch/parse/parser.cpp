@@ -19,24 +19,24 @@ LogicalVA doParse(const std::string &input) {
   parser.addErrorListener(&listener);
   REmatchParser::RootContext *root = parser.root();
 
-  // * Variable Factory
+  // Variable Factory
   visitors::VariableFactoryVisitor vfv;
   vfv.visit(root);
   std::shared_ptr<VariableFactory> vfact_ptr = vfv.vfact_ptr;
 
-  std::cout << vfact_ptr->pprint() << std::endl;
-
-  // * Filter Factory and Logical VA
-  visitors::FilterFactoryVisitor ffv;
+  // Filter Factory and Logical VA
+  visitors::FilterFactoryVisitor ffv(vfact_ptr);
   ffv.visit(root);
   std::shared_ptr<FilterFactory> ffact_ptr = ffv.ffact_ptr;
   std::unique_ptr<LogicalVA>     lva_ptr   = std::move(ffv.lva_ptr);
 
-  std::cout << ffact_ptr->pprint() << std::endl;
+  // FIXME: JUST FOR DEBUGGING
+  std::cout << "------------------------" << std::endl;
   lva_ptr->set_factories(vfact_ptr, ffact_ptr);
   std::cout << *lva_ptr << std::endl;
+  std::cout << "------------------------" << std::endl;
 
-  return LogicalVA();
+  return *lva_ptr;
 }
 
 std::unique_ptr<LogicalVA> regex2LVA(std::string regex) {
