@@ -14,32 +14,6 @@ CharClassBuilder::CharClassBuilder(char c): nchars_(0) { add_single(c); }
 
 CharClassBuilder::CharClassBuilder(char l, char h): nchars_(0) { add_range(l,h); }
 
-CharClassBuilder::CharClassBuilder(REmatchParser::LiteralContext *ctx)
-    : nchars_(0) {
-  if (ctx->escapes()) {
-    add_single(ctx->getText()[1]);
-  }
-  else if (ctx->special()) {
-    auto s = ctx->special();
-    if (s->DOT()) {
-      add_range(0, CHAR_MAX);
-    } else if (s->TAB()) {
-      add_single('\t');
-    } else if (s->CARRIAGE_RETURN()) {
-      add_single('\r');
-    } else if (s->NEWLINE()) {
-      add_single('\n');
-    } else if (s->VERTICAL_WHITESPACE()) {
-      add_single('\v');
-    } else if (s->FORM_FEED()) {
-      add_single('\f');
-    }
-  }
-  else {
-    throw std::runtime_error("Unknown Literal: '" + ctx->getText() + "'");
-  }
-}
-
 CharClassBuilder::CharClassBuilder(REmatchParser::SharedAtomContext *ctx)
     : nchars_(0) {
   if (ctx->DECIMAL_DIGIT()) {

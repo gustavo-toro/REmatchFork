@@ -11,8 +11,8 @@ namespace visitors {
 class FilterFactoryVisitor : public REmatchParserBaseVisitor {
  public:
   std::shared_ptr<VariableFactory> vfact_ptr;
-  std::shared_ptr<FilterFactory>   ffact_ptr;
-  std::unique_ptr<LogicalVA>       lva_ptr;
+  std::shared_ptr<FilterFactory> ffact_ptr;
+  std::unique_ptr<LogicalVA> lva_ptr;
 
   FilterFactoryVisitor(std::shared_ptr<VariableFactory> _vfact_ptr)
       : vfact_ptr(_vfact_ptr), ffact_ptr(std::make_shared<FilterFactory>()) {}
@@ -118,9 +118,34 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   }
 
   std::any visitLiteral(REmatchParser::LiteralContext* ctx) override {
-    if (ctx->special() || ctx->escapes()) {
-      throw std::runtime_error(
-          "Special and escape characters are not supported yet");
+    if (ctx->escapes()) {
+      // Ignore the starting backslash
+      int code = ffact_ptr->add_filter(ctx->getText()[1]);
+      lva_ptr = std::make_unique<LogicalVA>(code);
+    } else if (ctx->special()) {
+      auto sp = ctx->special();
+      if (sp->DOT()) {
+        // TODO: Handle dot for unicode characters
+        int code = ffact_ptr->add_filter({0, CHAR_MAX});
+        lva_ptr = std::make_unique<LogicalVA>(code);
+      } else if (sp->TAB()) {
+        int code = ffact_ptr->add_filter('\t');
+        lva_ptr = std::make_unique<LogicalVA>(code);
+      } else if (sp->CARRIAGE_RETURN()) {
+        int code = ffact_ptr->add_filter('\r');
+        lva_ptr = std::make_unique<LogicalVA>(code);
+      } else if (sp->NEWLINE()) {
+        int code = ffact_ptr->add_filter('\n');
+        lva_ptr = std::make_unique<LogicalVA>(code);
+      } else if (sp->VERTICAL_WHITESPACE()) {
+        int code = ffact_ptr->add_filter('\v');
+        lva_ptr = std::make_unique<LogicalVA>(code);
+      } else if (sp->FORM_FEED()) {
+        int code = ffact_ptr->add_filter('\f');
+        lva_ptr = std::make_unique<LogicalVA>(code);
+      } else {
+        throw parsing::BadRegex("Unhandled Special Literal: " + sp->getText());
+      }
     }
     // Other literals
     else {
