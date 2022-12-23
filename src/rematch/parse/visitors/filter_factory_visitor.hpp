@@ -21,13 +21,13 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   std::any visitAlternation(REmatchParser::AlternationContext* ctx) override {
     // Build the automaton for the first expression
     visit(ctx->expr(0));
-    auto A = std::move(lva_ptr);
-    // Alternation of the remaining expressions
+    auto lhs = std::move(lva_ptr);
+    // Alternate the remaining expressions
     for (size_t i = 1; i < ctx->expr().size(); ++i) {
       visit(ctx->expr(i));
-      A->alter(*lva_ptr);
+      lhs->alter(*lva_ptr);
     }
-    lva_ptr = std::move(A);
+    lva_ptr = std::move(lhs);
 
     return 0;
   }
@@ -35,13 +35,13 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   std::any visitExpr(REmatchParser::ExprContext* ctx) override {
     // Build the automaton for the first element
     visit(ctx->element(0));
-    auto A = std::move(lva_ptr);
-    // Concatenation of the remaining elements
+    auto lhs = std::move(lva_ptr);
+    // Concatenate the remaining elements
     for (size_t i = 1; i < ctx->element().size(); ++i) {
       visit(ctx->element(i));
-      A->cat(*lva_ptr);
+      lhs->cat(*lva_ptr);
     }
-    lva_ptr = std::move(A);
+    lva_ptr = std::move(lhs);
 
     return 0;
   }
@@ -72,7 +72,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     } else if (ctx->STAR()) {
       lva_ptr->kleene();
     }
-    // Quantifier Range
+    // Quantifier range
     else {
       auto qty = ctx->quantity();
       int lo = 0, hi = -1;
@@ -122,19 +122,18 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       throw std::runtime_error(
           "Special and escape characters are not supported yet");
     }
-    // ctx->other()
+    // Other literals
     else {
       std::string text = ctx->getText();
-      // Build the main automaton with the first character
+      // Build the automaton for the first character
       int code = ffact_ptr->add_filter(text[0]);
-      auto A = std::make_unique<LogicalVA>(code);
+      lva_ptr = std::make_unique<LogicalVA>(code);
       // Concatenate the remaining characters
       for (size_t i = 1; i < text.size(); ++i) {
         int code = ffact_ptr->add_filter(text[i]);
-        auto B = std::make_unique<LogicalVA>(code);
-        A->cat(*B);
+        auto rhs = std::make_unique<LogicalVA>(code);
+        lva_ptr->cat(*rhs);
       }
-      lva_ptr = std::move(A);
     }
 
     return 0;
