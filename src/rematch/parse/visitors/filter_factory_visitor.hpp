@@ -21,13 +21,13 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   std::any visitAlternation(REmatchParser::AlternationContext* ctx) override {
     // Build the automaton for the first expression
     visit(ctx->expr(0));
-    auto lhs = std::move(lva_ptr);
+    auto A = std::move(lva_ptr);
     // Alternate the remaining expressions
     for (size_t i = 1; i < ctx->expr().size(); ++i) {
       visit(ctx->expr(i));
-      lhs->alter(*lva_ptr);
+      A->alter(*lva_ptr);
     }
-    lva_ptr = std::move(lhs);
+    lva_ptr = std::move(A);
 
     return 0;
   }
@@ -35,13 +35,13 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   std::any visitExpr(REmatchParser::ExprContext* ctx) override {
     // Build the automaton for the first element
     visit(ctx->element(0));
-    auto lhs = std::move(lva_ptr);
+    auto A = std::move(lva_ptr);
     // Concatenate the remaining elements
     for (size_t i = 1; i < ctx->element().size(); ++i) {
       visit(ctx->element(i));
-      lhs->cat(*lva_ptr);
+      A->cat(*lva_ptr);
     }
-    lva_ptr = std::move(lhs);
+    lva_ptr = std::move(A);
 
     return 0;
   }
@@ -94,7 +94,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   }
 
   std::any visitParentheses(REmatchParser::ParenthesesContext* ctx) override {
-    visit(ctx->alternation());
+    visitChildren(ctx);
 
     return 0;
   }
@@ -118,47 +118,77 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   }
 
   std::any visitLiteral(REmatchParser::LiteralContext* ctx) override {
-    if (ctx->escapes()) {
-      // Ignore the starting backslash
-      int code = ffact_ptr->add_filter(ctx->getText()[1]);
-      lva_ptr = std::make_unique<LogicalVA>(code);
-    } else if (ctx->special()) {
-      auto sp = ctx->special();
-      if (sp->DOT()) {
-        // TODO: Handle dot for unicode characters
-        int code = ffact_ptr->add_filter({0, CHAR_MAX});
-        lva_ptr = std::make_unique<LogicalVA>(code);
-      } else if (sp->TAB()) {
-        int code = ffact_ptr->add_filter('\t');
-        lva_ptr = std::make_unique<LogicalVA>(code);
-      } else if (sp->CARRIAGE_RETURN()) {
-        int code = ffact_ptr->add_filter('\r');
-        lva_ptr = std::make_unique<LogicalVA>(code);
-      } else if (sp->NEWLINE()) {
-        int code = ffact_ptr->add_filter('\n');
-        lva_ptr = std::make_unique<LogicalVA>(code);
-      } else if (sp->VERTICAL_WHITESPACE()) {
-        int code = ffact_ptr->add_filter('\v');
-        lva_ptr = std::make_unique<LogicalVA>(code);
-      } else if (sp->FORM_FEED()) {
-        int code = ffact_ptr->add_filter('\f');
-        lva_ptr = std::make_unique<LogicalVA>(code);
-      } else {
-        throw parsing::BadRegex("Unhandled Special Literal: " + sp->getText());
-      }
+    visitChildren(ctx);
+
+    return 0;
+  }
+
+  std::any visitEscapes(REmatchParser::EscapesContext* ctx) override {
+    // Ignore the starting backslash
+    lva_ptr =
+        std::make_unique<LogicalVA>(ffact_ptr->add_filter(ctx->getText()[1]));
+
+    return 0;
+  }
+
+  std::any visitSpecial(REmatchParser::SpecialContext* ctx) override {
+    // Dot (Any Operator) needs to be handled for UTF-8 literals
+    if (ctx->DOT()) {
+      // 1 byte automaton
+      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x00', '\x7F'}));
+      // 2 bytes automaton
+      auto B1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xC2', '\xDF'}));
+      auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      B1->cat(*B2);
+      // 3 bytes automaton
+      auto C1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xE0', '\xEF'}));
+      auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto C3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      C1->cat(*C2);
+      C1->cat(*C3);
+      // 4 bytes automaton
+      auto D1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xF0', '\xF7'}));
+      auto D2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D4 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      D1->cat(*D2);
+      D1->cat(*D3);
+      D1->cat(*D4);
+      // Alternate all the automata
+      A1->alter(*B1);
+      A1->alter(*C1);
+      A1->alter(*D1);
+
+      lva_ptr = std::move(A1);
+
+      return 0;
     }
-    // Other literals
-    else {
-      std::string text = ctx->getText();
-      // Build the automaton for the first character
-      int code = ffact_ptr->add_filter(text[0]);
-      lva_ptr = std::make_unique<LogicalVA>(code);
-      // Concatenate the remaining characters
-      for (size_t i = 1; i < text.size(); ++i) {
-        int code = ffact_ptr->add_filter(text[i]);
-        auto rhs = std::make_unique<LogicalVA>(code);
-        lva_ptr->cat(*rhs);
-      }
+    // Regular special literals
+    else if (ctx->TAB()) {
+      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter('\t'));
+    } else if (ctx->CARRIAGE_RETURN()) {
+      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter('\r'));
+    } else if (ctx->NEWLINE()) {
+      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter('\n'));
+    } else if (ctx->VERTICAL_WHITESPACE()) {
+      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter('\v'));
+    } else if (ctx->FORM_FEED()) {
+      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter('\f'));
+    } else {
+      throw parsing::BadRegex("Unhandled Special Literal: " + ctx->getText());
+    }
+
+    return 0;
+  }
+
+  std::any visitOther(REmatchParser::OtherContext* ctx) override {
+    std::string text = ctx->getText();
+    // Build the automaton for the first character
+    lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(text[0]));
+    // Concatenate the remaining characters
+    for (size_t i = 1; i < text.size(); ++i) {
+      auto A = std::make_unique<LogicalVA>(ffact_ptr->add_filter(text[i]));
+      lva_ptr->cat(*A);
     }
 
     return 0;
