@@ -63,7 +63,7 @@ void NormalEvaluator::init_evaluation_phase(int64_t pos) {
 bool NormalEvaluator::evaluation_phase() {
   while(i_pos_ < text_->size()) {
     char a = (*text_)[i_pos_];
-    a &= 0x7F;  // Only ASCII chars for now
+    // a &= 0x7F;  // Only ASCII chars for now
 
     reading(a, i_pos_);
 

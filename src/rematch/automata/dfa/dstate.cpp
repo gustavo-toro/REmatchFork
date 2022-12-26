@@ -10,12 +10,12 @@ int DState::ID = 0;
 
 DState::DState(size_t tot_states)
   : id_(ID++),
-    transitions_(128),
+    transitions_(256),
     states_bitmap_(tot_states, false) {}
 
 DState::DState(size_t tot_states, std::vector<State*> states)
     : id_(ID++),
-      transitions_(128),
+      transitions_(256),
       states_bitmap_(tot_states, false),
       states_subset_(states) {
   for(auto &p: states_subset_) {
@@ -27,7 +27,7 @@ DState::DState(size_t tot_states, std::vector<State*> states)
 
 DState::DState(size_t tot_states, std::set<State*> states)
     : id_(ID++),
-      transitions_(128),
+      transitions_(256),
       states_bitmap_(tot_states, false),
       states_subset_(states.begin(), states.end()) {
   for(auto &p: states_subset_) {

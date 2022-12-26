@@ -195,6 +195,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   }
 
   std::any visitSharedAtom(REmatchParser::SharedAtomContext*) override {
+    // TODO: Remove CharClassBuilder and use this visitor instead
     throw std::runtime_error("Character shared atoms are not supported yet");
   }
 

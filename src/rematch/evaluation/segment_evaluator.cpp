@@ -73,7 +73,7 @@ void SegmentEvaluator::init_evaluation_phase(int64_t pos) {
 bool SegmentEvaluator::evaluation_phase() {
   while(i_pos_ < i_max_) {
     char a = (*text_)[i_pos_];
-    a &= 0x7F;  // Only ASCII chars for now
+    // a &= 0x7F;  // Only ASCII chars for now
 
     reading(a, i_pos_);
 
@@ -97,7 +97,7 @@ bool SegmentEvaluator::searching_phase() {
 
   for(;i_src_ < text_->size();) {
 
-    char a = (char) (*text_)[i_src_] & 0x7F;
+    char a = (char) (*text_)[i_src_]; //& 0x7F;
 
     ++i_src_;
 
