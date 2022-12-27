@@ -23,11 +23,11 @@ public:
   enum {
     RuleRoot = 0, RuleAlternation = 1, RuleExpr = 2, RuleElement = 3, RuleGroup = 4, 
     RuleParentheses = 5, RuleAssignation = 6, RuleVarname = 7, RuleAtom = 8, 
-    RuleCharacterClass = 9, RuleCcAtom = 10, RuleCcRange = 11, RuleCcLiteral = 12, 
-    RuleCcEscapes = 13, RuleCcOther = 14, RuleLiteral = 15, RuleEscapes = 16, 
-    RuleSpecial = 17, RuleOther = 18, RuleSharedAtom = 19, RuleQuantifier = 20, 
-    RuleQuantity = 21, RuleQuantExact = 22, RuleQuantRange = 23, RuleQuantMin = 24, 
-    RuleQuantMax = 25, RuleNumber = 26
+    RuleCharacterClass = 9, RuleCcAtom = 10, RuleCcRange = 11, RuleCcSingle = 12, 
+    RuleCcLiteral = 13, RuleCcEscapes = 14, RuleCcOther = 15, RuleLiteral = 16, 
+    RuleEscapes = 17, RuleSpecial = 18, RuleOther = 19, RuleSharedAtom = 20, 
+    RuleQuantifier = 21, RuleQuantity = 22, RuleQuantExact = 23, RuleQuantRange = 24, 
+    RuleQuantMin = 25, RuleQuantMax = 26, RuleNumber = 27
   };
 
   explicit REmatchParser(antlr4::TokenStream *input);
@@ -59,6 +59,7 @@ public:
   class CharacterClassContext;
   class CcAtomContext;
   class CcRangeContext;
+  class CcSingleContext;
   class CcLiteralContext;
   class CcEscapesContext;
   class CcOtherContext;
@@ -234,7 +235,7 @@ public:
     virtual size_t getRuleIndex() const override;
     CcRangeContext *ccRange();
     SharedAtomContext *sharedAtom();
-    CcLiteralContext *ccLiteral();
+    CcSingleContext *ccSingle();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -257,6 +258,19 @@ public:
   };
 
   CcRangeContext* ccRange();
+
+  class  CcSingleContext : public antlr4::ParserRuleContext {
+  public:
+    CcSingleContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    CcLiteralContext *ccLiteral();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  CcSingleContext* ccSingle();
 
   class  CcLiteralContext : public antlr4::ParserRuleContext {
   public:

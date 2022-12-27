@@ -43,6 +43,8 @@ public:
 
     virtual std::any visitCcRange(REmatchParser::CcRangeContext *context) = 0;
 
+    virtual std::any visitCcSingle(REmatchParser::CcSingleContext *context) = 0;
+
     virtual std::any visitCcLiteral(REmatchParser::CcLiteralContext *context) = 0;
 
     virtual std::any visitCcEscapes(REmatchParser::CcEscapesContext *context) = 0;

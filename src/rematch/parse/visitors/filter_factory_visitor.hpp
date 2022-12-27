@@ -8,8 +8,31 @@
 
 namespace rematch {
 namespace visitors {
+
+struct UnicodeRange {
+  UnicodeRange() : lo(0), hi(0) {}
+  UnicodeRange(uint32_t l, uint32_t h) : lo(l), hi(h) {}
+
+  bool operator==(const UnicodeRange &rhs) const {
+    return lo == rhs.lo && hi == rhs.hi;
+  }
+
+  uint32_t lo;
+  uint32_t hi;
+};
+
+struct UnicodeRangeLess {
+  bool operator()(const UnicodeRange &a, const UnicodeRange &b) const {
+    return a.hi < b.lo;
+  }
+};
+
+// TODO: Move this constant to another file ?
+static constexpr uint32_t UTF8MAX = 0x10FFFF;
+using UnicodeRangeSet = std::set<UnicodeRange, UnicodeRangeLess>;
+
 class FilterFactoryVisitor : public REmatchParserBaseVisitor {
- public:
+public:
   std::shared_ptr<VariableFactory> vfact_ptr;
   std::shared_ptr<FilterFactory> ffact_ptr;
   std::unique_ptr<LogicalVA> lva_ptr;
@@ -17,8 +40,61 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
   FilterFactoryVisitor(std::shared_ptr<VariableFactory> _vfact_ptr)
       : vfact_ptr(_vfact_ptr), ffact_ptr(std::make_shared<FilterFactory>()) {}
 
- private:
-  std::any visitAlternation(REmatchParser::AlternationContext* ctx) override {
+private:
+  UnicodeRangeSet ranges;
+  uint32_t current_codepoint;
+
+  bool add_range(uint32_t lo, uint32_t hi) {
+    if (hi < lo)
+      return false;
+
+    {
+      auto it = ranges.find(UnicodeRange(lo, hi));
+      if (it != ranges.end() && it->lo <= lo && hi <= it->hi)
+        return false;
+    }
+
+    // Look for an inmediate range to the left of [lo, hi]. If exists
+    // then erase and extend [lo, hi] accordingly
+    if (lo > 0) {
+      auto it = ranges.find(UnicodeRange(lo - 1, lo - 1));
+      if (it != ranges.end()) {
+        lo = it->lo;
+        if (it->hi > hi)
+          hi = it->hi;
+        ranges.erase(it);
+      }
+    }
+
+    // Look for an inmediate range to the right of [lo, hi]. If exists
+    // then erase and extend [lo, hi] accordingly
+    // Note: The last unicode code point is 0x10FFFF
+    if (hi < UTF8MAX) {
+      auto it = ranges.find(UnicodeRange(hi + 1, hi + 1));
+      if (it != ranges.end()) {
+        hi = it->hi;
+        // Not necesary to check for lo. Did it in previous step.
+        ranges.erase(it);
+      }
+    }
+
+    // Search for ranges inside [lo, hi] and erase them
+    // The remaining ranges that overlap with [lo, hi] must be inside.
+    for (;;) {
+      auto it = ranges.find(UnicodeRange(lo, hi));
+      if (it == ranges.end())
+        break;
+      ranges.erase(it);
+    }
+
+    // Add [lo, hi]
+    ranges.insert(UnicodeRange(lo, hi));
+    return true;
+  }
+
+  bool add_single(uint32_t c) { return add_range(c, c); }
+
+  std::any visitAlternation(REmatchParser::AlternationContext *ctx) override {
     // Build the automaton for the first expression
     visit(ctx->expr(0));
     auto A = std::move(lva_ptr);
@@ -32,7 +108,34 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitExpr(REmatchParser::ExprContext* ctx) override {
+  void negate() {
+    std::vector<UnicodeRange> new_ranges;
+    new_ranges.reserve(ranges.size() + 1);
+
+    auto it = ranges.begin();
+    if (it == ranges.end()) {
+      new_ranges.push_back(UnicodeRange(0, UTF8MAX));
+    } else {
+      uint32_t next_lo = 0;
+      if (it->lo == 0) {
+        next_lo = it->hi + 1;
+        ++it;
+      }
+      for (; it != ranges.end(); ++it) {
+        new_ranges.push_back(UnicodeRange(next_lo, it->lo - 1));
+        next_lo = it->hi + 1;
+      }
+      if (next_lo <= UTF8MAX)
+        new_ranges.push_back(UnicodeRange(next_lo, UTF8MAX));
+    }
+
+    ranges.clear();
+    for (auto &range : new_ranges) {
+      ranges.insert(range);
+    }
+  }
+
+  std::any visitExpr(REmatchParser::ExprContext *ctx) override {
     // Build the automaton for the first element
     visit(ctx->element(0));
     auto A = std::move(lva_ptr);
@@ -46,7 +149,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitElement(REmatchParser::ElementContext* ctx) override {
+  std::any visitElement(REmatchParser::ElementContext *ctx) override {
     // Build the automaton for the group
     visit(ctx->group());
     // Apply the quantifier
@@ -58,13 +161,13 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitGroup(REmatchParser::GroupContext* ctx) override {
+  std::any visitGroup(REmatchParser::GroupContext *ctx) override {
     visitChildren(ctx);
 
     return 0;
   }
 
-  std::any visitQuantifier(REmatchParser::QuantifierContext* ctx) override {
+  std::any visitQuantifier(REmatchParser::QuantifierContext *ctx) override {
     if (ctx->QUESTION()) {
       lva_ptr->optional();
     } else if (ctx->PLUS()) {
@@ -93,13 +196,13 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitParentheses(REmatchParser::ParenthesesContext* ctx) override {
+  std::any visitParentheses(REmatchParser::ParenthesesContext *ctx) override {
     visitChildren(ctx);
 
     return 0;
   }
 
-  std::any visitAssignation(REmatchParser::AssignationContext* ctx) override {
+  std::any visitAssignation(REmatchParser::AssignationContext *ctx) override {
     // Build the automaton for the alternation
     visit(ctx->alternation());
     // Assign the codes from the variable
@@ -111,19 +214,19 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitAtom(REmatchParser::AtomContext* ctx) override {
+  std::any visitAtom(REmatchParser::AtomContext *ctx) override {
     visitChildren(ctx);
 
     return 0;
   }
 
-  std::any visitLiteral(REmatchParser::LiteralContext* ctx) override {
+  std::any visitLiteral(REmatchParser::LiteralContext *ctx) override {
     visitChildren(ctx);
 
     return 0;
   }
 
-  std::any visitEscapes(REmatchParser::EscapesContext* ctx) override {
+  std::any visitEscapes(REmatchParser::EscapesContext *ctx) override {
     // Ignore the starting backslash
     lva_ptr =
         std::make_unique<LogicalVA>(ffact_ptr->add_filter(ctx->getText()[1]));
@@ -131,26 +234,36 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitSpecial(REmatchParser::SpecialContext* ctx) override {
+  std::any visitSpecial(REmatchParser::SpecialContext *ctx) override {
     // Dot (Any Operator) needs to be handled for UTF-8 literals
     if (ctx->DOT()) {
       // 1 byte automaton
-      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x00', '\x7F'}));
+      auto A1 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x00', '\x7F'}));
       // 2 bytes automaton
-      auto B1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xC2', '\xDF'}));
-      auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto B1 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xC2', '\xDF'}));
+      auto B2 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
       B1->cat(*B2);
       // 3 bytes automaton
-      auto C1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xE0', '\xEF'}));
-      auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
-      auto C3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto C1 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xE0', '\xEF'}));
+      auto C2 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto C3 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
       C1->cat(*C2);
       C1->cat(*C3);
       // 4 bytes automaton
-      auto D1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xF0', '\xF7'}));
-      auto D2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
-      auto D3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
-      auto D4 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D1 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xF0', '\xF7'}));
+      auto D2 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D3 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D4 =
+          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
       D1->cat(*D2);
       D1->cat(*D3);
       D1->cat(*D4);
@@ -181,7 +294,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitOther(REmatchParser::OtherContext* ctx) override {
+  std::any visitOther(REmatchParser::OtherContext *ctx) override {
     std::string text = ctx->getText();
     // Build the automaton for the first character
     lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(text[0]));
@@ -194,14 +307,94 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitSharedAtom(REmatchParser::SharedAtomContext*) override {
+  std::any visitSharedAtom(REmatchParser::SharedAtomContext *) override {
     // TODO: Remove CharClassBuilder and use this visitor instead
     throw std::runtime_error("Character shared atoms are not supported yet");
   }
 
-  std::any visitCharacterClass(REmatchParser::CharacterClassContext*) override {
-    throw std::runtime_error("Character classes are not supported yet");
+  std::any
+  visitCharacterClass(REmatchParser::CharacterClassContext *ctx) override {
+    // Build the character class set of ranges
+    for (auto &atom : ctx->ccAtom()) {
+      visit(atom);
+    }
+    // Check if the character class must be negated
+    if (ctx->HAT()) {
+      negate();
+    }
+    // TODO: Build the automaton
+
+    // Print current character class
+    std::cout << "Character Class: " << ctx->getText() << std::endl;
+    for (auto &range : ranges) {
+      std::cout << range.lo << " - " << range.hi << std::endl;
+    }
+
+    throw std::runtime_error("TODO: Implement this");
+    return 0;
+  }
+
+  std::any visitCcAtom(REmatchParser::CcAtomContext *ctx) override {
+    visitChildren(ctx);
+
+    return 0;
+  }
+
+  std::any visitCcRange(REmatchParser::CcRangeContext *ctx) override {
+    // Build the codepoint range and add it to the set
+    visit(ctx->ccLiteral(0));
+    uint32_t lo = current_codepoint;
+    visit(ctx->ccLiteral(1));
+    add_range(lo, current_codepoint);
+
+    return 0;
+  }
+
+  std::any visitCcSingle(REmatchParser::CcSingleContext *ctx) override {
+    // Get the codepoint and add it to the set
+    visit(ctx->ccLiteral());
+    add_single(current_codepoint);
+
+    return 0;
+  }
+
+  std::any visitCcLiteral(REmatchParser::CcLiteralContext *ctx) override {
+    visitChildren(ctx);
+
+    return 0;
+  }
+
+  std::any visitCcEscapes(REmatchParser::CcEscapesContext *ctx) override {
+    // Get the codepoint ignoring the starting backslash
+    current_codepoint = ctx->getText()[1];
+
+    return 0;
+  }
+
+  std::any visitCcOther(REmatchParser::CcOtherContext *ctx) override {
+    std::string str = ctx->getText();
+    // Get the codepoint of the utf-8 character
+    switch (str.size()) {
+    case 1:
+      current_codepoint = str[0];
+      break;
+    case 2:
+      current_codepoint = ((str[0] & 0x1F) << 6) + (str[1] & 0x3F);
+      break;
+    case 3:
+      current_codepoint =
+          ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) << 6) + (str[2] & 0x3F);
+      break;
+    case 4:
+      current_codepoint = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12) +
+                          ((str[2] & 0x3F) << 6) + (str[3] & 0x3F);
+      break;
+    default:
+      throw parsing::BadRegex("Invalid UTF-8 character: " + str);
+    }
+
+    return 0;
   }
 };
-}  // namespace visitors
-}  // namespace rematch
+} // namespace visitors
+} // namespace rematch

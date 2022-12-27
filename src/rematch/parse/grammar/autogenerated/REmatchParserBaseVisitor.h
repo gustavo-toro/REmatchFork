@@ -63,6 +63,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitCcSingle(REmatchParser::CcSingleContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitCcLiteral(REmatchParser::CcLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
