@@ -14,44 +14,6 @@ CharClassBuilder::CharClassBuilder(char c): nchars_(0) { add_single(c); }
 
 CharClassBuilder::CharClassBuilder(char l, char h): nchars_(0) { add_range(l,h); }
 
-CharClassBuilder::CharClassBuilder(REmatchParser::SharedAtomContext *ctx)
-    : nchars_(0) {
-  if (ctx->DECIMAL_DIGIT()) {
-    add_range(0, 9);
-  } else if (ctx->NOT_DECIMAL_DIGIT()) {
-    add_range(0, 9);
-    negate();
-  } else if (ctx->WHITESPACE()) {
-    add_single(' ');
-    add_single('\t');
-    add_single('\r');
-    add_single('\n');
-    add_single('\v');
-    add_single('\f');
-  } else if (ctx->NOT_WHITESPACE()) {
-    add_single(' ');
-    add_single('\t');
-    add_single('\r');
-    add_single('\n');
-    add_single('\v');
-    add_single('\f');
-    negate();
-  } else if (ctx->ALPHANUMERIC()) {
-    add_range('A', 'Z');
-    add_range('a', 'z');
-    add_range('0', '9');
-    add_single('_');
-  } else if (ctx->NOT_ALPHANUMERIC()) {
-    add_range('A', 'Z');
-    add_range('a', 'z');
-    add_range('0', '9');
-    add_single('_');
-    negate();
-  } else {
-    throw std::runtime_error("Unknown Shared Atom: '" + ctx->getText() + "'");
-  }
-}
-
 bool CharClassBuilder::add_range(char lo, char hi) {
 	if (hi < lo)
 		return false;

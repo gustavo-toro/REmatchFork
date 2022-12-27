@@ -24,10 +24,10 @@ public:
     RuleRoot = 0, RuleAlternation = 1, RuleExpr = 2, RuleElement = 3, RuleGroup = 4, 
     RuleParentheses = 5, RuleAssignation = 6, RuleVarname = 7, RuleAtom = 8, 
     RuleCharacterClass = 9, RuleCcAtom = 10, RuleCcRange = 11, RuleCcSingle = 12, 
-    RuleCcLiteral = 13, RuleCcEscapes = 14, RuleCcOther = 15, RuleLiteral = 16, 
-    RuleEscapes = 17, RuleSpecial = 18, RuleOther = 19, RuleSharedAtom = 20, 
-    RuleQuantifier = 21, RuleQuantity = 22, RuleQuantExact = 23, RuleQuantRange = 24, 
-    RuleQuantMin = 25, RuleQuantMax = 26, RuleNumber = 27
+    RuleCcLiteral = 13, RuleCcEscapes = 14, RuleCcOther = 15, RuleSingleSharedAtom = 16, 
+    RuleLiteral = 17, RuleEscapes = 18, RuleSpecial = 19, RuleOther = 20, 
+    RuleSharedAtom = 21, RuleQuantifier = 22, RuleQuantity = 23, RuleQuantExact = 24, 
+    RuleQuantRange = 25, RuleQuantMin = 26, RuleQuantMax = 27, RuleNumber = 28
   };
 
   explicit REmatchParser(antlr4::TokenStream *input);
@@ -63,6 +63,7 @@ public:
   class CcLiteralContext;
   class CcEscapesContext;
   class CcOtherContext;
+  class SingleSharedAtomContext;
   class LiteralContext;
   class EscapesContext;
   class SpecialContext;
@@ -202,7 +203,7 @@ public:
     AtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     CharacterClassContext *characterClass();
-    SharedAtomContext *sharedAtom();
+    SingleSharedAtomContext *singleSharedAtom();
     LiteralContext *literal();
 
 
@@ -318,6 +319,19 @@ public:
   };
 
   CcOtherContext* ccOther();
+
+  class  SingleSharedAtomContext : public antlr4::ParserRuleContext {
+  public:
+    SingleSharedAtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    SharedAtomContext *sharedAtom();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SingleSharedAtomContext* singleSharedAtom();
 
   class  LiteralContext : public antlr4::ParserRuleContext {
   public:

@@ -79,6 +79,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitSingleSharedAtom(REmatchParser::SingleSharedAtomContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitLiteral(REmatchParser::LiteralContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -27,12 +27,11 @@ struct UnicodeRangeLess {
   }
 };
 
-// TODO: Move this constant to another file ?
 static constexpr uint32_t UTF8MAX = 0x10FFFF;
 using UnicodeRangeSet = std::set<UnicodeRange, UnicodeRangeLess>;
 
 class FilterFactoryVisitor : public REmatchParserBaseVisitor {
-public:
+ public:
   std::shared_ptr<VariableFactory> vfact_ptr;
   std::shared_ptr<FilterFactory> ffact_ptr;
   std::unique_ptr<LogicalVA> lva_ptr;
@@ -40,18 +39,16 @@ public:
   FilterFactoryVisitor(std::shared_ptr<VariableFactory> _vfact_ptr)
       : vfact_ptr(_vfact_ptr), ffact_ptr(std::make_shared<FilterFactory>()) {}
 
-private:
+ private:
   UnicodeRangeSet ranges;
   uint32_t current_codepoint;
 
   bool add_range(uint32_t lo, uint32_t hi) {
-    if (hi < lo)
-      return false;
+    if (hi < lo) return false;
 
     {
       auto it = ranges.find(UnicodeRange(lo, hi));
-      if (it != ranges.end() && it->lo <= lo && hi <= it->hi)
-        return false;
+      if (it != ranges.end() && it->lo <= lo && hi <= it->hi) return false;
     }
 
     // Look for an inmediate range to the left of [lo, hi]. If exists
@@ -60,8 +57,7 @@ private:
       auto it = ranges.find(UnicodeRange(lo - 1, lo - 1));
       if (it != ranges.end()) {
         lo = it->lo;
-        if (it->hi > hi)
-          hi = it->hi;
+        if (it->hi > hi) hi = it->hi;
         ranges.erase(it);
       }
     }
@@ -82,8 +78,7 @@ private:
     // The remaining ranges that overlap with [lo, hi] must be inside.
     for (;;) {
       auto it = ranges.find(UnicodeRange(lo, hi));
-      if (it == ranges.end())
-        break;
+      if (it == ranges.end()) break;
       ranges.erase(it);
     }
 
@@ -307,13 +302,14 @@ private:
     return 0;
   }
 
-  std::any visitSharedAtom(REmatchParser::SharedAtomContext *) override {
-    // TODO: Remove CharClassBuilder and use this visitor instead
-    throw std::runtime_error("Character shared atoms are not supported yet");
+  std::any visitSingleSharedAtom(
+      REmatchParser::SingleSharedAtomContext *) override {
+    // TODO: Build the automaton directly, clear the ranges
+    throw std::runtime_error("Single Shared Atom not implemented");
   }
 
-  std::any
-  visitCharacterClass(REmatchParser::CharacterClassContext *ctx) override {
+  std::any visitCharacterClass(
+      REmatchParser::CharacterClassContext *ctx) override {
     // Build the character class set of ranges
     for (auto &atom : ctx->ccAtom()) {
       visit(atom);
@@ -322,7 +318,7 @@ private:
     if (ctx->HAT()) {
       negate();
     }
-    // TODO: Build the automaton
+    // TODO: Build the automaton, clear the ranges
 
     // Print current character class
     std::cout << "Character Class: " << ctx->getText() << std::endl;
@@ -346,6 +342,44 @@ private:
     uint32_t lo = current_codepoint;
     visit(ctx->ccLiteral(1));
     add_range(lo, current_codepoint);
+
+    return 0;
+  }
+
+  std::any visitSharedAtom(REmatchParser::SharedAtomContext *ctx) override {
+    // Add the specific range to the set
+    if (ctx->DECIMAL_DIGIT()) {
+      // 0-9
+      add_range(48, 57);
+    } else if (ctx->NOT_DECIMAL_DIGIT()) {
+      // NOT(0-9)
+      add_range(0, 47);
+      add_range(58, UTF8MAX);
+    } else if (ctx->WHITESPACE()) {
+      // \t\n\v\f\r and space
+      add_range(9, 13);
+      add_single(32);
+    } else if (ctx->NOT_WHITESPACE()) {
+      // NOT(\t\n\v\f\r and space)
+      add_range(0, 8);
+      add_range(14, 31);
+      add_range(33, UTF8MAX);
+    } else if (ctx->ALPHANUMERIC()) {
+      // 0-9A-Za-z_
+      add_range(48, 57);
+      add_range(65, 90);
+      add_single(95);
+      add_range(97, 122);
+    } else if (ctx->NOT_ALPHANUMERIC()) {
+      // NOT(0-9A-Za-z_)
+      add_range(0, 47);
+      add_range(58, 64);
+      add_range(91, 94);
+      add_single(96);
+      add_range(123, UTF8MAX);
+    } else {
+      throw parsing::BadRegex("Unhandled Shared Atom: " + ctx->getText());
+    }
 
     return 0;
   }
@@ -375,26 +409,26 @@ private:
     std::string str = ctx->getText();
     // Get the codepoint of the utf-8 character
     switch (str.size()) {
-    case 1:
-      current_codepoint = str[0];
-      break;
-    case 2:
-      current_codepoint = ((str[0] & 0x1F) << 6) + (str[1] & 0x3F);
-      break;
-    case 3:
-      current_codepoint =
-          ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) << 6) + (str[2] & 0x3F);
-      break;
-    case 4:
-      current_codepoint = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12) +
-                          ((str[2] & 0x3F) << 6) + (str[3] & 0x3F);
-      break;
-    default:
-      throw parsing::BadRegex("Invalid UTF-8 character: " + str);
+      case 1:
+        current_codepoint = str[0];
+        break;
+      case 2:
+        current_codepoint = ((str[0] & 0x1F) << 6) + (str[1] & 0x3F);
+        break;
+      case 3:
+        current_codepoint =
+            ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) << 6) + (str[2] & 0x3F);
+        break;
+      case 4:
+        current_codepoint = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12) +
+                            ((str[2] & 0x3F) << 6) + (str[3] & 0x3F);
+        break;
+      default:
+        throw parsing::BadRegex("Invalid UTF-8 character: " + str);
     }
 
     return 0;
   }
 };
-} // namespace visitors
-} // namespace rematch
+}  // namespace visitors
+}  // namespace rematch

@@ -19,7 +19,7 @@ parentheses: '(' alternation ')';
 assignation: '!' varname '{' alternation '}';
 varname: ALPHA (ALPHA | DIGIT)*;
 
-atom: characterClass | sharedAtom | literal;
+atom: characterClass | singleSharedAtom | literal;
 
 characterClass: '[' '^'? ccAtom+ ']';
 ccAtom: ccRange | sharedAtom | ccSingle;
@@ -28,6 +28,8 @@ ccSingle: ccLiteral;
 ccLiteral: ccEscapes | ccOther;
 ccEscapes: '\\' ('^' | '-' | ']' | '\\');
 ccOther: ~('^' | '-' | ']' | '\\');
+
+singleSharedAtom: sharedAtom;
 
 literal: escapes | special | other;
 escapes:
