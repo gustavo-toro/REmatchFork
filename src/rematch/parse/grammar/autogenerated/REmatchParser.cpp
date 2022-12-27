@@ -1,5 +1,5 @@
 
-// Generated from REmatchParser.g4 by ANTLR 4.10.1
+// Generated from REmatchParser.g4 by ANTLR 4.11.1
 
 
 #include "REmatchParserVisitor.h"
@@ -36,7 +36,7 @@ struct REmatchParserStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-std::once_flag rematchparserParserOnceFlag;
+::antlr4::internal::OnceFlag rematchparserParserOnceFlag;
 REmatchParserStaticData *rematchparserParserStaticData = nullptr;
 
 void rematchparserParserInitialize() {
@@ -101,7 +101,7 @@ void rematchparserParserInitialize() {
   	5,22,0,0,103,102,1,0,0,0,103,104,1,0,0,0,104,106,1,0,0,0,105,107,3,20,
   	10,0,106,105,1,0,0,0,107,108,1,0,0,0,108,106,1,0,0,0,108,109,1,0,0,0,
   	109,110,1,0,0,0,110,111,5,25,0,0,111,19,1,0,0,0,112,116,3,22,11,0,113,
-  	116,3,38,19,0,114,116,3,30,15,0,115,112,1,0,0,0,115,113,1,0,0,0,115,114,
+  	116,3,38,19,0,114,116,3,24,12,0,115,112,1,0,0,0,115,113,1,0,0,0,115,114,
   	1,0,0,0,116,21,1,0,0,0,117,118,3,24,12,0,118,119,5,23,0,0,119,120,3,24,
   	12,0,120,23,1,0,0,0,121,124,3,26,13,0,122,124,3,28,14,0,123,121,1,0,0,
   	0,123,122,1,0,0,0,124,25,1,0,0,0,125,126,5,26,0,0,126,127,7,1,0,0,127,
@@ -347,29 +347,8 @@ REmatchParser::ExprContext* REmatchParser::expr() {
       setState(68); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    } while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::DECIMAL_DIGIT)
-      | (1ULL << REmatchParser::NOT_DECIMAL_DIGIT)
-      | (1ULL << REmatchParser::WHITESPACE)
-      | (1ULL << REmatchParser::NOT_WHITESPACE)
-      | (1ULL << REmatchParser::ALPHANUMERIC)
-      | (1ULL << REmatchParser::NOT_ALPHANUMERIC)
-      | (1ULL << REmatchParser::TAB)
-      | (1ULL << REmatchParser::CARRIAGE_RETURN)
-      | (1ULL << REmatchParser::NEWLINE)
-      | (1ULL << REmatchParser::VERTICAL_WHITESPACE)
-      | (1ULL << REmatchParser::FORM_FEED)
-      | (1ULL << REmatchParser::EXCLAMAITON)
-      | (1ULL << REmatchParser::L_PAR)
-      | (1ULL << REmatchParser::COMMA)
-      | (1ULL << REmatchParser::HAT)
-      | (1ULL << REmatchParser::HYPHEN)
-      | (1ULL << REmatchParser::L_BRACK)
-      | (1ULL << REmatchParser::BACKSLASH)
-      | (1ULL << REmatchParser::ALPHA)
-      | (1ULL << REmatchParser::DIGIT)
-      | (1ULL << REmatchParser::DOT)
-      | (1ULL << REmatchParser::UNRECOGNIZED))) != 0));
+    } while (((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 2110074878) != 0);
    
   }
   catch (RecognitionException &e) {
@@ -428,11 +407,8 @@ REmatchParser::ElementContext* REmatchParser::element() {
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::L_CURLY)
-      | (1ULL << REmatchParser::QUESTION)
-      | (1ULL << REmatchParser::PLUS)
-      | (1ULL << REmatchParser::STAR))) != 0)) {
+    if (((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 3686400) != 0) {
       setState(71);
       quantifier();
     }
@@ -884,15 +860,10 @@ REmatchParser::CharacterClassContext* REmatchParser::characterClass() {
     setState(103);
     _errHandler->sync(this);
 
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
-    case 1: {
+    _la = _input->LA(1);
+    if (_la == REmatchParser::HAT) {
       setState(102);
       match(REmatchParser::HAT);
-      break;
-    }
-
-    default:
-      break;
     }
     setState(106); 
     _errHandler->sync(this);
@@ -903,36 +874,8 @@ REmatchParser::CharacterClassContext* REmatchParser::characterClass() {
       setState(108); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    } while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::DECIMAL_DIGIT)
-      | (1ULL << REmatchParser::NOT_DECIMAL_DIGIT)
-      | (1ULL << REmatchParser::WHITESPACE)
-      | (1ULL << REmatchParser::NOT_WHITESPACE)
-      | (1ULL << REmatchParser::ALPHANUMERIC)
-      | (1ULL << REmatchParser::NOT_ALPHANUMERIC)
-      | (1ULL << REmatchParser::TAB)
-      | (1ULL << REmatchParser::CARRIAGE_RETURN)
-      | (1ULL << REmatchParser::NEWLINE)
-      | (1ULL << REmatchParser::VERTICAL_WHITESPACE)
-      | (1ULL << REmatchParser::FORM_FEED)
-      | (1ULL << REmatchParser::PIPE)
-      | (1ULL << REmatchParser::EXCLAMAITON)
-      | (1ULL << REmatchParser::L_CURLY)
-      | (1ULL << REmatchParser::R_CURLY)
-      | (1ULL << REmatchParser::L_PAR)
-      | (1ULL << REmatchParser::R_PAR)
-      | (1ULL << REmatchParser::COMMA)
-      | (1ULL << REmatchParser::QUESTION)
-      | (1ULL << REmatchParser::PLUS)
-      | (1ULL << REmatchParser::STAR)
-      | (1ULL << REmatchParser::HAT)
-      | (1ULL << REmatchParser::HYPHEN)
-      | (1ULL << REmatchParser::L_BRACK)
-      | (1ULL << REmatchParser::BACKSLASH)
-      | (1ULL << REmatchParser::ALPHA)
-      | (1ULL << REmatchParser::DIGIT)
-      | (1ULL << REmatchParser::DOT)
-      | (1ULL << REmatchParser::UNRECOGNIZED))) != 0));
+    } while (((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 2101346302) != 0);
     setState(110);
     match(REmatchParser::R_BRACK);
    
@@ -960,8 +903,8 @@ REmatchParser::SharedAtomContext* REmatchParser::CcAtomContext::sharedAtom() {
   return getRuleContext<REmatchParser::SharedAtomContext>(0);
 }
 
-REmatchParser::LiteralContext* REmatchParser::CcAtomContext::literal() {
-  return getRuleContext<REmatchParser::LiteralContext>(0);
+REmatchParser::CcLiteralContext* REmatchParser::CcAtomContext::ccLiteral() {
+  return getRuleContext<REmatchParser::CcLiteralContext>(0);
 }
 
 
@@ -1009,7 +952,7 @@ REmatchParser::CcAtomContext* REmatchParser::ccAtom() {
     case 3: {
       enterOuterAlt(_localctx, 3);
       setState(114);
-      literal();
+      ccLiteral();
       break;
     }
 
@@ -1240,11 +1183,8 @@ REmatchParser::CcEscapesContext* REmatchParser::ccEscapes() {
     match(REmatchParser::BACKSLASH);
     setState(126);
     _la = _input->LA(1);
-    if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::HAT)
-      | (1ULL << REmatchParser::HYPHEN)
-      | (1ULL << REmatchParser::R_BRACK)
-      | (1ULL << REmatchParser::BACKSLASH))) != 0))) {
+    if (!(((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 113246208) != 0)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1313,11 +1253,8 @@ REmatchParser::CcOtherContext* REmatchParser::ccOther() {
     enterOuterAlt(_localctx, 1);
     setState(128);
     _la = _input->LA(1);
-    if (_la == 0 || _la == Token::EOF || ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::HAT)
-      | (1ULL << REmatchParser::HYPHEN)
-      | (1ULL << REmatchParser::R_BRACK)
-      | (1ULL << REmatchParser::BACKSLASH))) != 0))) {
+    if (_la == 0 || _la == Token::EOF || (((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 113246208) != 0)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1505,19 +1442,8 @@ REmatchParser::EscapesContext* REmatchParser::escapes() {
     match(REmatchParser::BACKSLASH);
     setState(136);
     _la = _input->LA(1);
-    if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::PIPE)
-      | (1ULL << REmatchParser::L_CURLY)
-      | (1ULL << REmatchParser::R_CURLY)
-      | (1ULL << REmatchParser::L_PAR)
-      | (1ULL << REmatchParser::R_PAR)
-      | (1ULL << REmatchParser::QUESTION)
-      | (1ULL << REmatchParser::PLUS)
-      | (1ULL << REmatchParser::STAR)
-      | (1ULL << REmatchParser::L_BRACK)
-      | (1ULL << REmatchParser::R_BRACK)
-      | (1ULL << REmatchParser::BACKSLASH)
-      | (1ULL << REmatchParser::DOT))) != 0))) {
+    if (!(((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 658231296) != 0)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1594,13 +1520,8 @@ REmatchParser::SpecialContext* REmatchParser::special() {
     enterOuterAlt(_localctx, 1);
     setState(138);
     _la = _input->LA(1);
-    if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::TAB)
-      | (1ULL << REmatchParser::CARRIAGE_RETURN)
-      | (1ULL << REmatchParser::NEWLINE)
-      | (1ULL << REmatchParser::VERTICAL_WHITESPACE)
-      | (1ULL << REmatchParser::FORM_FEED)
-      | (1ULL << REmatchParser::DOT))) != 0))) {
+    if (!(((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 536874880) != 0)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1697,18 +1618,8 @@ REmatchParser::OtherContext* REmatchParser::other() {
     enterOuterAlt(_localctx, 1);
     setState(140);
     _la = _input->LA(1);
-    if (_la == 0 || _la == Token::EOF || ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::PIPE)
-      | (1ULL << REmatchParser::L_CURLY)
-      | (1ULL << REmatchParser::R_CURLY)
-      | (1ULL << REmatchParser::L_PAR)
-      | (1ULL << REmatchParser::R_PAR)
-      | (1ULL << REmatchParser::QUESTION)
-      | (1ULL << REmatchParser::PLUS)
-      | (1ULL << REmatchParser::STAR)
-      | (1ULL << REmatchParser::L_BRACK)
-      | (1ULL << REmatchParser::R_BRACK)
-      | (1ULL << REmatchParser::BACKSLASH))) != 0))) {
+    if (_la == 0 || _la == Token::EOF || (((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 121360384) != 0)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1785,13 +1696,8 @@ REmatchParser::SharedAtomContext* REmatchParser::sharedAtom() {
     enterOuterAlt(_localctx, 1);
     setState(142);
     _la = _input->LA(1);
-    if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << REmatchParser::DECIMAL_DIGIT)
-      | (1ULL << REmatchParser::NOT_DECIMAL_DIGIT)
-      | (1ULL << REmatchParser::WHITESPACE)
-      | (1ULL << REmatchParser::NOT_WHITESPACE)
-      | (1ULL << REmatchParser::ALPHANUMERIC)
-      | (1ULL << REmatchParser::NOT_ALPHANUMERIC))) != 0))) {
+    if (!(((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 126) != 0)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -2288,5 +2194,5 @@ REmatchParser::NumberContext* REmatchParser::number() {
 }
 
 void REmatchParser::initialize() {
-  std::call_once(rematchparserParserOnceFlag, rematchparserParserInitialize);
+  ::antlr4::internal::call_once(rematchparserParserOnceFlag, rematchparserParserInitialize);
 }

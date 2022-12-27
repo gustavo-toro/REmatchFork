@@ -1,5 +1,5 @@
 
-// Generated from REmatchParser.g4 by ANTLR 4.10.1
+// Generated from REmatchParser.g4 by ANTLR 4.11.1
 
 #pragma once
 
@@ -234,7 +234,7 @@ public:
     virtual size_t getRuleIndex() const override;
     CcRangeContext *ccRange();
     SharedAtomContext *sharedAtom();
-    LiteralContext *literal();
+    CcLiteralContext *ccLiteral();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

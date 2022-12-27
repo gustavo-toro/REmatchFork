@@ -22,7 +22,7 @@ varname: ALPHA (ALPHA | DIGIT)*;
 atom: characterClass | sharedAtom | literal;
 
 characterClass: '[' '^'? ccAtom+ ']';
-ccAtom: ccRange | sharedAtom | literal;
+ccAtom: ccRange | sharedAtom | ccLiteral;
 ccRange: ccLiteral '-' ccLiteral;
 ccLiteral: ccEscapes | ccOther;
 ccEscapes: '\\' ('^' | '-' | ']' | '\\');

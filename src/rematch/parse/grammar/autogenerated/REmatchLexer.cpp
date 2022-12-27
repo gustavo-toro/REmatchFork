@@ -1,5 +1,5 @@
 
-// Generated from REmatchLexer.g4 by ANTLR 4.10.1
+// Generated from REmatchLexer.g4 by ANTLR 4.11.1
 
 
 #include "REmatchLexer.h"
@@ -41,7 +41,7 @@ struct REmatchLexerStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-std::once_flag rematchlexerLexerOnceFlag;
+::antlr4::internal::OnceFlag rematchlexerLexerOnceFlag;
 REmatchLexerStaticData *rematchlexerLexerStaticData = nullptr;
 
 void rematchlexerLexerInitialize() {
@@ -174,5 +174,5 @@ const atn::ATN& REmatchLexer::getATN() const {
 
 
 void REmatchLexer::initialize() {
-  std::call_once(rematchlexerLexerOnceFlag, rematchlexerLexerInitialize);
+  ::antlr4::internal::call_once(rematchlexerLexerOnceFlag, rematchlexerLexerInitialize);
 }
