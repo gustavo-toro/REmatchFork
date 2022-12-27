@@ -231,14 +231,13 @@ bool CharClass::operator<(const CharClass& cc) const {
 
 
 std::ostream& operator<<(std::ostream &os, CharClassBuilder const &cc) {
-	if(cc.is_dot()) return os << '.';
-	else if(cc.nchars_ == 1) return os << (char)cc.ranges_.begin()->lo;
+	if(cc.nchars_ == 1) return os << std::bitset<8>(cc.ranges_.begin()->lo);
 	os << "[";
 	for(auto &range: cc.ranges_) {
 		if(range.lo == range.hi)
-			os << (char)range.lo;
+			os << std::bitset<8>(range.lo);
 		else
-			os << (char)range.lo << '-' << (char)range.hi;
+			os << std::bitset<8>(range.lo) << '-' << std::bitset<8>(range.hi);
 	}
 	os << "]";
 	return os;
