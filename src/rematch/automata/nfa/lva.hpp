@@ -8,6 +8,8 @@
 
 namespace rematch {
 
+using uint = unsigned int;
+
 class VariableFactory;
 class FilterFactory;
 class State;

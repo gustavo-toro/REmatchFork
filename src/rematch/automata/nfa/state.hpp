@@ -8,6 +8,8 @@
 
 namespace rematch {
 
+using uint = unsigned int;
+
 class State;
 
 class LVACapture{
