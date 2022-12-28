@@ -134,3 +134,5 @@ ENV/
 # VS Code
 # .vscode/
 .antlr/
+
+.DS_Store
