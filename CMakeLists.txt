@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.24)
 
 project(rematch LANGUAGES CXX)
 
@@ -33,10 +33,9 @@ add_compile_definitions(
 # Rematch libs starts as empty list
 set(REMATCH_LIBS "")
 
-include_directories(src/rematch)
 include_directories(SYSTEM src/thirdparty)
-# TODO: Change this
-include_directories(src/thirdparty/antlr4/runtime/src)
+include_directories(src/rematch)
+
 
 find_package(Boost 1.58)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
