@@ -89,20 +89,6 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
 
   bool add_single(uint32_t c) { return add_range(c, c); }
 
-  std::any visitAlternation(REmatchParser::AlternationContext *ctx) override {
-    // Build the automaton for the first expression
-    visit(ctx->expr(0));
-    auto A = std::move(lva_ptr);
-    // Alternate the remaining expressions
-    for (size_t i = 1; i < ctx->expr().size(); ++i) {
-      visit(ctx->expr(i));
-      A->alter(*lva_ptr);
-    }
-    lva_ptr = std::move(A);
-
-    return 0;
-  }
-
   void negate() {
     std::vector<UnicodeRange> new_ranges;
     new_ranges.reserve(ranges.size() + 1);
@@ -128,6 +114,20 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     for (auto &range : new_ranges) {
       ranges.insert(range);
     }
+  }
+
+  std::any visitAlternation(REmatchParser::AlternationContext *ctx) override {
+    // Build the automaton for the first expression
+    visit(ctx->expr(0));
+    auto A = std::move(lva_ptr);
+    // Alternate the remaining expressions
+    for (size_t i = 1; i < ctx->expr().size(); ++i) {
+      visit(ctx->expr(i));
+      A->alter(*lva_ptr);
+    }
+    lva_ptr = std::move(A);
+
+    return 0;
   }
 
   std::any visitExpr(REmatchParser::ExprContext *ctx) override {
@@ -304,7 +304,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
 
   std::any visitSingleSharedAtom(
       REmatchParser::SingleSharedAtomContext *) override {
-    // TODO: Build the automaton directly, clear the ranges
+    // TODO: Build the automaton for the single shared atom
     throw std::runtime_error("Single Shared Atom not implemented");
   }
 
@@ -318,15 +318,64 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     if (ctx->HAT()) {
       negate();
     }
-    // TODO: Build the automaton, clear the ranges
 
-    // Print current character class
+    // FIXME: (debug) Print current character class
     std::cout << "Character Class: " << ctx->getText() << std::endl;
     for (auto &range : ranges) {
       std::cout << range.lo << " - " << range.hi << std::endl;
     }
 
-    throw std::runtime_error("TODO: Implement this");
+    // Build the automaton for the character class
+    // TODO: The following code could be inside function and it could be called in the 
+    // visitSingleSharedAtom too (Considering the complexity of negated single shared atom)
+    auto it = ranges.begin();
+    // 1 byte automaton
+    {
+      CharClassBuilder ccb;
+      while (it != ranges.end() && it->lo <= 0x7F) {
+        if (it->hi > 0x7F) {
+          throw parsing::BadRegex("TODO: Handle split");
+        } else {
+          ccb.add_range(it->lo, it->hi);
+          ++it;
+        }
+      }
+      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
+    }
+    // 2 bytes automaton
+    {
+      while (it != ranges.end() && it->lo <= 0x7FF) {
+        throw parsing::BadRegex("TODO: Handle 2 bytes character class");
+        if (it->hi > 0x7FF) {
+          throw parsing::BadRegex("TODO: Handle split");
+        } else {
+          std::cout << it->lo << " - " << it->hi << std::endl;
+          ++it;
+        }
+      }
+    }
+    // 3 bytes automaton
+    {
+      while (it != ranges.end() && it->lo <= 0xFFFF) {
+        throw parsing::BadRegex("TODO: Handle 3 bytes character class");
+        if (it->hi > 0xFFFF) {
+          throw parsing::BadRegex("TODO: Handle split");
+        } else {
+          std::cout << it->lo << " - " << it->hi << std::endl;
+          ++it;
+        }
+      }
+    }
+    // 4 bytes automaton
+    {
+      while (it != ranges.end()) {
+        throw parsing::BadRegex("TODO: Handle 4 bytes character class");
+        // No need to split the range
+        std::cout << it->lo << " - " << it->hi << std::endl;
+        ++it;
+      }
+    }
+
     return 0;
   }
 
