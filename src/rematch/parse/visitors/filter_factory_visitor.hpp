@@ -334,7 +334,9 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       CharClassBuilder ccb;
       while (it != ranges.end() && it->lo <= 0x7F) {
         if (it->hi > 0x7F) {
-          throw parsing::BadRegex("TODO: Handle split");
+          // Use just the 1 byte range
+          ccb.add_range(it->lo, 0x7F);
+          break;
         } else {
           ccb.add_range(it->lo, it->hi);
           ++it;
