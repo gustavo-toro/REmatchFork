@@ -326,56 +326,73 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     }
 
     // Build the automaton for the character class
-    // TODO: The following code could be inside function and it could be called in the 
-    // visitSingleSharedAtom too (Considering the complexity of negated single shared atom)
+    // TODO: The following code could be inside function and it could be called
+    // in the visitSingleSharedAtom too (Considering the complexity of negated
+    // single shared atom)
     auto it = ranges.begin();
+    std::stack<UnicodeRange> stack;
+    stack.push(*it);
     // 1 byte automaton
     {
       CharClassBuilder ccb;
-      while (it != ranges.end() && it->lo <= 0x7F) {
-        if (it->hi > 0x7F) {
-          // Use just the 1 byte range
-          ccb.add_range(it->lo, 0x7F);
-          break;
+      while (!stack.empty()) {
+        UnicodeRange r = stack.top();
+        if (r.lo > 0x7F) break;
+        stack.pop();
+        if (r.hi <= 0x7F) {
+          // Handle range
+          ccb.add_range(r.lo, r.hi);
+          if (stack.empty() && ++it != ranges.end()) stack.push(*it);
         } else {
-          ccb.add_range(it->lo, it->hi);
-          ++it;
+          // Split range
+          stack.emplace(0x80, r.hi);
+          stack.emplace(r.lo, 0x7F);
         }
       }
       lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
     }
     // 2 bytes automaton
-    {
-      while (it != ranges.end() && it->lo <= 0x7FF) {
-        throw parsing::BadRegex("TODO: Handle 2 bytes character class");
-        if (it->hi > 0x7FF) {
-          throw parsing::BadRegex("TODO: Handle split");
-        } else {
-          std::cout << it->lo << " - " << it->hi << std::endl;
-          ++it;
-        }
+    while (!stack.empty()) {
+      stack.pop();
+      break;
+      throw std::runtime_error("2 bytes automaton not implemented");
+      UnicodeRange r = stack.top();
+      if (r.lo > 0x7FF) break;
+      stack.pop();
+      if (r.hi <= 0x7FF) {
+        // Handle range
+        std::cout << "2b: " << r.lo << " - " << r.hi << std::endl;
+        if (stack.empty() && ++it != ranges.end()) stack.push(*it);
+      } else {
+        // Split range
+        stack.emplace(0x800, r.hi);
+        stack.emplace(r.lo, 0x7FF);
       }
     }
     // 3 bytes automaton
-    {
-      while (it != ranges.end() && it->lo <= 0xFFFF) {
-        throw parsing::BadRegex("TODO: Handle 3 bytes character class");
-        if (it->hi > 0xFFFF) {
-          throw parsing::BadRegex("TODO: Handle split");
-        } else {
-          std::cout << it->lo << " - " << it->hi << std::endl;
-          ++it;
-        }
+    while (!stack.empty()) {
+      throw std::runtime_error("3 bytes automaton not implemented");
+      UnicodeRange r = stack.top();
+      if (r.lo > 0xFFFF) break;
+      stack.pop();
+      if (r.hi <= 0xFFFF) {
+        // Handle range
+        std::cout << "3b: " << r.lo << " - " << r.hi << std::endl;
+        if (stack.empty() && ++it != ranges.end()) stack.push(*it);
+      } else {
+        // Split range
+        stack.emplace(0x10000, r.hi);
+        stack.emplace(r.lo, 0xFFFF);
       }
     }
     // 4 bytes automaton
-    {
-      while (it != ranges.end()) {
-        throw parsing::BadRegex("TODO: Handle 4 bytes character class");
-        // No need to split the range
-        std::cout << it->lo << " - " << it->hi << std::endl;
-        ++it;
-      }
+    while (!stack.empty()) {
+      throw std::runtime_error("4 bytes automaton not implemented");
+      UnicodeRange r = stack.top();
+      stack.pop();
+      // Handle range
+      std::cout << "4b: " << r.lo << " - " << r.hi << std::endl;
+      if (stack.empty() && ++it != ranges.end()) stack.push(*it);
     }
 
     return 0;
