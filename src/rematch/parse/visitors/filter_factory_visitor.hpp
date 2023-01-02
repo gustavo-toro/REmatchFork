@@ -353,8 +353,6 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     }
     // 2 bytes automaton
     while (!stack.empty()) {
-      stack.pop();
-      break;
       throw std::runtime_error("2 bytes automaton not implemented");
       UnicodeRange r = stack.top();
       if (r.lo > 0x7FF) break;
