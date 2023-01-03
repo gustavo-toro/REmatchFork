@@ -349,6 +349,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
           stack.emplace(r.lo, 0x7F);
         }
       }
+
       lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
     }
     // 2 bytes automaton
@@ -407,6 +408,10 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     visit(ctx->ccLiteral(0));
     uint32_t lo = current_codepoint;
     visit(ctx->ccLiteral(1));
+    if (lo > current_codepoint) {
+      throw parsing::BadRegex("Character Class range start code is greater than end code: " +
+                              ctx->getText());
+    }
     add_range(lo, current_codepoint);
 
     return 0;
