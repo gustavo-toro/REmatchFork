@@ -193,13 +193,13 @@ bool CharClass::operator<(const CharClass& cc) const {
 
 
 std::ostream& operator<<(std::ostream &os, CharClassBuilder const &cc) {
-	if(cc.nchars_ == 1) return os << uint(cc.ranges_.begin()->lo);
+	if(cc.nchars_ == 1) return os << std::bitset<8>(cc.ranges_.begin()->lo);
 	os << "[";
 	for(auto &range: cc.ranges_) {
 		if(range.lo == range.hi)
-			os << '(' << uint(range.lo) << ')';
+			os << '(' << std::bitset<8>(range.lo) << ')';
 		else
-			os << '(' << uint(range.lo) << '-' << uint(range.hi) << ')';
+			os << '(' << std::bitset<8>(range.lo) << '-' << std::bitset<8>(range.hi) << ')';
 	}
 	os << "]";
 	return os;

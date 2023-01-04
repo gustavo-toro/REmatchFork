@@ -116,6 +116,35 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     }
   }
 
+  void build2BytesAutomaton(uint32_t _lo, uint32_t _hi) {
+    char lo[2] = {char('\xC0' | char(_lo >> 6)), char('\x80' | char(_lo & '\x3F'))};
+    char hi[2] = {char('\xC0' | char(_hi >> 6)), char('\x80' | char(_hi & '\x3F'))};
+    if (lo[0] == hi[0]) {
+      // Same first byte
+      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+      auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({lo[1], hi[1]}));
+      A1->cat(*A2);
+      lva_ptr = std::move(A1);
+    } else {
+      // Different first byte
+      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+      auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({lo[1], '\xBF'}));
+      A1->cat(*A2);
+      auto B1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(hi[0]));
+      auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', hi[1]}));
+      B1->cat(*B2);
+      A1->alter(*B1);
+      lva_ptr = std::move(A1);
+      if (lo[0] + 1 < hi[0]) {
+        // There are more bytes between the first bytes
+        auto C1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({char(lo[0] + 1), char(hi[0] - 1)}));
+        auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+        C1->cat(*C2);
+        lva_ptr->alter(*C1);
+      }
+    }
+  }
+
   std::any visitAlternation(REmatchParser::AlternationContext *ctx) override {
     // Build the automaton for the first expression
     visit(ctx->expr(0));
@@ -349,18 +378,24 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
           stack.emplace(r.lo, 0x7F);
         }
       }
-
-      lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
+      if (!ccb.empty()) {
+        lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
+      }
     }
     // 2 bytes automaton
     while (!stack.empty()) {
-      throw std::runtime_error("2 bytes automaton not implemented");
       UnicodeRange r = stack.top();
       if (r.lo > 0x7FF) break;
       stack.pop();
       if (r.hi <= 0x7FF) {
         // Handle range
-        std::cout << "2b: " << r.lo << " - " << r.hi << std::endl;
+        if (lva_ptr != nullptr) {
+          auto A = std::move(lva_ptr);
+          build2BytesAutomaton(r.lo, r.hi);
+          lva_ptr->alter(*A);
+        } else {
+          build2BytesAutomaton(r.lo, r.hi);
+        }
         if (stack.empty() && ++it != ranges.end()) stack.push(*it);
       } else {
         // Split range
@@ -409,8 +444,9 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     uint32_t lo = current_codepoint;
     visit(ctx->ccLiteral(1));
     if (lo > current_codepoint) {
-      throw parsing::BadRegex("Character Class range start code is greater than end code: " +
-                              ctx->getText());
+      throw parsing::BadRegex(
+          "Character Class range start code is greater than end code: " +
+          ctx->getText());
     }
     add_range(lo, current_codepoint);
 
