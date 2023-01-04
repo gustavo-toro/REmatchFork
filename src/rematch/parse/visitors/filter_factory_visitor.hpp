@@ -403,7 +403,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
         stack.emplace(r.lo, 0x7FF);
       }
     }
-    // 3 bytes automaton
+    // TODO: 3 bytes automaton
     while (!stack.empty()) {
       throw std::runtime_error("3 bytes automaton not implemented");
       UnicodeRange r = stack.top();
@@ -419,7 +419,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
         stack.emplace(r.lo, 0xFFFF);
       }
     }
-    // 4 bytes automaton
+    // TODO: 4 bytes automaton
     while (!stack.empty()) {
       throw std::runtime_error("4 bytes automaton not implemented");
       UnicodeRange r = stack.top();
