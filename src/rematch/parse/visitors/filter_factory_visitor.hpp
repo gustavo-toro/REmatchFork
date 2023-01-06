@@ -116,9 +116,27 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     }
   }
 
-  void build2BytesAutomaton(uint32_t _lo, uint32_t _hi) {
-    char lo[2] = {char('\xC0' | char(_lo >> 6)), char('\x80' | char(_lo & '\x3F'))};
-    char hi[2] = {char('\xC0' | char(_hi >> 6)), char('\x80' | char(_hi & '\x3F'))};
+  char *utf8Encoder(uint32_t n, int nbytes) {
+    switch (nbytes) {
+      case 2:
+        return new char[2]{char('\xC0' | char(n >> 6)),
+                           char('\x80' | char(n & '\x3F'))};
+      case 3:
+        return new char[3]{char('\xE0' | char(n >> 12)),
+                           char('\x80' | char((n >> 6) & '\x3F')),
+                           char('\x80' | char(n & '\x3F'))};
+      case 4:
+        return new char[4]{char('\xF0' | char(n >> 18)),
+                           char('\x80' | char((n >> 12) & '\x3F')),
+                           char('\x80' | char((n >> 6) & '\x3F')),
+                           char('\x80' | char(n & '\x3F'))};
+      default:
+        throw std::runtime_error("Invalid number of bytes");
+    }
+  }
+
+  // Build the automaton for a range of two bytes and stores it in the lva_ptr
+  void buildTwoBytesAutomaton(char lo[2], char hi[2]) {
     if (lo[0] == hi[0]) {
       // Same first byte
       auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
@@ -134,14 +152,142 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', hi[1]}));
       B1->cat(*B2);
       A1->alter(*B1);
-      lva_ptr = std::move(A1);
       if (lo[0] + 1 < hi[0]) {
-        // There are more bytes between the first bytes
+        // There are more bytes between the first bytes 
         auto C1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({char(lo[0] + 1), char(hi[0] - 1)}));
         auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
         C1->cat(*C2);
-        lva_ptr->alter(*C1);
+        A1->alter(*C1);
       }
+      lva_ptr = std::move(A1);
+    }
+  }
+
+  // Build the automaton for a range of three bytes and stores it in the lva_ptr
+  void buildThreeBytesAutomaton(char lo[3], char hi[3]) {
+    if (lo[0] == hi[0]) {
+      // Same first byte
+      if (lo[1] == hi[1]) {
+        // Same second byte
+        auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+        auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[1]));
+        auto A3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({lo[2], hi[2]}));
+        A1->cat(*A2);
+        A1->cat(*A3);
+        lva_ptr = std::move(A1);
+      } else {
+        // Different second byte
+        auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+        buildTwoBytesAutomaton(lo + 1, hi + 1);
+        auto A2 = std::move(lva_ptr);
+        A1->cat(*A2);
+        lva_ptr = std::move(A1);
+      }
+    } else {
+      // Different first byte
+      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+      auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[1]));
+      auto A3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({lo[2], '\xBF'}));
+      A1->cat(*A2);
+      A1->cat(*A3);
+      auto B1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(hi[0]));
+      auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(hi[1]));
+      auto B3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', hi[2]}));
+      B1->cat(*B2);
+      B1->cat(*B3);
+      A1->alter(*B1);
+      if (lo[0] + 1 < hi[0]) {
+        // There are more bytes between the first bytes
+        buildTwoBytesAutomaton(lo, hi);
+        auto C1 = std::move(lva_ptr);
+        auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+        C1->cat(*C2);
+        A1->alter(*C1);
+      }
+      lva_ptr = std::move(A1);
+    }
+  }
+
+  // Build the automaton for a character class and stores it in the lva_ptr
+  void buildCharacterClassAutomaton() {
+    auto it = ranges.begin();
+    std::stack<UnicodeRange> stack;
+    stack.push(*it);
+    // 1 byte automaton
+    {
+      CharClassBuilder ccb;
+      while (!stack.empty()) {
+        UnicodeRange r = stack.top();
+        if (r.lo > 0x7F) break;
+        stack.pop();
+        if (r.hi <= 0x7F) {
+          // Handle range
+          ccb.add_range(r.lo, r.hi);
+          if (stack.empty() && ++it != ranges.end()) stack.push(*it);
+        } else {
+          // Split range
+          stack.emplace(0x80, r.hi);
+          stack.emplace(r.lo, 0x7F);
+        }
+      }
+      if (!ccb.empty()) {
+        lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
+      }
+    }
+    // 2 bytes automaton
+    while (!stack.empty()) {
+      UnicodeRange r = stack.top();
+      if (r.lo > 0x7FF) break;
+      stack.pop();
+      if (r.hi <= 0x7FF) {
+        // Handle range
+        char* lo = utf8Encoder(r.lo, 2);
+        char* hi = utf8Encoder(r.hi, 2);
+        if (lva_ptr != nullptr) {
+          auto A = std::move(lva_ptr);
+          buildTwoBytesAutomaton(lo, hi);
+          lva_ptr->alter(*A);
+        } else {
+          buildTwoBytesAutomaton(lo, hi);
+        }
+        if (stack.empty() && ++it != ranges.end()) stack.push(*it);
+      } else {
+        // Split range
+        stack.emplace(0x800, r.hi);
+        stack.emplace(r.lo, 0x7FF);
+      }
+    }
+    // 3 bytes automaton
+    while (!stack.empty()) {
+      UnicodeRange r = stack.top();
+      if (r.lo > 0xFFFF) break;
+      stack.pop();
+      if (r.hi <= 0xFFFF) {
+        // Handle range
+        char* lo = utf8Encoder(r.lo, 3);
+        char* hi = utf8Encoder(r.hi, 3);
+        if (lva_ptr != nullptr) {
+          auto A = std::move(lva_ptr);
+          buildThreeBytesAutomaton(lo, hi);
+          lva_ptr->alter(*A);
+        } else {
+          buildThreeBytesAutomaton(lo, hi);
+        }
+        if (stack.empty() && ++it != ranges.end()) stack.push(*it);
+      } else {
+        // Split range
+        stack.emplace(0x10000, r.hi);
+        stack.emplace(r.lo, 0xFFFF);
+      }
+    }
+    // TODO: 4 bytes automaton
+    while (!stack.empty()) {
+      throw std::runtime_error("4 bytes automaton not implemented");
+      UnicodeRange r = stack.top();
+      stack.pop();
+      // Handle range
+      std::cout << "4b: " << r.lo << " - " << r.hi << std::endl;
+      if (stack.empty() && ++it != ranges.end()) stack.push(*it);
     }
   }
 
@@ -262,32 +408,22 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     // Dot (Any Operator) needs to be handled for UTF-8 literals
     if (ctx->DOT()) {
       // 1 byte automaton
-      auto A1 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x00', '\x7F'}));
+      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x00', '\x7F'}));
       // 2 bytes automaton
-      auto B1 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xC2', '\xDF'}));
-      auto B2 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto B1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xC2', '\xDF'}));
+      auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
       B1->cat(*B2);
       // 3 bytes automaton
-      auto C1 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xE0', '\xEF'}));
-      auto C2 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
-      auto C3 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto C1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xE0', '\xEF'}));
+      auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto C3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
       C1->cat(*C2);
       C1->cat(*C3);
       // 4 bytes automaton
-      auto D1 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xF0', '\xF7'}));
-      auto D2 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
-      auto D3 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
-      auto D4 =
-          std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\xF0', '\xF7'}));
+      auto D2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+      auto D4 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
       D1->cat(*D2);
       D1->cat(*D3);
       D1->cat(*D4);
@@ -331,14 +467,17 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     return 0;
   }
 
-  std::any visitSingleSharedAtom(
-      REmatchParser::SingleSharedAtomContext *) override {
-    // TODO: Build the automaton for the single shared atom
-    throw std::runtime_error("Single Shared Atom not implemented");
+  std::any visitSingleSharedAtom(REmatchParser::SingleSharedAtomContext* ctx) override {
+    // Note: Single shared atom is like a "hard-coded" character class
+    // Build the single shared atom set of ranges
+    visit(ctx->sharedAtom());
+    // Build the automaton for the single shared atom
+    buildCharacterClassAutomaton();
+
+    return 0;
   }
 
-  std::any visitCharacterClass(
-      REmatchParser::CharacterClassContext *ctx) override {
+  std::any visitCharacterClass(REmatchParser::CharacterClassContext *ctx) override {
     // Build the character class set of ranges
     for (auto &atom : ctx->ccAtom()) {
       visit(atom);
@@ -347,87 +486,8 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     if (ctx->HAT()) {
       negate();
     }
-
-    // FIXME: (debug) Print current character class
-    std::cout << "Character Class: " << ctx->getText() << std::endl;
-    for (auto &range : ranges) {
-      std::cout << range.lo << " - " << range.hi << std::endl;
-    }
-
     // Build the automaton for the character class
-    // TODO: The following code could be inside function and it could be called
-    // in the visitSingleSharedAtom too (Considering the complexity of negated
-    // single shared atom)
-    auto it = ranges.begin();
-    std::stack<UnicodeRange> stack;
-    stack.push(*it);
-    // 1 byte automaton
-    {
-      CharClassBuilder ccb;
-      while (!stack.empty()) {
-        UnicodeRange r = stack.top();
-        if (r.lo > 0x7F) break;
-        stack.pop();
-        if (r.hi <= 0x7F) {
-          // Handle range
-          ccb.add_range(r.lo, r.hi);
-          if (stack.empty() && ++it != ranges.end()) stack.push(*it);
-        } else {
-          // Split range
-          stack.emplace(0x80, r.hi);
-          stack.emplace(r.lo, 0x7F);
-        }
-      }
-      if (!ccb.empty()) {
-        lva_ptr = std::make_unique<LogicalVA>(ffact_ptr->add_filter(ccb));
-      }
-    }
-    // 2 bytes automaton
-    while (!stack.empty()) {
-      UnicodeRange r = stack.top();
-      if (r.lo > 0x7FF) break;
-      stack.pop();
-      if (r.hi <= 0x7FF) {
-        // Handle range
-        if (lva_ptr != nullptr) {
-          auto A = std::move(lva_ptr);
-          build2BytesAutomaton(r.lo, r.hi);
-          lva_ptr->alter(*A);
-        } else {
-          build2BytesAutomaton(r.lo, r.hi);
-        }
-        if (stack.empty() && ++it != ranges.end()) stack.push(*it);
-      } else {
-        // Split range
-        stack.emplace(0x800, r.hi);
-        stack.emplace(r.lo, 0x7FF);
-      }
-    }
-    // TODO: 3 bytes automaton
-    while (!stack.empty()) {
-      throw std::runtime_error("3 bytes automaton not implemented");
-      UnicodeRange r = stack.top();
-      if (r.lo > 0xFFFF) break;
-      stack.pop();
-      if (r.hi <= 0xFFFF) {
-        // Handle range
-        std::cout << "3b: " << r.lo << " - " << r.hi << std::endl;
-        if (stack.empty() && ++it != ranges.end()) stack.push(*it);
-      } else {
-        // Split range
-        stack.emplace(0x10000, r.hi);
-        stack.emplace(r.lo, 0xFFFF);
-      }
-    }
-    // TODO: 4 bytes automaton
-    while (!stack.empty()) {
-      throw std::runtime_error("4 bytes automaton not implemented");
-      UnicodeRange r = stack.top();
-      stack.pop();
-      // Handle range
-      std::cout << "4b: " << r.lo << " - " << r.hi << std::endl;
-      if (stack.empty() && ++it != ranges.end()) stack.push(*it);
-    }
+    buildCharacterClassAutomaton();
 
     return 0;
   }
@@ -523,8 +583,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
         current_codepoint = ((str[0] & 0x1F) << 6) + (str[1] & 0x3F);
         break;
       case 3:
-        current_codepoint =
-            ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) << 6) + (str[2] & 0x3F);
+        current_codepoint = ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) << 6) + (str[2] & 0x3F);
         break;
       case 4:
         current_codepoint = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12) +
