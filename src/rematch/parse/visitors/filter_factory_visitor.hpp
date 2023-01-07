@@ -116,25 +116,6 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
     }
   }
 
-  char *utf8Encoder(uint32_t n, int nbytes) {
-    switch (nbytes) {
-      case 2:
-        return new char[2]{char('\xC0' | char(n >> 6)),
-                           char('\x80' | char(n & '\x3F'))};
-      case 3:
-        return new char[3]{char('\xE0' | char(n >> 12)),
-                           char('\x80' | char((n >> 6) & '\x3F')),
-                           char('\x80' | char(n & '\x3F'))};
-      case 4:
-        return new char[4]{char('\xF0' | char(n >> 18)),
-                           char('\x80' | char((n >> 12) & '\x3F')),
-                           char('\x80' | char((n >> 6) & '\x3F')),
-                           char('\x80' | char(n & '\x3F'))};
-      default:
-        throw std::runtime_error("Invalid number of bytes");
-    }
-  }
-
   // Build the automaton for a range of two bytes and stores it in the lva_ptr
   void buildTwoBytesAutomaton(char lo[2], char hi[2]) {
     if (lo[0] == hi[0]) {
@@ -153,7 +134,7 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       B1->cat(*B2);
       A1->alter(*B1);
       if (lo[0] + 1 < hi[0]) {
-        // There are more bytes between the first bytes 
+        // There are more bytes between the first bytes
         auto C1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({char(lo[0] + 1), char(hi[0] - 1)}));
         auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
         C1->cat(*C2);
@@ -198,7 +179,12 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       A1->alter(*B1);
       if (lo[0] + 1 < hi[0]) {
         // There are more bytes between the first bytes
-        buildTwoBytesAutomaton(lo, hi);
+        // Decode utf-8, increment/decrement and re-encode
+        uint32_t lo_next = (((lo[0] & 0x0F) << 6) | (lo[1] & 0x3F)) + 1;
+        uint32_t hi_prev = (((hi[0] & 0x0F) << 6) | (hi[1] & 0x3F)) - 1;
+        char lo_mid[2] = {char((lo_next >> 6) | 0xE0), char((lo_next & 0x3F) | 0x80)};
+        char hi_mid[2] = {char((hi_prev >> 6) | 0xE0), char((hi_prev & 0x3F) | 0x80)};
+        buildTwoBytesAutomaton(lo_mid, hi_mid);
         auto C1 = std::move(lva_ptr);
         auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
         C1->cat(*C2);
@@ -241,8 +227,8 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       stack.pop();
       if (r.hi <= 0x7FF) {
         // Handle range
-        char* lo = utf8Encoder(r.lo, 2);
-        char* hi = utf8Encoder(r.hi, 2);
+        char lo[2] = {char((r.lo >> 6) | 0xC0), char((r.lo & 0x3F) | 0x80)};
+        char hi[2] = {char((r.hi >> 6) | 0xC0), char((r.hi & 0x3F) | 0x80)};
         if (lva_ptr != nullptr) {
           auto A = std::move(lva_ptr);
           buildTwoBytesAutomaton(lo, hi);
@@ -264,8 +250,8 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       stack.pop();
       if (r.hi <= 0xFFFF) {
         // Handle range
-        char* lo = utf8Encoder(r.lo, 3);
-        char* hi = utf8Encoder(r.hi, 3);
+        char lo[3] = {char((r.lo >> 12) | 0xE0), char(((r.lo >> 6) & 0x3F) | 0x80), char((r.lo & 0x3F) | 0x80)};
+        char hi[3] = {char((r.hi >> 12) | 0xE0), char(((r.hi >> 6) & 0x3F) | 0x80), char((r.hi & 0x3F) | 0x80)};
         if (lva_ptr != nullptr) {
           auto A = std::move(lva_ptr);
           buildThreeBytesAutomaton(lo, hi);
