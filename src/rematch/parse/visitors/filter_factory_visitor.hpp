@@ -209,7 +209,6 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
 
   // Build the automaton for a range of four bytes and stores it in the lva_ptr
   void buildFourBytesAutomaton(char lo[4], char hi[4]) {
-    // WIP
     if (lo[0] == hi[0]) {
       // Same first byte
       if (lo[1] == hi[1]) {
@@ -236,9 +235,74 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
         }
       } else {
         // Different second byte
+        auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+        buildThreeBytesAutomaton(lo + 1, hi + 1);
+        auto A2 = std::move(lva_ptr);
+        A1->cat(*A2);
+        lva_ptr = std::move(A1);
       }
     } else {
       // Different first byte
+      auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+      auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[1]));
+      auto A3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[2]));
+      auto A4 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({lo[3], '\xBF'}));
+      A1->cat(*A2);
+      A1->cat(*A3);
+      A1->cat(*A4);
+      auto B1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(hi[0]));
+      auto B2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(hi[1]));
+      auto B3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(hi[2]));
+      auto B4 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', hi[3]}));
+      B1->cat(*B2);
+      B1->cat(*B3);
+      B1->cat(*B4);
+      A1->alter(*B1);
+      if (uint64_t(lo[0] << 16 | lo[1] << 8 | lo[2]) + 1 < uint64_t(hi[0] << 16 | hi[1] << 8 | hi[2])) {
+        // There are more bytes between the first/second/third bytes
+        char lo_mid[3];
+        char hi_mid[3];
+        if (lo[2] == '\xBF') {
+          // Third byte overflows
+          if (lo[1] == '\xBF') {
+            // Second byte overflows
+            lo_mid[0] = char(lo[0] + 1);
+            lo_mid[1] = '\x80';
+            lo_mid[2] = '\x80';
+          } else {
+            lo_mid[0] = lo[0];
+            lo_mid[1] = char(lo[1] + 1);
+            lo_mid[2] = '\x80';
+          }
+        } else {
+          lo_mid[0] = lo[0];
+          lo_mid[1] = lo[1];
+          lo_mid[2] = char(lo[2] + 1);
+        }
+        if (hi[2] == '\x80') {
+          // Third byte underflows
+          if (hi[1] == '\x80') {
+            // Second byte underflows
+            hi_mid[0] = char(hi[0] - 1);
+            hi_mid[1] = '\xBF';
+            hi_mid[2] = '\xBF';
+          } else {
+            hi_mid[0] = hi[0];
+            hi_mid[1] = char(hi[1] - 1);
+            hi_mid[2] = '\xBF';
+          }
+        } else {
+          hi_mid[0] = hi[0];
+          hi_mid[1] = hi[1];
+          hi_mid[2] = char(hi[2] - 1);
+        }
+        buildThreeBytesAutomaton(lo_mid, hi_mid);
+        auto C1 = std::move(lva_ptr);
+        auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
+        C1->cat(*C2);
+        A1->alter(*C1);
+      }
+      lva_ptr = std::move(A1);
     }
   }
 
@@ -314,13 +378,20 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
         stack.emplace(r.lo, 0xFFFF);
       }
     }
-    // TODO: 4 bytes automaton
+    // 4 bytes automaton
     while (!stack.empty()) {
-      throw std::runtime_error("4 bytes automaton not implemented");
       UnicodeRange r = stack.top();
       stack.pop();
       // Handle range
-      std::cout << "4b: " << r.lo << " - " << r.hi << std::endl;
+      char lo[4] = {char((r.lo >> 18) | 0xF0), char(((r.lo >> 12) & 0x3F) | 0x80), char(((r.lo >> 6) & 0x3F) | 0x80), char((r.lo & 0x3F) | 0x80)};
+      char hi[4] = {char((r.hi >> 18) | 0xF0), char(((r.hi >> 12) & 0x3F) | 0x80), char(((r.hi >> 6) & 0x3F) | 0x80), char((r.hi & 0x3F) | 0x80)};
+      if (lva_ptr != nullptr) {
+        auto A = std::move(lva_ptr);
+        buildFourBytesAutomaton(lo, hi);
+        lva_ptr->alter(*A);
+      } else {
+        buildFourBytesAutomaton(lo, hi);
+      }
       if (stack.empty() && ++it != ranges.end()) stack.push(*it);
     }
   }
