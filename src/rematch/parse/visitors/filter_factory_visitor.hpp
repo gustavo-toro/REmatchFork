@@ -177,13 +177,26 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
       B1->cat(*B2);
       B1->cat(*B3);
       A1->alter(*B1);
-      if (lo[0] + 1 < hi[0]) {
-        // There are more bytes between the first bytes
-        // Decode utf-8, increment/decrement and re-encode
-        uint32_t lo_next = (((lo[0] & 0x0F) << 6) | (lo[1] & 0x3F)) + 1;
-        uint32_t hi_prev = (((hi[0] & 0x0F) << 6) | (hi[1] & 0x3F)) - 1;
-        char lo_mid[2] = {char((lo_next >> 6) | 0xE0), char((lo_next & 0x3F) | 0x80)};
-        char hi_mid[2] = {char((hi_prev >> 6) | 0xE0), char((hi_prev & 0x3F) | 0x80)};
+      if (uint16_t(lo[0] << 8 | lo[1]) + 1 < uint16_t(hi[0] << 8 | hi[1])) {
+        // There are more bytes between the first/second bytes
+        char lo_mid[2];
+        char hi_mid[2];
+        if (lo[1] == '\xBF') {
+          // Second byte overflows
+          lo_mid[0] = char(lo[0] + 1);
+          lo_mid[1] = '\x80';
+        } else {
+          lo_mid[0] = lo[0];
+          lo_mid[1] = char(lo[1] + 1);
+        }
+        if (hi[1] == '\x80') {
+          // Second byte underflows
+          hi_mid[0] = char(hi[0] - 1);
+          hi_mid[1] = '\xBF';
+        } else {
+          hi_mid[0] = hi[0];
+          hi_mid[1] = char(hi[1] - 1);
+        }
         buildTwoBytesAutomaton(lo_mid, hi_mid);
         auto C1 = std::move(lva_ptr);
         auto C2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({'\x80', '\xBF'}));
@@ -191,6 +204,41 @@ class FilterFactoryVisitor : public REmatchParserBaseVisitor {
         A1->alter(*C1);
       }
       lva_ptr = std::move(A1);
+    }
+  }
+
+  // Build the automaton for a range of four bytes and stores it in the lva_ptr
+  void buildFourBytesAutomaton(char lo[4], char hi[4]) {
+    // WIP
+    if (lo[0] == hi[0]) {
+      // Same first byte
+      if (lo[1] == hi[1]) {
+        // Same second byte
+        if (lo[2] == hi[2]) {
+          // Same third byte
+          auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+          auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[1]));
+          auto A3 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[2]));
+          auto A4 = std::make_unique<LogicalVA>(ffact_ptr->add_filter({lo[3], hi[3]}));
+          A1->cat(*A2);
+          A1->cat(*A3);
+          A1->cat(*A4);
+          lva_ptr = std::move(A1);
+        } else {
+          // Different third byte
+          auto A1 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[0]));
+          auto A2 = std::make_unique<LogicalVA>(ffact_ptr->add_filter(lo[1]));
+          buildTwoBytesAutomaton(lo + 2, hi + 2);
+          auto A3 = std::move(lva_ptr);
+          A1->cat(*A2);
+          A1->cat(*A3);
+          lva_ptr = std::move(A1);
+        }
+      } else {
+        // Different second byte
+      }
+    } else {
+      // Different first byte
     }
   }
 
