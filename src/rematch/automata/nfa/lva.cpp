@@ -379,7 +379,7 @@ void LogicalVA::add_distance(int distance) {
   // REFACTORING TODO: add the code above to a function in ffactory, create or add kAnyChar
 
   LogicalVA *distance1Automaton = new LogicalVA(*this);
-  std::cout << distance1Automaton->states.size() << std::endl;
+  distance1Automaton->init_state_->set_initial(false);
 
   // We create a mapping from a state id to its position in states:
   auto state_id_to_index = std::vector<int>(states.size());
@@ -413,14 +413,15 @@ void LogicalVA::add_distance(int distance) {
   states.insert(states.end(), distance1Automaton->states.begin(), distance1Automaton->states.end());
 
   accepting_state_ = new State();
-  accepting_state_->set_accepting(true);
   for (auto &state : states) {
     if (state->accepting()) {
         state->add_epsilon(accepting_state_);
         state->set_accepting(false);
     }
   }
+  accepting_state_->set_accepting(true);
   states.push_back(accepting_state_);
+  relabel_states();
   std::cout << "Finished adding distance" << std::endl;
 }
 

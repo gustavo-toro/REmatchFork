@@ -43,7 +43,7 @@ ExtendedVA::ExtendedVA(LogicalVA const &A, Anchor a)
   #endif
 
   #ifndef NOPT_OFFSET
-  offset_opt();
+  // offset_opt();
   #endif
 
   captureClosure();
@@ -52,7 +52,12 @@ ExtendedVA::ExtendedVA(LogicalVA const &A, Anchor a)
   std::cout << "EvaluationVA after capture closure:\n" << *this << "\n\n";
   #endif
 
+  relabelStates();
   duplicate_opt();
+
+#ifndef NDEBUG
+  std::cout << "EvaluationVA after duplicate_opt:\n" << *this << "\n\n";
+#endif
 
   relabelStates();
 
@@ -775,7 +780,8 @@ void ExtendedVA::duplicate_opt() {
       q0New = states0[qOldIdx];
       q1New = states1[qOldIdx];
 
-      p1New->add_filter(filter->code, q0New);
+
+      p1New->add_filter(filter->code, q0New); // Why do we only connect p1 to q0, and not p0 to q1???
 
       // If reached state is accepting, then only connect to 0
       if (qOld->accepting())
